@@ -7,7 +7,6 @@ export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "G-Q62SLZCHKP";
 declare global {
   interface Window {
     gtag: (...args: unknown[]) => void;
-    dataLayer: Record<string, unknown>[];
   }
 }
 
