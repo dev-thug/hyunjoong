@@ -15,6 +15,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#000000",
 };
 
 export const metadata: Metadata = {
@@ -133,7 +134,6 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
     shortcut: ["/favicon.ico"],
   },
-  themeColor: "#000000",
 };
 
 export default function RootLayout({
