@@ -29,9 +29,11 @@ export default function Skills() {
     offset: ["start end", "end start"],
   });
   const prefersReduce = useReducedMotion();
-  const y = prefersReduce
-    ? (undefined as unknown as any)
-    : useTransform(scrollYProgress, [0, 1], ["50px", "-50px"]);
+  const y = useTransform(
+    scrollYProgress,
+    [0, 1],
+    prefersReduce ? ["0px", "0px"] : ["50px", "-50px"]
+  );
 
   const skillCategories = [
     {
@@ -170,8 +172,7 @@ export default function Skills() {
               subtitle={category.subtitle}
               icon={category.icon}
               gradient={category.gradient}
-              // SkillCategoryHeader.y는 MotionValue<string> 타입이므로, reduce 모드에서는 0px 고정값 적용
-              y={(prefersReduce ? (undefined as unknown as any) : y) as any}
+              y={y}
             />
 
             {/* Skills Cards */}
