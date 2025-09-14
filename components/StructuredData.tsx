@@ -5,7 +5,7 @@ export default function StructuredData() {
     name: "김현중",
     jobTitle: "풀스택 개발자",
     description:
-      "4년차 풀스택 개발자로 NodeJS, Python, AWS를 활용한 확장 가능한 클라우드 네이티브 앱 개발 경험과 협업 중심의 개발 철학을 보유하고 있습니다.",
+      "풀스택 개발자로 NodeJS, Python, AWS를 활용한 확장 가능한 클라우드 네이티브 앱 개발 경험과 협업 중심의 개발 철학을 보유하고 있습니다.",
     url: "https://hyunjoong.kim",
     image: "https://hyunjoong.kim/profile-image.jpg",
     sameAs: [
@@ -53,7 +53,7 @@ export default function StructuredData() {
     "@type": "WebSite",
     name: "김현중 포트폴리오",
     url: "https://hyunjoong.kim",
-    description: "4년차 풀스택 개발자 김현중의 포트폴리오 웹사이트",
+    description: "풀스택 개발자 김현중의 포트폴리오 웹사이트",
     author: {
       "@type": "Person",
       name: "김현중",

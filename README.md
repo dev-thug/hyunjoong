@@ -443,7 +443,7 @@ CLS: < 0.1     // Cumulative Layout Shift
 ```typescript
 export const metadata: Metadata = {
   title: "김현중 | 풀스택 개발자 포트폴리오",
-  description: "4년차 풀스택 개발자...",
+  description: "풀스택 개발자...",
   keywords: ["백엔드 개발자", "NodeJS", "AWS"],
   openGraph: {
     /* Open Graph 설정 */

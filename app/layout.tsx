@@ -24,11 +24,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   title: {
     default:
-      "김현중 | 4년차 풀스택 개발자 포트폴리오 | NodeJS Python AWS 전문가",
+      "김현중 | 풀스택 개발자 포트폴리오 | NodeJS Python AWS 전문가",
     template: "%s | 김현중 풀스택 개발자",
   },
   description:
-    "4년차 풀스택 개발자 김현중의 포트폴리오. NodeJS, Python, AWS, Docker, Kubernetes를 활용한 확장 가능한 클라우드 네이티브 앱 개발. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험, MSA 전문가.",
+    "풀스택 개발자 김현중의 포트폴리오. NodeJS, Python, AWS, Docker, Kubernetes를 활용한 확장 가능한 클라우드 네이티브 앱 개발. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험, MSA 전문가.",
   keywords: [
     // 핵심 타겟 키워드
     "풀스택 개발자 포트폴리오",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     "Batch Processing 개발자",
 
     // 경력/경험 키워드
-    "4년차 개발자 포트폴리오",
+    "개발자 포트폴리오",
     "시니어 풀스택 개발자",
     "유전체 분석 시스템 개발자",
     "대용량 트래픽 처리 개발자",
@@ -71,9 +71,9 @@ export const metadata: Metadata = {
     "스타트업 개발자",
   ],
   openGraph: {
-    title: "김현중 | 4년차 풀스택 개발자 포트폴리오 | NodeJS Python AWS 전문가",
+    title: "김현중 | 풀스택 개발자 포트폴리오 | NodeJS Python AWS 전문가",
     description:
-      "4년차 풀스택 개발자로서 NodeJS, Python, AWS를 활용한 클라우드 네이티브 앱 개발 전문가. 2000+ 유전체 분석 시스템, 10만+ 사용자 서비스 구축 경험.",
+      "풀스택 개발자로서 NodeJS, Python, AWS를 활용한 클라우드 네이티브 앱 개발 전문가. 2000+ 유전체 분석 시스템, 10만+ 사용자 서비스 구축 경험.",
     url: "/",
     siteName: "김현중 풀스택 개발자 포트폴리오",
     images: [
@@ -81,7 +81,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "김현중 풀스택 개발자 포트폴리오 - 4년차 NodeJS Python AWS 전문가",
+        alt: "김현중 풀스택 개발자 포트폴리오 -  NodeJS Python AWS 전문가",
       },
     ],
     locale: "ko_KR",
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "김현중 | 4년차 풀스택 개발자 포트폴리오",
+    title: "김현중 | 풀스택 개발자 포트폴리오",
     description:
       "NodeJS, Python, AWS 전문가. 2000+ 유전체 분석 시스템, 10만+ 사용자 서비스 구축. MSA, 클라우드 네이티브 아키텍처 전문가.",
     images: ["/opengraph-image"],

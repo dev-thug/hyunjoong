@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "김현중 포트폴리오 - 풀스택 개발자",
     short_name: "김현중 포트폴리오",
-    description: "4년차 풀스택 개발자 김현중의 포트폴리오 웹사이트",
+    description: "풀스택 개발자 김현중의 포트폴리오 웹사이트",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",
