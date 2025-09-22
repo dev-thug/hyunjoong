@@ -11,6 +11,31 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 1,
     },
+    // 앵커 링크들도 포함하여 검색엔진이 페이지 구조를 더 잘 이해하도록 함
+    {
+      url: `${base}/#about`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${base}/#skills`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${base}/#experience`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${base}/#contact`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     // 향후 추가될 페이지들을 위한 확장성 고려
     // {
     //   url: `${base}/projects`,

@@ -25,64 +25,73 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   title: {
     default:
-      "김현중 | 풀스택 개발자 포트폴리오 | NodeJS Python AWS 전문가",
-    template: "%s | 김현중 풀스택 개발자",
+      "풀스택 개발자 포트폴리오 | 김현중 | NodeJS Python AWS 전문가 | 서울 개발자",
+    template: "%s | 풀스택 개발자 김현중",
   },
   description:
-    "풀스택 개발자 김현중의 포트폴리오. NodeJS, Python, AWS, Docker, Kubernetes를 활용한 확장 가능한 클라우드 네이티브 앱 개발. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험, MSA 전문가.",
+    "풀스택 개발자 포트폴리오 - 김현중. NodeJS, Python, AWS 전문가로 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 개발자 채용 문의 환영.",
   keywords: [
-    // 핵심 타겟 키워드
+    // 핵심 타겟 키워드 (검색량 높은 순)
     "풀스택 개발자 포트폴리오",
-    "풀스택 개발자",
     "개발자 포트폴리오",
-    "한국 풀스택 개발자",
-    "서울 개발자 포트폴리오",
+    "풀스택 개발자",
+    "풀스택 개발자 채용",
+    "개발자 구인",
+    "서울 개발자",
+    "한국 개발자",
+    "서울 풀스택 개발자",
 
     // 기술 스택 키워드
+    "AWS 개발자",
+    "NodeJS 개발자",
+    "Python 개발자",
+    "React 개발자",
+    "Next.js 개발자",
+    "AWS 개발자 포트폴리오",
     "NodeJS 개발자 포트폴리오",
     "Python 개발자 포트폴리오",
-    "AWS 개발자 포트폴리오",
-    "React 개발자 포트폴리오",
-    "Next.js 개발자 포트폴리오",
+
+    // 클라우드 및 DevOps
+    "클라우드 개발자",
+    "DevOps 개발자",
     "Docker 개발자",
     "Kubernetes 개발자",
-    "클라우드 개발자",
     "마이크로서비스 개발자",
-    "DevOps 개발자",
+    "서버리스 개발자",
 
     // 구체적 기술 키워드
-    "AWS Amplify 전문가",
-    "GraphQL AppSync 개발자",
-    "Event Driven Architecture",
-    "DynamoDB 전문가",
+    "AWS Amplify",
+    "GraphQL 개발자",
+    "DynamoDB 개발자",
     "Lambda 개발자",
-    "Batch Processing 개발자",
-
-    // 경력/경험 키워드
-    "개발자 포트폴리오",
-    "시니어 풀스택 개발자",
-    "유전체 분석 시스템 개발자",
-    "대용량 트래픽 처리 개발자",
+    "Event Driven Architecture",
     "MSA 아키텍트",
 
-    // 산업 키워드
-    "헬스케어 IT 개발자",
+    // 경력 및 경험
+    "시니어 풀스택 개발자",
+    "4년 경력 개발자",
+    "유전체 분석 시스템",
+    "대용량 트래픽 처리",
+    "10만 사용자 서비스",
+
+    // 산업별 키워드
+    "헬스케어 개발자",
     "핀테크 개발자",
-    "이커머스 개발자",
     "스타트업 개발자",
+    "이커머스 개발자",
   ],
   openGraph: {
-    title: "김현중 | 풀스택 개발자 포트폴리오 | NodeJS Python AWS 전문가",
+    title: "풀스택 개발자 포트폴리오 | 김현중 | NodeJS Python AWS 전문가",
     description:
-      "풀스택 개발자로서 NodeJS, Python, AWS를 활용한 클라우드 네이티브 앱 개발 전문가. 2000+ 유전체 분석 시스템, 10만+ 사용자 서비스 구축 경험.",
+      "풀스택 개발자 포트폴리오 - 김현중. NodeJS, Python, AWS 전문가로 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 개발자 채용 문의 환영.",
     url: "/",
-    siteName: "김현중 풀스택 개발자 포트폴리오",
+    siteName: "풀스택 개발자 김현중 포트폴리오",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "김현중 풀스택 개발자 포트폴리오 -  NodeJS Python AWS 전문가",
+        alt: "풀스택 개발자 포트폴리오 - 김현중 | NodeJS Python AWS 전문가 | 서울 개발자",
       },
     ],
     locale: "ko_KR",
@@ -91,9 +100,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "김현중 | 풀스택 개발자 포트폴리오",
+    title: "풀스택 개발자 포트폴리오 | 김현중 | NodeJS Python AWS 전문가",
     description:
-      "NodeJS, Python, AWS 전문가. 2000+ 유전체 분석 시스템, 10만+ 사용자 서비스 구축. MSA, 클라우드 네이티브 아키텍처 전문가.",
+      "풀스택 개발자 포트폴리오 - 김현중. NodeJS, Python, AWS 전문가로 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 개발자 채용 문의 환영.",
     images: ["/opengraph-image"],
     creator: "@dev_thug",
     site: "@dev_thug",
