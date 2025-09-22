@@ -6,6 +6,8 @@ const withPWA = nextPWA({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
+  // Turbopack과의 호환성을 위한 설정
+  buildExcludes: [/middleware-manifest\.json$/],
 });
 
 const ContentSecurityPolicy = [
