@@ -37,6 +37,7 @@ const techStack = [
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -63,8 +64,14 @@ export default function Hero() {
       {/* Background Grid */}
       <BackgroundGrid />
 
-      <div ref={containerRef} className="relative z-10 w-full mx-auto text-center h-screen">
-        <motion.div style={{ y, opacity }} className="flex flex-col justify-evenly h-full py-20">
+      <div
+        ref={containerRef}
+        className="relative z-10 w-full mx-auto text-center h-screen"
+      >
+        <motion.div
+          style={{ y, opacity }}
+          className="flex flex-col justify-evenly h-full py-20"
+        >
           {/* Headline */}
           <AnimatedText
             as="h1"

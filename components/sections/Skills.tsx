@@ -24,6 +24,7 @@ import { SkillCard, SkillCategoryHeader } from "../cards";
 
 export default function Skills() {
   const containerRef = useRef<HTMLDivElement>(null);
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"],
@@ -147,6 +148,7 @@ export default function Skills() {
 
       {/* Skills Grid */}
       <div
+        ref={containerRef}
         style={{
           display: "flex",
           flexDirection: "column",

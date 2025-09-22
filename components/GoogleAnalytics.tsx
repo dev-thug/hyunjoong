@@ -65,8 +65,3 @@ export const trackExternalLink = (url: string, linkText: string) => {
 export const trackScrollDepth = (depth: number) => {
   trackEvent("scroll", "engagement", `${depth}%`, depth);
 };
-
-// 유지 호환: 컴포넌트 기본 내보내기 (더 이상 사용되지 않음)
-export default function GoogleAnalytics(): null {
-  return null;
-}

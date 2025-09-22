@@ -8,16 +8,13 @@ export default function StructuredData() {
       "풀스택 개발자로 NodeJS, Python, AWS를 활용한 확장 가능한 클라우드 네이티브 앱 개발 경험과 협업 중심의 개발 철학을 보유하고 있습니다.",
     url: "https://hyunjoong.kim",
     image: "https://hyunjoong.kim/profile-image.jpg",
-    sameAs: [
-      "https://github.com/hyunjoongkim",
-      "https://linkedin.com/in/hyunjoongkim",
-    ],
+    sameAs: ["https://github.com/dev-thug", "https://linkedin.com/in/dev-thug"],
     address: {
       "@type": "PostalAddress",
       addressCountry: "KR",
       addressRegion: "Seoul",
     },
-    email: "hyunjoong.kim@example.com",
+    email: "de0978@gmail.com",
     telephone: "+82-10-0000-0000",
     knowsAbout: [
       "JavaScript",

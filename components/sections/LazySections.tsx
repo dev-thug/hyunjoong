@@ -2,9 +2,21 @@
 
 import dynamic from "next/dynamic";
 
-const Skills = dynamic(() => import("./Skills"), { ssr: false });
-const Experience = dynamic(() => import("./Experience"), { ssr: false });
-const Contact = dynamic(() => import("./Contact"), { ssr: false });
+const Skills = dynamic(() => import("./Skills"), {
+  loading: () => (
+    <div className="h-96 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg" />
+  ),
+});
+const Experience = dynamic(() => import("./Experience"), {
+  loading: () => (
+    <div className="h-96 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg" />
+  ),
+});
+const Contact = dynamic(() => import("./Contact"), {
+  loading: () => (
+    <div className="h-96 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg" />
+  ),
+});
 
 export default function LazySections() {
   return (
