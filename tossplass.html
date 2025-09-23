@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>김현중 자기소개서 - 토스플레이스 지원</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      @page {
+        size: A4 portrait;
+        margin: 25mm 20mm 25mm 20mm;
+      }
+      body {
+        font-family: "Noto Sans KR", sans-serif;
+        font-size: 12pt;
+        line-height: 1.6;
+        color: #000000;
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+        width: 210mm;
+        height: 297mm;
+        box-sizing: border-box;
+      }
+      .container {
+        padding: 0 10mm;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .header {
+        text-align: center;
+        padding: 10mm 0;
+        background: linear-gradient(135deg, #0066ff 0%, #00d4aa 100%);
+        color: white;
+        border-radius: 12px;
+        margin-bottom: 10mm;
+      }
+      .header h1 {
+        font-size: 18pt;
+        font-weight: 700;
+        margin: 0;
+      }
+      .section {
+        margin-bottom: 8mm;
+      }
+      .section h2 {
+        font-size: 14pt;
+        font-weight: 700;
+        color: #0066ff;
+        margin: 0 0 4mm 0;
+        border-bottom: 1px solid #00d4aa;
+        padding-bottom: 2mm;
+      }
+      .section p {
+        margin: 0;
+        text-align: justify;
+      }
+      .highlight {
+        color: #00d4aa;
+        font-weight: 700;
+      }
+      .footer {
+        text-align: center;
+        font-size: 10pt;
+        opacity: 0.7;
+        margin-top: auto;
+        padding-top: 5mm;
+      }
+      @media print {
+        body {
+          margin: 0;
+        }
+        .container {
+          padding: 25mm 20mm;
+        }
+      }
+      /* 페이지 브레이크: 긴 컨텐츠 시 2페이지로 */
+      .page-break {
+        margin-top: 20mm;
+        page-break-before: always;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>
+          토스플레이스 SDK 플랫폼 혁신을 책임질 풀스택 Node.js 개발자,
+          <br />
+          김현중
+        </h1>
+      </div>
+
+      <div class="section">
+        <p>
+          토스플레이스의 SDK Platform 팀에 합류해 토스 포스(POS) 플러그인 SDK
+          개발과 업무 자동화 플랫폼 구축에 기여하고 싶습니다. 토스플레이스는
+          오프라인 결제를 혁신해 매장 운영을 간소화하며 사용자와 점주 모두에게
+          편리함을 제공합니다. 4년간 스타트업에서 서버리스 아키텍처를 설계하며
+          운영 효율을 높인 경험을 바탕으로, 이 미션에 최신 기술을 적용해 팀
+          생산성을 극대화하겠습니다. TypeScript와 AWS를 활용한 풀스택 개발자로서
+          사용자 중심 솔루션을 설계한 역량은 토스플레이스의 ‘책임’ 가치와 잘
+          맞습니다.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>1. 사용자들의 모바일 행동이 훨씬 쉬워지도록 도운 경험</h2>
+        <p>
+          예진 서비스 프로젝트에서 한의 임상결정지원시스템을 단독 개발하며
+          한의사들의 진료 프로세스를 간소화했습니다. ReactJS 기반 웹
+          프론트엔드를 구축해 UI/UX 컴포넌트를 개발하고, API 호출 모듈을
+          최적화해 환자 관리와 처방 추천을 직관적으로 구현했습니다. 초기 한의사
+          피드백을 반영해 증상 입력 인터페이스를 모바일 친화적으로 설계하고 터치
+          기반 조작을 간편화했습니다. 결과적으로 진료 시간이 20% 단축되었고,
+          TIPS 프로그램(2023.05) 선정에 기여했습니다. 이 경험을 통해 토스 포스의
+          배달 연동 기능을 간소화해 점주들의 매장 운영을 혁신하겠습니다.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>
+          2. 외부 상황에 따라 서비스가 중단되지 않도록 데이터를 수집하고
+          모니터링한 경험
+        </h2>
+        <p>
+          유전체 분석 앱을 개발하며 AWS Batch와 EFS를 활용해 대규모 데이터 처리
+          안정성을 확보했습니다. 10GB 참조 데이터를 EFS에 마운트하고, 병렬
+          컴퓨팅을 설계해 1000개 샘플을 동시에 연산할 수 있게 했습니다. 처리
+          시간을 30분에서 10분으로 단축해 비용과 성능을 개선했습니다. 1000명
+          동시 처리 시 발생할 수 있는 트래픽 문제를 사전 모니터링하고, EFS 설정
+          분석 및 다중 EFS 분산 방안을 제안했습니다. 기존 단일 EC2 시스템의
+          메모리 문제를 AWS Batch로 전환해 안정성을 높이고, AWS Cognito로 데이터
+          보안을 강화했습니다. 이 프로젝트는 토스플레이스의 SDK 플랫폼에서 배달
+          서비스 연동 시 안정성과 확장성을 보장할 준비가 되어 있습니다.
+        </p>
+      </div>
+
+      <!-- 페이지 브레이크: 2페이지로 이어짐 -->
+      <div class="page-break"></div>
+
+      <div class="section">
+        <h2>
+          3. 유연하면서도 가독성이 좋은 코드, 유지보수가 가능한 코드를 작성한
+          경험
+        </h2>
+        <p>
+          예진 서비스 백엔드 개발에서 DynamoDB NoSQL 데이터 모델링으로 UX 데이터
+          액세스 패턴을 분석하고 키 디자인을 최적화했습니다. 멀티테넌트 구조를
+          Amplify Gen1으로 구현해 인증과 API를 자동화하며 가독성을
+          높였습니다.유전체 분석 프로젝트에서 프론트엔드 개발자와 협업하며 API
+          스펙을 설계해 서버-클라이언트 간 데이터 흐름을 유연하게 구성했습니다.
+          TypeScript를 활용해 타입 안전성을 강화하고, 코드 리뷰로 가독성을 지속
+          개선했습니다. 이 역량으로 토스플레이스의 플러그인 SDK를 확장 가능하고
+          유지보수 쉽게 구축하겠습니다.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>
+          4. 반복적인 업무 프로세스의 패러다임을 바꾸고 새로운 방식으로 전환한
+          경험
+        </h2>
+        <p>
+          유전체 분석 프로젝트에서 초기 시스템 구축 시, 회원가입과 서비스
+          모니터링 프로세스를 자동화해 팀 효율을 높였습니다. 사용자가 회원가입을
+          신청하면 Jira 티켓이 자동 생성되고, 관리자가 티켓을 승인 상태로
+          전환하면 회원가입이 완료되는 흐름을 AWS Lambda와 Jira API로
+          구현했습니다. 또한, AWS SNS와 Lambda를 활용해 서비스 상태를
+          모니터링하고, Slack 웹훅으로 실시간 알림을 전송하는 시스템을 구축해
+          운영 안정성을 강화했습니다. 서버리스 아키텍처로 수동 프로세스를
+          자동화해 개발 생산성을 향상시켰으며, 유전체 분석 앱에서 순차 처리
+          로직을 AWS Batch 병렬 처리로 전환해 데이터 처리 속도를 개선했습니다.
+          이 경험을 바탕으로 토스플레이스의 업무 자동화 플랫폼에서 복잡한
+          워크플로우를 혁신적으로 최적화하겠습니다.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2>
+          5. 더 좋은 개발자 경험(Developer Experience)을 만드는 데 관심이 많은
+          경험
+        </h2>
+        <p>
+          개인 프로젝트 specify.app을 통해 AI를 활용해 개발자의 의도대로
+          정확하고 효율적인 개발을 지원하는 플랫폼을 구축했습니다. 새로운 시대의
+          개발 방식에 적응하고 AI를 효과적으로 활용하기 위해, 자연어 명세를 AI
+          대화로 세밀하게 구체화하고 작업을 자동 분해하여 개발 프로세스를
+          혁신했습니다. 이 프로젝트는 개발자 경험(DX)을 향상시키는 데 초점을
+          맞춰, 명세 기반 개발을 통해 생산성을 70% 이상 높이는 혁신을
+          추구합니다. 최신 기술 트렌드와 DX 향상에 대한 지속적인 탐구를 통해,
+          개발자들이 더 창의적이고 빠르게 코딩할 수 있는 환경을 실현이
+          목표입니다. 이 열정으로 토스플레이스 SDK Platform 팀에서 AI 기반
+          혁신을 통해 개발자 경험을 강화하고, 플러그인 SDK 개발의 생산성을
+          극대화하겠습니다.
+        </p>
+      </div>
+
+      <div class="section">
+        <p>
+          토스플레이스 SDK Platform 팀의 초기 멤버로서, 서버리스 기술을 활용해
+          확장성과 유지보수성을 갖춘 SDK를 구축하고 팀의 개발 생산성을
+          높이겠습니다. 대규모 실서비스 환경에서는 실무를 통해 빠르게 학습하며
+          기술과 서비스 이해도를 넓힐 준비가 되어 있습니다. 토스플레이스의
+          미션에 깊이 공감하며, 제 경험과 기술력을 통해 SDK Platform 팀에서
+          실질적인 가치를 창출하고, 오프라인 결제 시스템의 혁신을 이끌어
+          나가겠습니다. 팀과 함께 빠르게 성장하며, 기술적 도전과 기회를 극복하는
+          데 앞장서겠습니다.
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>© 2025 김현중 | toss.place 지원 | de0978@gmail.com</p>
+      </div>
+    </div>
+  </body>
+</html>
