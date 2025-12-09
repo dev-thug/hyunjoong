@@ -132,7 +132,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Scroll Indicator */}
-          <ScrollIndicator targetId="about" />
+          <ScrollIndicator targetId="projects" />
         </motion.div>
       </div>
 

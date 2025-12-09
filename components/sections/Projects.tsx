@@ -171,7 +171,7 @@ export default function Projects() {
       </div>
 
       {/* Call to Action */}
-      <div
+      {/* <div
         style={{
           marginTop: "128px",
         }}
@@ -182,7 +182,7 @@ export default function Projects() {
           buttonText="GitHub 방문하기"
           buttonHref="https://github.com/dev-thug"
         />
-      </div>
+      </div> */}
     </SectionContainer>
   );
 }
