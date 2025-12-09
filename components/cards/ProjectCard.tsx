@@ -38,7 +38,6 @@ export default function ProjectCard({
   tags,
   metrics,
   highlights,
-  github,
   demo,
   featured,
   gradient,

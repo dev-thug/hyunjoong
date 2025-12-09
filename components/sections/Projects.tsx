@@ -1,6 +1,6 @@
 "use client";
 
-import { Database, Server, Zap, Users, Bot, GitBranch, HeartPulse, Calendar, FileText } from "lucide-react";
+import { Database, Server, Zap, Users, Bot, HeartPulse, FileText } from "lucide-react";
 import { SectionHeader, SectionContainer } from "../ui";
 import { ProjectCard, CallToActionCard } from "../cards";
 

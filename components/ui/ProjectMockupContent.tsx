@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Monitor } from "lucide-react";
+import Image from "next/image";
 
 interface ProjectMockupContentProps {
   title: string;
@@ -41,10 +42,11 @@ export default function ProjectMockupContent({
   if (imageSrc) {
     return (
       <div className="w-full h-full relative overflow-hidden">
-        <img
+        <Image
           src={imageSrc}
           alt={title}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
           style={{
             objectPosition: "center top",
           }}
