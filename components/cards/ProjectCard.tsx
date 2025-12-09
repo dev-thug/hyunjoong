@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Github, Play } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { ReactNode } from "react";
 import ProjectMetricCard from "./ProjectMetricCard";
 import ProjectHighlights from "./ProjectHighlights";
@@ -21,11 +21,13 @@ interface ProjectCardProps {
   tags: string[];
   metrics: ProjectMetric[];
   highlights: string[];
-  github: string;
+  github?: string;
   demo?: string;
   featured: boolean;
   gradient: string;
   mockup: "macbook" | "iphone" | "desktop";
+  videoSrc?: string;
+  imageSrc?: string;
   index: number;
 }
 
@@ -41,6 +43,8 @@ export default function ProjectCard({
   featured,
   gradient,
   mockup,
+  videoSrc,
+  imageSrc,
   index,
 }: ProjectCardProps) {
   const isReversed = index % 2 === 1;
@@ -186,41 +190,17 @@ export default function ProjectCard({
           </motion.div>
 
           {/* Action Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.1 }}
-            viewport={{ once: true }}
-            className="flex"
-            style={{
-              gap: "16px",
-            }}
-          >
-            <motion.a
-              href={github}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                trackProjectClick(title, "github");
-                trackExternalLink(github, `${title} GitHub`);
-              }}
-              className="group flex items-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-apple-lg"
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
+          {demo && (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 1.1 }}
+              viewport={{ once: true }}
+              className="flex"
               style={{
-                padding: "16px 32px",
-                gap: "12px",
+                gap: "16px",
               }}
             >
-              <Github
-                style={{
-                  width: "20px",
-                  height: "20px",
-                }}
-              />
-              <span>View Code</span>
-            </motion.a>
-            {demo && (
               <motion.a
                 href={demo}
                 target="_blank"
@@ -229,7 +209,7 @@ export default function ProjectCard({
                   trackProjectClick(title, "demo");
                   trackExternalLink(demo, `${title} Demo`);
                 }}
-                className="group flex items-center border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-full font-semibold hover:border-gray-400 dark:hover:border-gray-500 transition-colors"
+                className="group flex items-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-apple-lg"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
                 style={{
@@ -237,16 +217,16 @@ export default function ProjectCard({
                   gap: "12px",
                 }}
               >
-                <Play
+                <ExternalLink
                   style={{
                     width: "20px",
                     height: "20px",
                   }}
                 />
-                <span>Live Demo</span>
+                <span>바로가기</span>
               </motion.a>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
         </div>
       </div>
 
@@ -267,7 +247,7 @@ export default function ProjectCard({
         }}
       >
         <DeviceMockup type={mockup}>
-          <ProjectMockupContent title={title} gradient={gradient} />
+          <ProjectMockupContent title={title} gradient={gradient} videoSrc={videoSrc} imageSrc={imageSrc} />
         </DeviceMockup>
       </motion.div>
     </motion.div>

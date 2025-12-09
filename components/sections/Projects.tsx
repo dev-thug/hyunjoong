@@ -1,110 +1,117 @@
 "use client";
 
-import { Database, Server, Zap, Users } from "lucide-react";
+import { Database, Server, Zap, Users, Bot, GitBranch, HeartPulse, Calendar, FileText } from "lucide-react";
 import { SectionHeader, SectionContainer } from "../ui";
 import { ProjectCard, CallToActionCard } from "../cards";
 
 export default function Projects() {
   const projects = [
     {
-      title: "E-Commerce Backend",
-      subtitle: "Enterprise-grade microservices platform",
+      title: "Specify",
+      subtitle: "AI-Powered Collaborative Document Platform (개인 프로젝트)",
       description:
-        "MSA 아키텍처 기반의 대용량 이커머스 플랫폼 백엔드 시스템으로, 확장성과 안정성을 극대화한 엔터프라이즈급 솔루션입니다.",
-      tags: ["Java", "Spring Boot", "MySQL", "Redis", "AWS", "Docker"],
+        "AI 에이전트가 글쓰기와 문서 관리를 돕고 지식 그래프를 정리하는 협업 문서 편집 플랫폼입니다. 실시간 협업, 맥락 기반 AI 지원, 문서 간 관계 분석을 제공합니다.",
+      tags: ["TypeScript", "React", "CodeMirror 6", "Yjs (CRDT)", "AWS Bedrock", "GraphQL", "DynamoDB", "AWS Amplify"],
       metrics: [
+        {
+          icon: <Bot className="w-4 h-4" />,
+          label: "AI 컨텍스트 지원",
+          value: "Context-aware",
+        },
         {
           icon: <Users className="w-4 h-4" />,
-          label: "월 10만+ 활성 사용자",
-          value: "100K+",
-        },
-        {
-          icon: <Zap className="w-4 h-4" />,
-          label: "평균 응답시간",
-          value: "200ms",
-        },
-        {
-          icon: <Database className="w-4 h-4" />,
-          label: "일일 트랜잭션",
-          value: "1M+",
-        },
-      ],
-      highlights: [
-        "주문 처리 시스템 성능 40% 향상으로 사용자 경험 개선",
-        "Redis 캐싱 전략 최적화로 데이터베이스 부하 70% 감소",
-        "무중단 배포 시스템 구축으로 서비스 안정성 확보",
-      ],
-      github: "https://github.com/username/ecommerce-backend",
-      demo: "https://demo.example.com",
-      featured: true,
-      gradient: "from-blue-500 to-cyan-500",
-      mockup: "macbook",
-    },
-    {
-      title: "Real-time Chat Server",
-      subtitle: "WebSocket-based messaging platform",
-      description:
-        "WebSocket과 Redis Pub/Sub을 활용한 고성능 실시간 채팅 시스템으로, 대규모 동시 접속을 안정적으로 처리합니다.",
-      tags: ["Node.js", "WebSocket", "Redis", "MongoDB", "Docker"],
-      metrics: [
-        {
-          icon: <Users className="w-4 h-4" />,
-          label: "동시 접속자",
-          value: "5K+",
-        },
-        {
-          icon: <Zap className="w-4 h-4" />,
-          label: "메시지 지연",
-          value: "<50ms",
-        },
-        {
-          icon: <Server className="w-4 h-4" />,
-          label: "서버 가용률",
-          value: "99.9%",
-        },
-      ],
-      highlights: [
-        "WebSocket 연결 관리 최적화로 메모리 사용량 30% 절약",
-        "Redis Cluster 구성으로 수평 확장성 확보",
-        "메시지 큐 시스템으로 안정적인 메시지 전달 보장",
-      ],
-      github: "https://github.com/username/chat-server",
-      featured: false,
-      gradient: "from-green-500 to-emerald-500",
-      mockup: "iphone",
-    },
-    {
-      title: "Data Pipeline System",
-      subtitle: "Big data processing infrastructure",
-      description:
-        "대용량 로그 데이터 수집 및 분석을 위한 실시간 스트리밍 파이프라인으로, 확장 가능한 데이터 인프라를 제공합니다.",
-      tags: ["Python", "Apache Kafka", "Elasticsearch", "Kibana", "AWS"],
-      metrics: [
-        {
-          icon: <Database className="w-4 h-4" />,
-          label: "일일 데이터 처리",
-          value: "1TB+",
-        },
-        {
-          icon: <Zap className="w-4 h-4" />,
-          label: "처리 방식",
+          label: "실시간 협업",
           value: "Real-time",
         },
         {
-          icon: <Server className="w-4 h-4" />,
-          label: "스케일링",
-          value: "Auto",
+          icon: <GitBranch className="w-4 h-4" />,
+          label: "문서 관계 시각화",
+          value: "Graph View",
         },
       ],
       highlights: [
-        "Kafka를 통한 안정적인 대용량 데이터 스트리밍 처리",
-        "Elasticsearch 클러스터 최적화로 검색 성능 3배 향상",
-        "자동화된 모니터링 시스템으로 장애 대응 시간 단축",
+        "CodeMirror 6 + Yjs 기반 실시간 CRDT 협업 편집기 구현",
+        "AWS Bedrock 기반 맥락 인식 AI 에이전트 통합",
+        "문서 간 관계 분석 및 지식 그래프 시각화 시스템 구축",
+        "자동 문서 분류 및 태깅 시스템으로 생산성 향상",
       ],
-      github: "https://github.com/username/data-pipeline",
-      featured: false,
-      gradient: "from-purple-500 to-violet-500",
-      mockup: "desktop",
+      demo: "https://specify.app/",
+      featured: true,
+      gradient: "from-violet-500 to-indigo-500",
+      mockup: "macbook",
+      videoSrc: "/videos/specify.webm",
+    },
+    {
+      title: "Fortuna Helix - 유전체 분석 플랫폼",
+      subtitle: "대용량 유전체 데이터 처리 서버리스 아키텍처",
+      description:
+        "100-200GB 규모의 유전체 시퀀싱 데이터를 처리하는 Event-Driven 서버리스 플랫폼입니다. AWS Batch와 EFS를 활용한 병렬 처리로 1000개 샘플 동시 연산이 가능하며, 분석 시간을 66% 단축했습니다.",
+      tags: ["NestJS", "TypeScript", "AWS Batch", "Lambda", "AppSync", "GraphQL", "DynamoDB", "SQS", "SNS", "EFS", "S3", "Cognito"],
+      metrics: [
+        {
+          icon: <Zap className="w-4 h-4" />,
+          label: "분석 시간 단축",
+          value: "66%↓",
+        },
+        {
+          icon: <Database className="w-4 h-4" />,
+          label: "동시 샘플 처리",
+          value: "1000개",
+        },
+        {
+          icon: <Server className="w-4 h-4" />,
+          label: "운영 비용 절감",
+          value: "92%↓",
+        },
+      ],
+      highlights: [
+        "AWS Batch + EFS 기반 병렬 컴퓨팅으로 분석 시간 30분→10분 단축",
+        "운영 비용 월 600만원→50만원으로 92% 절감 달성",
+        "S3 pre-signed URL + Cognito로 파일 업로드 자동화 구현",
+        "SQS FIFO + Lambda로 PDF 리포트 1000개 30초 생성 시스템 구축",
+        "EventBridge + SNS/SQS 기반 이벤트 드리븐 아키텍처 설계",
+        "멀티테넌트 DynamoDB NoSQL 데이터 관리 구조 구현",
+      ],
+      featured: true,
+      gradient: "from-cyan-500 to-blue-500",
+      mockup: "macbook",
+      videoSrc: "/videos/fortunahelix_project.mp4",
+    },
+    {
+      title: "예진 (Yejin Clinic)",
+      subtitle: "AI 기반 한의원 EMR 시스템",
+      description:
+        "환자 관리부터 AI 처방 추천까지 한의원을 업그레이드하는 통합 관리 시스템입니다. ReactJS 인터랙티브 UI와 AWS Amplify Gen1 Event-Driven 아키텍처로 초진 시간을 27분에서 12분으로 55% 단축했습니다.",
+      tags: ["ReactJS", "TypeScript", "AWS Amplify Gen1", "DynamoDB", "GraphQL", "PWA", "Spoqa Han Sans"],
+      metrics: [
+        {
+          icon: <HeartPulse className="w-4 h-4" />,
+          label: "초진 시간 단축",
+          value: "55%↓",
+        },
+        {
+          icon: <Bot className="w-4 h-4" />,
+          label: "AI 처방 추천",
+          value: "Real-time",
+        },
+        {
+          icon: <FileText className="w-4 h-4" />,
+          label: "전자 차트",
+          value: "Digital EMR",
+        },
+      ],
+      highlights: [
+        "AI 기반 증상 입력→처방 추천 워크플로우로 초진 시간 27분→12분 단축",
+        "GraphQL 쿼리 최적화로 네트워크 오버헤드 60% 감소",
+        "DynamoDB 액세스 패턴 분석 기반 테이블 설계 및 키 최적화",
+        "베타 테스터 3곳 30건 초진 로그 측정으로 TIPS 프로그램(2023.05) 선정 기여",
+        "ReactJS 인터랙티브 UI로 진료 프로세스 직관화",
+      ],
+      demo: "https://yejin.clinic/",
+      featured: true,
+      gradient: "from-orange-400 to-amber-500",
+      mockup: "macbook",
+      imageSrc: "/yejin/landing-page.png",
     },
   ];
 
@@ -151,11 +158,12 @@ export default function Projects() {
             tags={project.tags}
             metrics={project.metrics}
             highlights={project.highlights}
-            github={project.github}
             demo={project.demo}
             featured={project.featured}
             gradient={project.gradient}
             mockup={project.mockup as "macbook" | "iphone" | "desktop"}
+            videoSrc={project.videoSrc}
+            imageSrc={project.imageSrc}
             index={index}
           />
         ))}

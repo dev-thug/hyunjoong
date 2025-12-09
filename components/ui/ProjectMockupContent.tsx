@@ -6,12 +6,53 @@ import { Monitor } from "lucide-react";
 interface ProjectMockupContentProps {
   title: string;
   gradient: string;
+  videoSrc?: string;
+  imageSrc?: string;
 }
 
 export default function ProjectMockupContent({
   title,
   gradient,
+  videoSrc,
+  imageSrc,
 }: ProjectMockupContentProps) {
+  // If video source is provided, render video
+  if (videoSrc) {
+    return (
+      <div className="w-full h-full relative overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          style={{
+            objectPosition: "center top",
+          }}
+        >
+          <source src={videoSrc} type="video/webm" />
+          <source src={videoSrc.replace('.webm', '.mp4')} type="video/mp4" />
+        </video>
+      </div>
+    );
+  }
+
+  // If image source is provided, render image
+  if (imageSrc) {
+    return (
+      <div className="w-full h-full relative overflow-hidden">
+        <img
+          src={imageSrc}
+          alt={title}
+          className="w-full h-full object-cover"
+          style={{
+            objectPosition: "center top",
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div
       className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center relative overflow-hidden`}
