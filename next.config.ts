@@ -26,6 +26,8 @@ const ContentSecurityPolicy = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Next.js 16: Turbopack is enabled by default, add empty config for compatibility
+  turbopack: {},
   experimental: {
     optimizePackageImports: ["lucide-react", "framer-motion"],
   },
