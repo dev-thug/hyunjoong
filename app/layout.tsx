@@ -4,6 +4,7 @@ import "./globals.css";
 import StructuredData from "@/components/StructuredData";
 import Script from "next/script";
 import { GoogleAnalytics as GA } from "@next/third-parties/google";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -170,6 +171,7 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <GA gaId={process.env.NEXT_PUBLIC_GA_ID ?? "G-Q62SLZCHKP"} />
+        <Analytics/>
         {children}
       </body>
     </html>
