@@ -5,7 +5,7 @@ export default function StructuredData() {
     name: "김현중",
     jobTitle: "풀스택 개발자",
     description:
-      "풀스택 개발자로 NodeJS, Python, AWS를 활용한 확장 가능한 클라우드 네이티브 앱 개발 경험과 협업 중심의 개발 철학을 보유하고 있습니다.",
+      "풀스택 개발 전문가로 NodeJS, Python, AWS를 활용한 확장 가능한 클라우드 네이티브 앱 개발 경험과 협업 중심의 개발 철학을 보유한 풀스택 개발자입니다.",
     url: "https://hyunjoong.kim",
     image: "https://hyunjoong.kim/profile-image.jpg",
     sameAs: ["https://github.com/dev-thug", "https://linkedin.com/in/dev-thug"],
@@ -17,6 +17,8 @@ export default function StructuredData() {
     email: "de0978@gmail.com",
     telephone: "+82-10-0000-0000",
     knowsAbout: [
+      "풀스택 개발",
+      "풀스택 웹 개발",
       "JavaScript",
       "TypeScript",
       "React",
@@ -69,7 +71,7 @@ export default function StructuredData() {
     "@type": "ProfessionalService",
     name: "김현중 풀스택 개발 서비스",
     description:
-      "웹 애플리케이션 개발, 클라우드 네이티브 솔루션, API 개발 전문 서비스",
+      "풀스택 개발 전문 - 웹 애플리케이션 개발, 클라우드 네이티브 솔루션, API 개발 서비스",
     provider: {
       "@type": "Person",
       name: "김현중",
@@ -79,6 +81,8 @@ export default function StructuredData() {
       name: "대한민국",
     },
     serviceType: [
+      "풀스택 개발",
+      "풀스택 웹 개발",
       "웹 애플리케이션 개발",
       "API 개발",
       "클라우드 네이티브 개발",

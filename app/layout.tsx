@@ -29,12 +29,16 @@ export const metadata: Metadata = {
     template: "%s | 풀스택 개발자 김현중",
   },
   description:
-    "풀스택 개발자 포트폴리오 - 김현중. NodeJS, Python, AWS 전문가로 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 개발자 채용 문의 환영.",
+    "풀스택 개발자 포트폴리오 - 김현중. 풀스택 개발 전문가로 NodeJS, Python, AWS 기반 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 웹 개발자 채용 문의 환영.",
   keywords: [
     // 핵심 타겟 키워드 (검색량 높은 순)
     "풀스택 개발자 포트폴리오",
-    "개발자 포트폴리오",
+    "풀스택 개발",
     "풀스택 개발자",
+    "개발자 포트폴리오",
+    "풀스택 웹 개발",
+    "풀스택 개발 포트폴리오",
+    "풀스택 소프트웨어 개발",
     "풀스택 개발자 채용",
     "개발자 구인",
     "서울 개발자",
@@ -83,7 +87,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "풀스택 개발자 포트폴리오 | 김현중 | NodeJS Python AWS 전문가",
     description:
-      "풀스택 개발자 포트폴리오 - 김현중. NodeJS, Python, AWS 전문가로 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 개발자 채용 문의 환영.",
+      "풀스택 개발자 포트폴리오 - 김현중. 풀스택 개발 전문가로 NodeJS, Python, AWS 기반 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 웹 개발자 채용 문의 환영.",
     url: "/",
     siteName: "풀스택 개발자 김현중 포트폴리오",
     images: [
@@ -102,7 +106,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "풀스택 개발자 포트폴리오 | 김현중 | NodeJS Python AWS 전문가",
     description:
-      "풀스택 개발자 포트폴리오 - 김현중. NodeJS, Python, AWS 전문가로 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 개발자 채용 문의 환영.",
+      "풀스택 개발자 포트폴리오 - 김현중. 풀스택 개발 전문가로 NodeJS, Python, AWS 기반 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 웹 개발자 채용 문의 환영.",
     images: ["/opengraph-image"],
     creator: "@dev_thug",
     site: "@dev_thug",
