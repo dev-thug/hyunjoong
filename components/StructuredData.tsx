@@ -38,7 +38,7 @@ export default function StructuredData() {
     hasCredential: [
       {
         "@type": "EducationalOccupationalCredential",
-        name: "풀스택 개발 경력 4년",
+        name: "풀스택 개발 경력 5년",
         description:
           "NodeJS, Python, AWS 기반 클라우드 네이티브 앱 개발 및 운영",
       },

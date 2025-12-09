@@ -11,6 +11,41 @@ import { Calendar, Users, Briefcase } from "lucide-react";
 import { SectionHeader, SectionContainer } from "../ui";
 import { ExperienceCard } from "../cards";
 
+// 경력 기간 자동 계산 함수
+function calculateDuration(startDate: string, endDate?: string): string {
+  const start = new Date(startDate);
+  const end = endDate ? new Date(endDate) : new Date();
+  
+  const totalMonths = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+  const years = Math.floor(totalMonths / 12);
+  const months = totalMonths % 12;
+  
+  if (years === 0) {
+    return `${months}개월`;
+  } else if (months === 0) {
+    return `${years}년`;
+  } else {
+    return `${years}년 ${months}개월`;
+  }
+}
+
+// 경력 기간 문자열 생성 함수
+function formatPeriod(startDate: string, endDate?: string): string {
+  const startFormatted = startDate.slice(0, 7).replace("-", ".");
+  const endFormatted = endDate ? endDate.slice(0, 7).replace("-", ".") : "Present";
+  const duration = calculateDuration(startDate, endDate);
+  
+  return `${startFormatted} - ${endFormatted} (${duration})`;
+}
+
+// 총 경력 연수 계산 함수 (첫 직장 시작일 기준)
+function calculateTotalExperience(startDate: string): string {
+  const start = new Date(startDate);
+  const now = new Date();
+  const years = Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 365));
+  return `${years}+`;
+}
+
 export default function Experience() {
   const timelineRef = useRef<HTMLDivElement>(null);
 
@@ -25,57 +60,62 @@ export default function Experience() {
     prefersReduce ? ["100%", "100%"] : ["0%", "100%"]
   );
 
+  // 첫 직장 시작일 (총 경력 계산용)
+  const firstJobStartDate = "2021-12-01";
+  const totalYearsExperience = calculateTotalExperience(firstJobStartDate);
+
   const experiences = [
     {
-      period: "2023.12 - Present (1년 7개월)",
+      period: formatPeriod("2023-12-01"),
       company: "Fortuna Helix",
-      position: "Tech leader, Fullstack Developer",
+      position: "Tech Leader, Backend & AWS Cloud Developer",
       location: "서울, 대한민국",
       type: "정규직",
       highlights: [
-        "2000 개 샘플 유전체 병렬 분석 시스템 구축, 처리시간 30 분 → 10 분으로 단축",
-        "스타트업(시리즈 Pre-A)에서 기획개발배포까지 전 과정 단독 주도 경험",
-        "ISO 27001 인증",
+        "AWS Batch + EFS 병렬 처리로 분석 시간 66% 단축 (30분→10분)",
+        "서버리스 전환으로 운영 비용 92% 절감 (월 600만→50만원)",
+        "EFS I/O 스로틀링 해결 및 멀티 EFS 분산 구성 제안",
+        "Lambda 타임아웃 최적화 및 재시도 정책 설계",
+        "ISO 27001 인증 기여",
       ],
       technologies: [
-        "AWS Amplify Gen2",
-        "AWS Lambda",
+        "NestJS",
+        "TypeScript",
         "AWS Batch",
-        "AWS SNS",
-        "AWS SQS",
-        "AWS S3",
-        "NodeJS",
-        "Python",
-        "Docker",
-        "Terraform",
+        "Lambda",
+        "EFS",
+        "EventBridge",
+        "SQS",
+        "SNS",
+        "DynamoDB",
+        "ECR",
+        "CloudWatch",
       ],
       color: "from-blue-500 to-cyan-500",
     },
     {
-      period: "2021.12 - 2023.12 (2년)",
+      period: formatPeriod("2021-12-01", "2023-12-01"),
       company: "(주)헬리큐어",
-      position: "Full Stack Developer",
+      position: "Backend & AWS Cloud Developer",
       location: "서울, 대한민국",
       type: "정규직",
       highlights: [
-        "예진 중기부 주관 TIPS 프로그램 선정 (2023.05)",
-        "Amplify Gen1로 멀티테넌트 구조의 인증, API, 인프라 자동 구성",
-        "외부 결제 시스템과 연동하여 자동 결제 지원",
+        "AI 처방 추천으로 초진 시간 55% 단축 (27분→12분)",
+        "TIPS 프로그램 선정 기여 (2023.05)",
+        "GraphQL 쿼리 최적화로 네트워크 오버헤드 60% 감소",
+        "Amplify Gen1 기반 멀티테넌트 인증 구조 구현",
+        "DynamoDB 액세스 패턴 분석 기반 테이블 설계",
       ],
-      technologies: ["ReactJS", "Amplify Gen1", "Python", "NodeJS"],
+      technologies: ["ReactJS", "TypeScript", "Amplify Gen1", "Lambda", "DynamoDB", "GraphQL", "Cognito", "CloudFormation"],
       color: "from-green-500 to-emerald-500",
     },
     {
-      period: "2015.03 - 2022.02 (7년)",
+      period: formatPeriod("2015-03-01", "2022-02-28"),
       company: "금오공과대학교 컴퓨터소프트웨어공학과",
       position: "학사 졸업",
       location: "구미, 대한민국",
       type: "학사",
-      highlights: [
-        // "레거시 시스템을 모던 아키텍처로 마이그레이션",
-        // "데이터베이스 쿼리 최적화로 성능 200% 향상",
-        // "RESTful API 설계 및 개발 경험 축적",
-      ],
+      highlights: [],
       technologies: ["Java", "Spring", "MySQL", "REST API", "Git"],
       color: "from-purple-500 to-violet-500",
     },
@@ -193,18 +233,18 @@ export default function Experience() {
         <div className="grid md:grid-cols-3 gap-8">
           {[
             {
-              number: "3+",
+              number: totalYearsExperience,
               label: "Years Experience",
               icon: <Calendar className="w-6 h-6" />,
             },
             {
-              number: "10+",
-              label: "Projects Delivered",
+              number: "3+",
+              label: "Major Projects",
               icon: <Briefcase className="w-6 h-6" />,
             },
             {
-              number: "100K+",
-              label: "Users Served",
+              number: "TIPS",
+              label: "Program Selected",
               icon: <Users className="w-6 h-6" />,
             },
           ].map((stat, index) => (

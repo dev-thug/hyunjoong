@@ -19,19 +19,19 @@ import {
 
 const techStack = [
   {
-    icon: <Code className="w-4 h-4" />,
-    label: "NodeJS & Python",
-    color: "from-green-500 to-emerald-600",
-  },
-  {
-    icon: <Database className="w-4 h-4" />,
-    label: "Database Design",
+    icon: <Cloud className="w-4 h-4" />,
+    label: "Serverless & Cloud Native",
     color: "from-blue-500 to-cyan-600",
   },
   {
-    icon: <Cloud className="w-4 h-4" />,
-    label: "AWS & DevOps",
+    icon: <Code className="w-4 h-4" />,
+    label: "Event-Driven Architecture",
     color: "from-purple-500 to-violet-600",
+  },
+  {
+    icon: <Database className="w-4 h-4" />,
+    label: "AI & LLM Integration",
+    color: "from-orange-500 to-red-600",
   },
 ];
 
@@ -96,10 +96,10 @@ export default function Hero() {
               delay={0.4}
               duration={1.0}
             >
-              확장 가능한 시스템을 설계하고
+              서버리스와 클라우드 네이티브로
               <br />
               <strong className="font-medium text-gray-900 dark:text-white">
-                사용자에게 가치를 전달합니다.
+                확장 가능하고 운영 효율적인 시스템을 설계합니다.
               </strong>
             </AnimatedText>
           </div>

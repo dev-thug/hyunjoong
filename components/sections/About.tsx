@@ -17,25 +17,25 @@ import { ValueCard, ExpertiseCard, AchievementCard } from "../cards";
 const coreValues = [
   {
     icon: <Target className="w-8 h-8" />,
-    title: "사용자 중심",
-    subtitle: "User-Centric Development",
+    title: "Cloud Native 설계",
+    subtitle: "Serverless Architecture",
     description:
-      "기술을 위한 기술이 아닌, 사용자에게 실질적인 가치를 제공하는 개발을 추구합니다.",
+      "AWS 서버리스 아키텍처로 비용 92% 절감, 처리 시간 66% 단축을 실현한 경험을 보유하고 있습니다.",
     gradient: "from-blue-500 to-cyan-600",
   },
   {
     icon: <Heart className="w-8 h-8" />,
-    title: "지속 가능한 코드",
-    subtitle: "Sustainable Code",
+    title: "문제 해결 역량",
+    subtitle: "Problem Solving",
     description:
-      "가독성 좋고 유지보수가 쉬운 코드를 작성하여 팀의 생산성을 높입니다.",
+      "EFS I/O 스로틀링, Lambda 타임아웃 등 실무에서 발생하는 복잡한 기술적 문제를 해결합니다.",
     gradient: "from-green-500 to-emerald-600",
   },
   {
     icon: <Users className="w-8 h-8" />,
-    title: "협업과 소통",
-    subtitle: "Collaboration & Communication",
-    description: "동료와의 적극적인 소통을 통해 더 나은 결과물을 만들어냅니다.",
+    title: "협업과 코드 리뷰",
+    subtitle: "Team Collaboration",
+    description: "주간 코드 리뷰 세션을 운영하며 팀의 개발 생산성과 코드 품질을 높입니다.",
     gradient: "from-purple-500 to-violet-600",
   },
 ];
@@ -45,50 +45,50 @@ const expertise = [
     icon: <Code2 className="w-12 h-12" />,
     title: "클라이언트 개발",
     subtitle: "Client Development",
-    skills: ["ReactJS", "NextJS", "Tanstack", "Zustand"],
+    skills: ["Next.js 15", "ReactJS", "TypeScript", "CodeMirror 6"],
     color: "from-green-500 to-emerald-600",
   },
   {
     icon: <Server className="w-12 h-12" />,
     title: "서버 개발",
     subtitle: "Server Development",
-    skills: ["NestJS", "Event Driven Architecture", "REST API", "GraphQL"],
+    skills: ["NestJS", "Event-Driven", "GraphQL", "AppSync"],
     color: "from-orange-500 to-red-600",
   },
   {
     icon: <Database className="w-12 h-12" />,
     title: "데이터베이스 설계",
     subtitle: "Database Design",
-    skills: ["DynamoDB", "RDBMS", "MongoDB", "Redis"],
+    skills: ["DynamoDB", "액세스 패턴 분석", "GSI 설계", "멀티테넌트"],
     color: "from-blue-500 to-cyan-600",
   },
   {
     icon: <Cloud className="w-12 h-12" />,
     title: "클라우드 & DevOps",
     subtitle: "Cloud & DevOps",
-    skills: ["AWS Amplify Gen 1,2", "AWS Lambda", "SNS", "SQS"],
+    skills: ["AWS Batch", "Lambda", "EFS", "EventBridge", "SNS/SQS"],
     color: "from-purple-500 to-violet-600",
   },
 ];
 
 const achievements = [
   {
-    number: "66.7%",
-    title: "성능 개선",
-    description: "캐싱 전략과 쿼리 최적화",
+    number: "66%",
+    title: "분석 시간 단축",
+    description: "AWS Batch 병렬 처리로 30분→10분",
     icon: <Trophy className="w-8 h-8" />,
   },
   {
-    number: "1TB/s",
-    title: "사용자 서비스",
-    description: "대용량 트래픽 처리 경험",
-    icon: <Users className="w-8 h-8" />,
+    number: "92%",
+    title: "비용 절감",
+    description: "서버리스 전환으로 600만→50만원",
+    icon: <Server className="w-8 h-8" />,
   },
   {
-    number: "100%",
-    title: "무중단 배포",
-    description: "CI/CD 파이프라인 구축",
-    icon: <Server className="w-8 h-8" />,
+    number: "55%",
+    title: "초진 시간 단축",
+    description: "AI 처방 추천으로 27분→12분",
+    icon: <Users className="w-8 h-8" />,
   },
 ];
 
@@ -107,11 +107,10 @@ export default function About() {
         titleSize="xl"
         description={
           <>
-            사용자에게 가치를 전달하는 서비스를 만드는 것에 열정을 가진
-            개발자입니다.
+            4년간 스타트업에서 서버리스 아키텍처를 설계하며
             <br />
             <strong className="font-medium text-gray-900 dark:text-white">
-              지속 가능한 시스템을 구축하고 팀과 함께 성장합니다.
+              대용량 데이터 처리와 운영 효율을 높였습니다.
             </strong>
           </>
         }

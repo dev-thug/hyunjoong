@@ -57,55 +57,55 @@ export default function Contact() {
   const currentFocus = [
     {
       icon: <Code className="w-6 h-6" />,
-      title: "Kubernetes",
+      title: "EKS & Kubernetes",
       subtitle: "Container Orchestration",
       description:
-        "컨테이너 오케스트레이션과 클러스터 관리에 깊이 있게 공부하고 있습니다.",
+        "AWS Batch 경험을 EKS로 확장하여 컨테이너 오케스트레이션 역량을 강화하고 있습니다.",
       color: "from-blue-500 to-cyan-600",
     },
     {
-      icon: <Rocket className="w-6 h-6" />,
-      title: "Event-Driven Architecture",
-      subtitle: "Asynchronous Systems",
+      icon: <Brain className="w-6 h-6" />,
+      title: "AI & LLM Integration",
+      subtitle: "Bedrock & MCP Server",
       description:
-        "이벤트 중심 아키텍처를 통한 확장 가능한 시스템 설계를 연구하고 있습니다.",
+        "AWS Bedrock 기반 LLM 에이전트와 MCP 서버를 구현하며 AI 통합 역량을 확장하고 있습니다.",
       color: "from-purple-500 to-violet-600",
     },
     {
-      icon: <Brain className="w-6 h-6" />,
+      icon: <Rocket className="w-6 h-6" />,
       title: "Performance Optimization",
-      subtitle: "System Tuning",
+      subtitle: "I/O & Latency Tuning",
       description:
-        "대용량 트래픽 처리와 시스템 성능 최적화에 대해 지속적으로 학습하고 있습니다.",
+        "EFS I/O 스로틀링, Lambda 타임아웃 등 실무 병목 해결 경험을 확장하고 있습니다.",
       color: "from-orange-500 to-red-600",
     },
     {
       icon: <Coffee className="w-6 h-6" />,
-      title: "Functional Programming",
-      subtitle: "Clean Code",
+      title: "Cloud Native Architecture",
+      subtitle: "IaC & GitOps",
       description:
-        "함수형 프로그래밍 패러다임을 통한 더 안전하고 예측 가능한 코드 작성을 연구합니다.",
+        "CloudFormation, Terraform을 활용한 IaC 표준화와 배포 자동화를 연구합니다.",
       color: "from-green-500 to-emerald-600",
     },
   ];
 
   const stats = [
     {
-      number: "3+",
+      number: "4+",
       label: "Years Experience",
-      description: "백엔드 개발 경력",
+      description: "서버리스 아키텍처 개발",
       icon: <Calendar className="w-6 h-6" />,
     },
     {
-      number: "10+",
-      label: "Projects Completed",
-      description: "완료한 프로젝트",
+      number: "3+",
+      label: "Major Projects",
+      description: "프로덕션 운영 경험",
       icon: <Briefcase className="w-6 h-6" />,
     },
     {
-      number: "100%",
-      label: "Problem Solver",
-      description: "문제 해결 의지",
+      number: "TIPS",
+      label: "Program Selected",
+      description: "2023.05 선정 기여",
       icon: <Users className="w-6 h-6" />,
     },
   ];
@@ -137,10 +137,10 @@ export default function Contact() {
           titleSize="xl"
           description={
             <>
-              새로운 도전과 성장 기회를 찾고 있습니다.
+              Cloud Native 아키텍처와 AI 기술을 결합한
               <br />
               <strong className="font-medium text-gray-900 dark:text-white">
-                함께 혁신적인 서비스를 만들어가요.
+                디지털 혁신을 함께 만들어가요.
               </strong>
             </>
           }
@@ -270,7 +270,7 @@ export default function Contact() {
       {/* Call to Action */}
       <CallToActionCard
         title="함께 성장할 팀을 찾고 있습니다"
-        description="사용자에게 가치를 전달하는 서비스를 만드는 것에 열정을 가진 개발자입니다. <br /> 새로운 기술을 배우고 적용하는 것을 즐기며, 팀과 함께 성장하는 것을 중요하게 생각합니다."
+        description="서버리스 아키텍처로 비용 92% 절감, 분석 시간 66% 단축을 실현한 경험을 바탕으로 <br /> 확장성과 안정성을 갖춘 시스템을 구축하고 팀의 개발 생산성을 높이겠습니다."
         buttonText="연락하기"
         buttonHref="mailto:de0978@gmail.com?subject=채용 관련 문의&body=안녕하세요, 포트폴리오를 보고 연락드립니다."
       />
