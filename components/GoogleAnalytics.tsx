@@ -65,3 +65,24 @@ export const trackExternalLink = (url: string, linkText: string) => {
 export const trackScrollDepth = (depth: number) => {
   trackEvent("scroll", "engagement", `${depth}%`, depth);
 };
+
+// 섹션 뷰 추적
+export const trackSectionView = (sectionId: string) => {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", "section_view", {
+      section_id: sectionId,
+      page_location: `${window.location.href}#${sectionId}`,
+    });
+  }
+};
+
+// 섹션 이탈 추적 (체류 시간 포함)
+export const trackSectionExit = (sectionId: string, dwellTimeMs: number) => {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", "section_exit", {
+      section_id: sectionId,
+      dwell_time_ms: dwellTimeMs,
+      dwell_time_sec: Math.round(dwellTimeMs / 1000),
+    });
+  }
+};

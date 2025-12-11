@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import useScrollTracking from "./hooks/useScrollTracking";
+import useSectionTracking from "./hooks/useSectionTracking";
 import { trackPageView } from "./GoogleAnalytics";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -14,6 +15,8 @@ export default function AnalyticsProvider({
 }: AnalyticsProviderProps) {
   // Enable scroll tracking
   useScrollTracking();
+  // Enable section view tracking
+  useSectionTracking();
 
   const pathname = usePathname();
   const searchParams = useSearchParams();

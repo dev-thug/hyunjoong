@@ -53,6 +53,7 @@ export default function SectionContainer({
     <section
       ref={containerRef}
       id={id}
+      data-section={id}
       className={`relative min-h-screen flex items-center justify-center ${bgClass} overflow-hidden ${className}`}
     >
       <div
