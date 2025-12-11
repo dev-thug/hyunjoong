@@ -46,6 +46,66 @@ function calculateTotalExperience(startDate: string): string {
   return `${years}+`;
 }
 
+// 첫 직장 시작일 (총 경력 계산용)
+const firstJobStartDate = "2021-12-01";
+
+const experiences = [
+  {
+    period: formatPeriod("2023-12-01"),
+    company: "Fortuna Helix",
+    position: "Tech Leader, Backend & AWS Cloud Developer",
+    location: "서울, 대한민국",
+    type: "정규직",
+    highlights: [
+      "AWS Batch + EFS 병렬 처리로 분석 시간 66% 단축 (30분→10분)",
+      "서버리스 전환으로 운영 비용 92% 절감 (월 600만→50만원)",
+      "EFS I/O 스로틀링 해결 및 멀티 EFS 분산 구성 제안",
+      "Lambda 타임아웃 최적화 및 재시도 정책 설계",
+      "ISO 27001 인증 기여",
+    ],
+    technologies: [
+      "NestJS",
+      "TypeScript",
+      "AWS Batch",
+      "Lambda",
+      "EFS",
+      "EventBridge",
+      "SQS",
+      "SNS",
+      "DynamoDB",
+      "ECR",
+      "CloudWatch",
+    ],
+    color: "from-blue-500 to-cyan-500",
+  },
+  {
+    period: formatPeriod("2021-12-01", "2023-12-01"),
+    company: "(주)헬리큐어",
+    position: "Backend & AWS Cloud Developer",
+    location: "서울, 대한민국",
+    type: "정규직",
+    highlights: [
+      "AI 처방 추천으로 초진 시간 55% 단축 (27분→12분)",
+      "TIPS 프로그램 선정 기여 (2023.05)",
+      "GraphQL 쿼리 최적화로 네트워크 오버헤드 60% 감소",
+      "Amplify Gen1 기반 멀티테넌트 인증 구조 구현",
+      "DynamoDB 액세스 패턴 분석 기반 테이블 설계",
+    ],
+    technologies: ["ReactJS", "TypeScript", "Amplify Gen1", "Lambda", "DynamoDB", "GraphQL", "Cognito", "CloudFormation"],
+    color: "from-green-500 to-emerald-500",
+  },
+  {
+    period: formatPeriod("2015-03-01", "2022-02-28"),
+    company: "금오공과대학교 컴퓨터소프트웨어공학과",
+    position: "학사 졸업",
+    location: "구미, 대한민국",
+    type: "학사",
+    highlights: [],
+    technologies: ["Java", "Spring", "MySQL", "REST API", "Git"],
+    color: "from-purple-500 to-violet-500",
+  },
+];
+
 export default function Experience() {
   const timelineRef = useRef<HTMLDivElement>(null);
 
@@ -60,66 +120,7 @@ export default function Experience() {
     prefersReduce ? ["100%", "100%"] : ["0%", "100%"]
   );
 
-  // 첫 직장 시작일 (총 경력 계산용)
-  const firstJobStartDate = "2021-12-01";
   const totalYearsExperience = calculateTotalExperience(firstJobStartDate);
-
-  const experiences = [
-    {
-      period: formatPeriod("2023-12-01"),
-      company: "Fortuna Helix",
-      position: "Tech Leader, Backend & AWS Cloud Developer",
-      location: "서울, 대한민국",
-      type: "정규직",
-      highlights: [
-        "AWS Batch + EFS 병렬 처리로 분석 시간 66% 단축 (30분→10분)",
-        "서버리스 전환으로 운영 비용 92% 절감 (월 600만→50만원)",
-        "EFS I/O 스로틀링 해결 및 멀티 EFS 분산 구성 제안",
-        "Lambda 타임아웃 최적화 및 재시도 정책 설계",
-        "ISO 27001 인증 기여",
-      ],
-      technologies: [
-        "NestJS",
-        "TypeScript",
-        "AWS Batch",
-        "Lambda",
-        "EFS",
-        "EventBridge",
-        "SQS",
-        "SNS",
-        "DynamoDB",
-        "ECR",
-        "CloudWatch",
-      ],
-      color: "from-blue-500 to-cyan-500",
-    },
-    {
-      period: formatPeriod("2021-12-01", "2023-12-01"),
-      company: "(주)헬리큐어",
-      position: "Backend & AWS Cloud Developer",
-      location: "서울, 대한민국",
-      type: "정규직",
-      highlights: [
-        "AI 처방 추천으로 초진 시간 55% 단축 (27분→12분)",
-        "TIPS 프로그램 선정 기여 (2023.05)",
-        "GraphQL 쿼리 최적화로 네트워크 오버헤드 60% 감소",
-        "Amplify Gen1 기반 멀티테넌트 인증 구조 구현",
-        "DynamoDB 액세스 패턴 분석 기반 테이블 설계",
-      ],
-      technologies: ["ReactJS", "TypeScript", "Amplify Gen1", "Lambda", "DynamoDB", "GraphQL", "Cognito", "CloudFormation"],
-      color: "from-green-500 to-emerald-500",
-    },
-    {
-      period: formatPeriod("2015-03-01", "2022-02-28"),
-      company: "금오공과대학교 컴퓨터소프트웨어공학과",
-      position: "학사 졸업",
-      location: "구미, 대한민국",
-      type: "학사",
-      highlights: [],
-      technologies: ["Java", "Spring", "MySQL", "REST API", "Git"],
-      color: "from-purple-500 to-violet-500",
-    },
-  ];
 
   return (
     <SectionContainer

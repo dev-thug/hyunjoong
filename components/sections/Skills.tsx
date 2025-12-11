@@ -22,6 +22,96 @@ import {
 import { SectionHeader, SectionContainer } from "../ui";
 import { SkillCard, SkillCategoryHeader } from "../cards";
 
+const skillCategories = [
+  {
+    title: "Backend Development & Serverless",
+    subtitle: "Event-Driven 서버리스 아키텍처 설계",
+    icon: <Server className="w-8 h-8" />,
+    gradient: "from-blue-500 to-cyan-500",
+    skills: [
+      {
+        name: "AWS Amplify Gen1/Gen2",
+        description:
+          "서버리스 풀스택 프레임워크 - 멀티테넌트 인증, 실시간 구독, AppSync 통합",
+        proficiency: 95,
+        icon: <Cloud className="w-5 h-5" />,
+      },
+      {
+        name: "Event-Driven Architecture",
+        description:
+          "EventBridge, SNS, SQS를 활용한 비동기 이벤트 처리 및 DLQ 모니터링",
+        proficiency: 93,
+        icon: <Layers className="w-5 h-5" />,
+      },
+      {
+        name: "NestJS & GraphQL",
+        description:
+          "TypeScript 기반 백엔드, AppSync/GraphQL 실시간 상태 추적 시스템",
+        proficiency: 90,
+        icon: <Code2 className="w-5 h-5" />,
+      },
+    ],
+  },
+  {
+    title: "Database & Storage",
+    subtitle: "대용량 데이터 처리와 효율적인 저장",
+    icon: <Database className="w-8 h-8" />,
+    gradient: "from-green-500 to-emerald-500",
+    skills: [
+      {
+        name: "Amazon DynamoDB",
+        description:
+          "액세스 패턴 분석 기반 GSI 설계, 멀티테넌트 구조, 키 최적화",
+        proficiency: 92,
+        icon: <Database className="w-5 h-5" />,
+      },
+      {
+        name: "Amazon S3 & EFS",
+        description:
+          "Pre-signed URL, 대용량 참조 파일 마운트, I/O 스로틀링 해결",
+        proficiency: 89,
+        icon: <Zap className="w-5 h-5" />,
+      },
+      {
+        name: "Data Modeling",
+        description:
+          "GraphQL 쿼리 최적화로 네트워크 오버헤드 60% 감소 달성",
+        proficiency: 88,
+        icon: <BarChart3 className="w-5 h-5" />,
+      },
+    ],
+  },
+  {
+    title: "Batch Processing & Infrastructure",
+    subtitle: "대규모 병렬 처리와 인프라 자동화",
+    icon: <Layers className="w-8 h-8" />,
+    gradient: "from-purple-500 to-violet-500",
+    skills: [
+      {
+        name: "AWS Batch & Docker",
+        description:
+          "1000개 샘플 동시 연산, ECR 이미지 관리, 66% 처리 시간 단축",
+        proficiency: 91,
+        icon: <Layers className="w-5 h-5" />,
+      },
+      {
+        name: "AWS Lambda",
+        description:
+          "타임아웃 최적화, 재시도 정책 설계, PDF 1000개 30초 생성",
+        proficiency: 94,
+        icon: <Zap className="w-5 h-5" />,
+      },
+      {
+        name: "Infrastructure as Code",
+        description:
+          "CloudFormation, Terraform, Amplify CI/CD 파이프라인 구성",
+        proficiency: 85,
+        icon: <GitBranch className="w-5 h-5" />,
+      },
+    ],
+  },
+];
+
 export default function Skills() {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -35,96 +125,6 @@ export default function Skills() {
     [0, 1],
     prefersReduce ? ["0px", "0px"] : ["50px", "-50px"]
   );
-
-  const skillCategories = [
-    {
-      title: "Backend Development & Serverless",
-      subtitle: "Event-Driven 서버리스 아키텍처 설계",
-      icon: <Server className="w-8 h-8" />,
-      gradient: "from-blue-500 to-cyan-500",
-      skills: [
-        {
-          name: "AWS Amplify Gen1/Gen2",
-          description:
-            "서버리스 풀스택 프레임워크 - 멀티테넌트 인증, 실시간 구독, AppSync 통합",
-          proficiency: 95,
-          icon: <Cloud className="w-5 h-5" />,
-        },
-        {
-          name: "Event-Driven Architecture",
-          description:
-            "EventBridge, SNS, SQS를 활용한 비동기 이벤트 처리 및 DLQ 모니터링",
-          proficiency: 93,
-          icon: <Layers className="w-5 h-5" />,
-        },
-        {
-          name: "NestJS & GraphQL",
-          description:
-            "TypeScript 기반 백엔드, AppSync/GraphQL 실시간 상태 추적 시스템",
-          proficiency: 90,
-          icon: <Code2 className="w-5 h-5" />,
-        },
-      ],
-    },
-    {
-      title: "Database & Storage",
-      subtitle: "대용량 데이터 처리와 효율적인 저장",
-      icon: <Database className="w-8 h-8" />,
-      gradient: "from-green-500 to-emerald-500",
-      skills: [
-        {
-          name: "Amazon DynamoDB",
-          description:
-            "액세스 패턴 분석 기반 GSI 설계, 멀티테넌트 구조, 키 최적화",
-          proficiency: 92,
-          icon: <Database className="w-5 h-5" />,
-        },
-        {
-          name: "Amazon S3 & EFS",
-          description:
-            "Pre-signed URL, 대용량 참조 파일 마운트, I/O 스로틀링 해결",
-          proficiency: 89,
-          icon: <Zap className="w-5 h-5" />,
-        },
-        {
-          name: "Data Modeling",
-          description:
-            "GraphQL 쿼리 최적화로 네트워크 오버헤드 60% 감소 달성",
-          proficiency: 88,
-          icon: <BarChart3 className="w-5 h-5" />,
-        },
-      ],
-    },
-    {
-      title: "Batch Processing & Infrastructure",
-      subtitle: "대규모 병렬 처리와 인프라 자동화",
-      icon: <Layers className="w-8 h-8" />,
-      gradient: "from-purple-500 to-violet-500",
-      skills: [
-        {
-          name: "AWS Batch & Docker",
-          description:
-            "1000개 샘플 동시 연산, ECR 이미지 관리, 66% 처리 시간 단축",
-          proficiency: 91,
-          icon: <Layers className="w-5 h-5" />,
-        },
-        {
-          name: "AWS Lambda",
-          description:
-            "타임아웃 최적화, 재시도 정책 설계, PDF 1000개 30초 생성",
-          proficiency: 94,
-          icon: <Zap className="w-5 h-5" />,
-        },
-        {
-          name: "Infrastructure as Code",
-          description:
-            "CloudFormation, Terraform, Amplify CI/CD 파이프라인 구성",
-          proficiency: 85,
-          icon: <GitBranch className="w-5 h-5" />,
-        },
-      ],
-    },
-  ];
 
   return (
     <SectionContainer

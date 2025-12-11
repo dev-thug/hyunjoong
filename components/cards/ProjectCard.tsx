@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { ReactNode } from "react";
 import ProjectMetricCard from "./ProjectMetricCard";
@@ -31,6 +31,43 @@ interface ProjectCardProps {
   index: number;
 }
 
+// Variants for staggered animation
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
+const mockupVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.9, y: 30 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 1.0,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
 export default function ProjectCard({
   title,
   subtitle,
@@ -47,17 +84,25 @@ export default function ProjectCard({
   index,
 }: ProjectCardProps) {
   const isReversed = index % 2 === 1;
+  const prefersReduce = useReducedMotion();
+
+  // Reduced motion variants
+  const reducedContainerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
+
+  const reducedItemVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 },
+  };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 100 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 1.2,
-        delay: index * 0.2,
-        ease: [0.16, 1, 0.3, 1],
-      }}
-      viewport={{ once: true }}
+      variants={prefersReduce ? reducedContainerVariants : containerVariants}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
       className={`grid lg:grid-cols-2 items-center ${
         isReversed ? "lg:grid-flow-col-dense" : ""
       }`}
@@ -66,7 +111,10 @@ export default function ProjectCard({
       }}
     >
       {/* Content */}
-      <div className={`${isReversed ? "lg:col-start-2" : ""}`}>
+      <motion.div
+        className={`${isReversed ? "lg:col-start-2" : ""}`}
+        variants={prefersReduce ? reducedItemVariants : itemVariants}
+      >
         <div
           className="flex flex-col"
           style={{
@@ -74,12 +122,7 @@ export default function ProjectCard({
           }}
         >
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, x: isReversed ? 50 : -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
+          <motion.div variants={prefersReduce ? reducedItemVariants : itemVariants}>
             <div
               className="flex flex-col"
               style={{
@@ -136,11 +179,12 @@ export default function ProjectCard({
           </motion.div>
 
           {/* Metrics */}
-          <div
+          <motion.div
             className="grid grid-cols-3"
             style={{
               gap: "24px",
             }}
+            variants={prefersReduce ? reducedItemVariants : itemVariants}
           >
             {metrics.map((metric, metricIndex) => (
               <ProjectMetricCard
@@ -152,18 +196,15 @@ export default function ProjectCard({
                 index={metricIndex}
               />
             ))}
-          </div>
+          </motion.div>
 
           {/* Highlights */}
-          <ProjectHighlights highlights={highlights} />
+          <motion.div variants={prefersReduce ? reducedItemVariants : itemVariants}>
+            <ProjectHighlights highlights={highlights} />
+          </motion.div>
 
           {/* Tags */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-            viewport={{ once: true }}
-          >
+          <motion.div variants={prefersReduce ? reducedItemVariants : itemVariants}>
             <BadgeGroup
               alignment="start"
               layout="wrap"
@@ -179,7 +220,7 @@ export default function ProjectCard({
                   variant="skill"
                   size="md"
                   index={tagIndex}
-                  delay={0.9}
+                  delay={0}
                   animated={false}
                 >
                   {tag}
@@ -191,14 +232,11 @@ export default function ProjectCard({
           {/* Action Buttons */}
           {demo && (
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.1 }}
-              viewport={{ once: true }}
               className="flex"
               style={{
                 gap: "16px",
               }}
+              variants={prefersReduce ? reducedItemVariants : itemVariants}
             >
               <motion.a
                 href={demo}
@@ -209,8 +247,8 @@ export default function ProjectCard({
                   trackExternalLink(demo, `${title} Demo`);
                 }}
                 className="group flex items-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-apple-lg"
-                whileHover={{ scale: 1.05, y: -2 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={prefersReduce ? {} : { scale: 1.05, y: -2 }}
+                whileTap={prefersReduce ? {} : { scale: 0.95 }}
                 style={{
                   padding: "16px 32px",
                   gap: "12px",
@@ -227,22 +265,15 @@ export default function ProjectCard({
             </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
 
       {/* Project Mockup */}
       <motion.div
         className={`${isReversed ? "lg:col-start-1 lg:row-start-1" : ""}`}
-        initial={{ opacity: 0, scale: 0.8, y: 50 }}
-        whileInView={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{
-          duration: 1.0,
-          delay: 0.2,
-          ease: [0.16, 1, 0.3, 1],
-        }}
-        viewport={{ once: true }}
-        whileHover={{
-          scale: 1.05,
-          rotateY: isReversed ? -5 : 5,
+        variants={prefersReduce ? reducedItemVariants : mockupVariants}
+        whileHover={prefersReduce ? {} : {
+          scale: 1.03,
+          rotateY: isReversed ? -3 : 3,
         }}
       >
         <DeviceMockup type={mockup}>
@@ -252,3 +283,4 @@ export default function ProjectCard({
     </motion.div>
   );
 }
+

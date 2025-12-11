@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Code2,
   Server,
@@ -93,6 +93,8 @@ const achievements = [
 ];
 
 export default function About() {
+  const prefersReduce = useReducedMotion();
+
   return (
     <SectionContainer
       id="about"
@@ -116,9 +118,8 @@ export default function About() {
         }
       />
 
-      {/* Core Values */}
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={prefersReduce ? { opacity: 0 } : { opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         viewport={{ once: true }}
@@ -142,7 +143,7 @@ export default function About() {
 
       {/* Technical Expertise */}
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={prefersReduce ? { opacity: 0 } : { opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         viewport={{ once: true }}
@@ -166,7 +167,7 @@ export default function About() {
 
       {/* Achievements */}
       <motion.div
-        initial={{ opacity: 0, y: 50 }}
+        initial={prefersReduce ? { opacity: 0 } : { opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         viewport={{ once: true }}

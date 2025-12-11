@@ -17,98 +17,99 @@ import {
 import { SectionHeader, SectionContainer, MetricCard } from "../ui";
 import { ContactCard, FocusCard, CallToActionCard } from "../cards";
 
+const contactInfo = [
+  {
+    icon: <Mail className="w-6 h-6" />,
+    label: "이메일",
+    value: "de0978@gmail.com",
+    href: "mailto:de0978@gmail.com",
+    gradient: "from-red-500 to-pink-600",
+    description: "가장 빠른 연락 방법",
+  },
+  {
+    icon: <Github className="w-6 h-6" />,
+    label: "Github",
+    value: "github.com/dev-thug",
+    href: "https://github.com/dev-thug",
+    gradient: "from-gray-600 to-gray-800",
+    description: "코드와 프로젝트 확인",
+  },
+  {
+    icon: <Linkedin className="w-6 h-6" />,
+    label: "LinkedIn",
+    value: "linkedin.com/in/dev-thug",
+    href: "https://linkedin.com/in/dev-thug",
+    gradient: "from-blue-500 to-blue-700",
+    description: "전문적인 네트워킹",
+  },
+  {
+    icon: <Phone className="w-6 h-6" />,
+    label: "전화번호",
+    value: "+82 10-0000-0000",
+    href: "tel:+821000000000",
+    gradient: "from-green-500 to-emerald-600",
+    description: "긴급시 연락",
+  },
+];
+
+const currentFocus = [
+  {
+    icon: <Code className="w-6 h-6" />,
+    title: "EKS & Kubernetes",
+    subtitle: "Container Orchestration",
+    description:
+      "AWS Batch 경험을 EKS로 확장하여 컨테이너 오케스트레이션 역량을 강화하고 있습니다.",
+    color: "from-blue-500 to-cyan-600",
+  },
+  {
+    icon: <Brain className="w-6 h-6" />,
+    title: "AI & LLM Integration",
+    subtitle: "Bedrock & MCP Server",
+    description:
+      "AWS Bedrock 기반 LLM 에이전트와 MCP 서버를 구현하며 AI 통합 역량을 확장하고 있습니다.",
+    color: "from-purple-500 to-violet-600",
+  },
+  {
+    icon: <Rocket className="w-6 h-6" />,
+    title: "Performance Optimization",
+    subtitle: "I/O & Latency Tuning",
+    description:
+      "EFS I/O 스로틀링, Lambda 타임아웃 등 실무 병목 해결 경험을 확장하고 있습니다.",
+    color: "from-orange-500 to-red-600",
+  },
+  {
+    icon: <Coffee className="w-6 h-6" />,
+    title: "Cloud Native Architecture",
+    subtitle: "IaC & GitOps",
+    description:
+      "CloudFormation, Terraform을 활용한 IaC 표준화와 배포 자동화를 연구합니다.",
+    color: "from-green-500 to-emerald-600",
+  },
+];
+
+const stats = [
+  {
+    number: "4+",
+    label: "Years Experience",
+    description: "서버리스 아키텍처 개발",
+    icon: <Calendar className="w-6 h-6" />,
+  },
+  {
+    number: "3+",
+    label: "Major Projects",
+    description: "프로덕션 운영 경험",
+    icon: <Briefcase className="w-6 h-6" />,
+  },
+  {
+    number: "TIPS",
+    label: "Program Selected",
+    description: "2023.05 선정 기여",
+    icon: <Users className="w-6 h-6" />,
+  },
+];
+
 export default function Contact() {
   const prefersReduce = useReducedMotion();
-  const contactInfo = [
-    {
-      icon: <Mail className="w-6 h-6" />,
-      label: "이메일",
-      value: "de0978@gmail.com",
-      href: "mailto:de0978@gmail.com",
-      gradient: "from-red-500 to-pink-600",
-      description: "가장 빠른 연락 방법",
-    },
-    {
-      icon: <Github className="w-6 h-6" />,
-      label: "Github",
-      value: "github.com/dev-thug",
-      href: "https://github.com/dev-thug",
-      gradient: "from-gray-600 to-gray-800",
-      description: "코드와 프로젝트 확인",
-    },
-    {
-      icon: <Linkedin className="w-6 h-6" />,
-      label: "LinkedIn",
-      value: "linkedin.com/in/dev-thug",
-      href: "https://linkedin.com/in/dev-thug",
-      gradient: "from-blue-500 to-blue-700",
-      description: "전문적인 네트워킹",
-    },
-    {
-      icon: <Phone className="w-6 h-6" />,
-      label: "전화번호",
-      value: "+82 10-0000-0000",
-      href: "tel:+821000000000",
-      gradient: "from-green-500 to-emerald-600",
-      description: "긴급시 연락",
-    },
-  ];
-
-  const currentFocus = [
-    {
-      icon: <Code className="w-6 h-6" />,
-      title: "EKS & Kubernetes",
-      subtitle: "Container Orchestration",
-      description:
-        "AWS Batch 경험을 EKS로 확장하여 컨테이너 오케스트레이션 역량을 강화하고 있습니다.",
-      color: "from-blue-500 to-cyan-600",
-    },
-    {
-      icon: <Brain className="w-6 h-6" />,
-      title: "AI & LLM Integration",
-      subtitle: "Bedrock & MCP Server",
-      description:
-        "AWS Bedrock 기반 LLM 에이전트와 MCP 서버를 구현하며 AI 통합 역량을 확장하고 있습니다.",
-      color: "from-purple-500 to-violet-600",
-    },
-    {
-      icon: <Rocket className="w-6 h-6" />,
-      title: "Performance Optimization",
-      subtitle: "I/O & Latency Tuning",
-      description:
-        "EFS I/O 스로틀링, Lambda 타임아웃 등 실무 병목 해결 경험을 확장하고 있습니다.",
-      color: "from-orange-500 to-red-600",
-    },
-    {
-      icon: <Coffee className="w-6 h-6" />,
-      title: "Cloud Native Architecture",
-      subtitle: "IaC & GitOps",
-      description:
-        "CloudFormation, Terraform을 활용한 IaC 표준화와 배포 자동화를 연구합니다.",
-      color: "from-green-500 to-emerald-600",
-    },
-  ];
-
-  const stats = [
-    {
-      number: "4+",
-      label: "Years Experience",
-      description: "서버리스 아키텍처 개발",
-      icon: <Calendar className="w-6 h-6" />,
-    },
-    {
-      number: "3+",
-      label: "Major Projects",
-      description: "프로덕션 운영 경험",
-      icon: <Briefcase className="w-6 h-6" />,
-    },
-    {
-      number: "TIPS",
-      label: "Program Selected",
-      description: "2023.05 선정 기여",
-      icon: <Users className="w-6 h-6" />,
-    },
-  ];
 
   return (
     <SectionContainer

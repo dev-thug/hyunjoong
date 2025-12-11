@@ -101,27 +101,29 @@ export default function SkillCard({
               {proficiency}%
             </span>
           </div>
-          <div
-            className="bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
-            style={{
-              height: "8px",
+        <div
+          className="bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
+          style={{
+            height: "8px",
+          }}
+        >
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            transition={{
+              duration: 1.5,
+              delay: 0.5,
+              ease: [0.16, 1, 0.3, 1],
             }}
-          >
-            <motion.div
-              initial={{ width: 0 }}
-              whileInView={{ width: `${proficiency}%` }}
-              transition={{
-                duration: 1.5,
-                delay: 0.5,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              viewport={{ once: true }}
-              className={`bg-gradient-to-r ${gradient} rounded-full`}
-              style={{
-                height: "100%",
-              }}
-            />
-          </div>
+            viewport={{ once: true }}
+            className={`bg-gradient-to-r ${gradient} rounded-full`}
+            style={{
+              height: "100%",
+              width: `${proficiency}%`,
+              transformOrigin: "left",
+            }}
+          />
+        </div>
         </div>
       </div>
     </BaseCard>
