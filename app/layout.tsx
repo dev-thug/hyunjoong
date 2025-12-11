@@ -93,7 +93,7 @@ export const metadata: Metadata = {
     siteName: "풀스택 개발자 김현중 포트폴리오",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/images/og-profile.jpg",
         width: 1200,
         height: 630,
         alt: "풀스택 개발자 포트폴리오 - 김현중 | NodeJS Python AWS 전문가 | 서울 개발자",
@@ -108,7 +108,7 @@ export const metadata: Metadata = {
     title: "풀스택 개발자 포트폴리오 | 김현중 | NodeJS Python AWS 전문가",
     description:
       "풀스택 개발자 포트폴리오 - 김현중. 풀스택 개발 전문가로 NodeJS, Python, AWS 기반 4년 경력. 2000+ 유전체 분석 시스템 구축, 10만+ 사용자 서비스 경험. 서울 기반 풀스택 웹 개발자 채용 문의 환영.",
-    images: ["/opengraph-image"],
+    images: ["/images/og-profile.jpg"],
     creator: "@dev_thug",
     site: "@dev_thug",
   },
