@@ -1,0 +1,215 @@
+import Link from 'next/link';
+import { ArrowLeft, Mail, Github, Linkedin, Twitter } from 'lucide-react';
+import { CONTACT_EMAIL, BRAND } from '@/constants';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Profile | Kim Hyun-joong',
+  description: 'Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems.',
+};
+
+/**
+ * 프로필 페이지
+ */
+export default function ProfilePage() {
+  const skills = [
+    {
+      category: 'Frontend',
+      items: ['React', 'Next.js', 'TypeScript', 'TailwindCSS', 'WebGL'],
+    },
+    {
+      category: 'Backend',
+      items: ['Node.js', 'Python', 'GraphQL', 'REST API'],
+    },
+    {
+      category: 'Cloud & DevOps',
+      items: ['AWS', 'Amplify', 'Lambda', 'DynamoDB', 'Docker'],
+    },
+    {
+      category: 'Data & AI',
+      items: ['Pinecone', 'OpenAI', 'Vector DB', 'Analytics'],
+    },
+  ];
+
+  const experiences = [
+    {
+      period: '2024 — Present',
+      title: 'Full-stack Architect',
+      company: 'Freelance',
+      description: 'High-impact serverless solutions for enterprise clients',
+    },
+    {
+      period: '2022 — 2024',
+      title: 'Senior Engineer',
+      company: 'Tech Startup',
+      description: 'Led architecture decisions for scalable platforms',
+    },
+    {
+      period: '2020 — 2022',
+      title: 'Software Engineer',
+      company: 'Digital Agency',
+      description: 'Full-stack development for diverse client projects',
+    },
+  ];
+
+  return (
+    <div>
+      {/* 헤더 */}
+      <div className="mb-12 md:mb-16">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6 md:mb-8"
+          tabIndex={0}
+          aria-label="Go back to home"
+        >
+          <ArrowLeft size={16} />
+          <span className="text-xs md:text-sm font-mono uppercase tracking-widest">Back to Home</span>
+        </Link>
+        
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin font-montserrat text-white/10 select-none">
+          PROFILE
+        </h1>
+      </div>
+
+      {/* 소개 섹션 */}
+      <section className="mb-16 md:mb-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
+          <div>
+            <span className="block text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-4 md:mb-6 flex items-center gap-3">
+              <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
+              About Me
+            </span>
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-light font-montserrat leading-tight text-white mb-6">
+              Building systems that <span className="text-gray-500 italic">scale with purpose</span>
+            </h2>
+          </div>
+          
+          <div className="flex flex-col justify-end">
+            <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed mb-6">
+              I&apos;m a Full-stack Architect based in Seoul, specializing in serverless architecture 
+              and high-performance web applications. With a focus on business impact, I build systems 
+              that not only work—but scale, convert, and deliver measurable results.
+            </p>
+            <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed">
+              My approach combines deep technical expertise with strategic thinking. 
+              In an era where AI writes code, the real value lies in architecture decisions, 
+              system design, and understanding the business context.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 스킬 섹션 */}
+      <section className="mb-16 md:mb-24">
+        <span className="block text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-8 md:mb-12 flex items-center gap-3">
+          <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
+          Tech Stack
+        </span>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          {skills.map((skill) => (
+            <div
+              key={skill.category}
+              className="glass-panel p-5 md:p-6 rounded-xl bg-noise border border-white/5 hover:border-white/10 transition-colors"
+            >
+              <h3 className="text-xs md:text-sm font-mono text-white uppercase tracking-wider mb-4">
+                {skill.category}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {skill.items.map((item) => (
+                  <span
+                    key={item}
+                    className="text-[10px] md:text-xs text-gray-400 px-2 py-1 rounded border border-gray-800"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 경력 섹션 */}
+      <section className="mb-16 md:mb-24">
+        <span className="block text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-8 md:mb-12 flex items-center gap-3">
+          <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
+          Experience
+        </span>
+        
+        <div className="space-y-6 md:space-y-8">
+          {experiences.map((exp, idx) => (
+            <div
+              key={idx}
+              className="group flex flex-col md:flex-row gap-4 md:gap-8 p-5 md:p-6 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all"
+            >
+              <div className="md:w-1/4">
+                <span className="text-xs font-mono text-gray-500">{exp.period}</span>
+              </div>
+              <div className="md:w-3/4">
+                <h3 className="text-lg md:text-xl font-light text-white mb-1">
+                  {exp.title}
+                </h3>
+                <span className="text-sm text-gray-500 block mb-2">{exp.company}</span>
+                <p className="text-sm text-gray-400">{exp.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 연락처 CTA */}
+      <section className="pt-8 md:pt-12 border-t border-gray-800">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-8">
+          <div>
+            <h3 className="text-xl md:text-2xl font-light text-white mb-2">
+              Let&apos;s work together
+            </h3>
+            <p className="text-sm text-gray-500">
+              Open for new ventures and collaborations
+            </p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="inline-flex items-center gap-3 px-5 py-3 bg-white text-black rounded-full font-mono text-xs uppercase tracking-wider hover:bg-gray-200 transition-colors"
+              tabIndex={0}
+              aria-label="Send email"
+            >
+              <Mail size={14} />
+              Get in Touch
+            </a>
+            
+            <div className="flex gap-3">
+              <a
+                href="#"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
+                tabIndex={0}
+                aria-label="Github profile"
+              >
+                <Github size={18} />
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
+                tabIndex={0}
+                aria-label="LinkedIn profile"
+              >
+                <Linkedin size={18} />
+              </a>
+              <a
+                href="#"
+                className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
+                tabIndex={0}
+                aria-label="Twitter profile"
+              >
+                <Twitter size={18} />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

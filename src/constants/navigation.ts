@@ -4,9 +4,9 @@ import type { NavLink, SocialLink } from '@/types/navigation';
  * 메인 네비게이션 링크
  */
 export const NAV_LINKS: readonly NavLink[] = [
-  { href: '#projects', label: 'Works' },
-  { href: '#blog', label: 'Intelligence' },
-  { href: '#about', label: 'Profile' },
+  { href: '/projects', label: 'Works' },
+  { href: '/blog', label: 'Intelligence' },
+  { href: '/profile', label: 'Profile' },
 ] as const;
 
 /**
