@@ -9,9 +9,9 @@ const BlogSection = () => {
   const posts = getAllPosts();
 
   return (
-    <section id="blog" className="py-32 relative z-10">
+    <section id="blog" className="py-16 md:py-24 lg:py-32 relative z-10">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black pointer-events-none" />
-      <div className="w-full max-w-[1400px] mx-auto px-6 relative">
+      <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 relative">
         <BlogList posts={posts} />
       </div>
     </section>
@@ -19,3 +19,4 @@ const BlogSection = () => {
 };
 
 export default BlogSection;
+
