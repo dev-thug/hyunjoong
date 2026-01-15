@@ -27,7 +27,7 @@ export const SOCIAL_LINKS: readonly SocialLink[] = [
  * 브랜드 정보
  */
 export const BRAND = {
-  NAME: 'KIM HYUNJOONG',
+  NAME: 'HYUNJOONG.KIM',
   TITLE: 'Kim Hyun-joong | Full-stack Architect',
   LOCATION: 'DESIGNED IN SEOUL',
   ESTABLISHED_YEAR: '2024',
