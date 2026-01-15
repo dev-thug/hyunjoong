@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import LiquidBackground from '@/components/LiquidBackground';
-import { Navigation, Footer } from '@/components/layout';
-import { SCROLL_THRESHOLD } from '@/constants';
+import { Footer } from '@/components/layout';
 
 interface HomeLayoutWrapperProps {
   readonly children: ReactNode;
@@ -11,34 +10,13 @@ interface HomeLayoutWrapperProps {
 
 /**
  * 홈 페이지 클라이언트 래퍼
- * 스크롤 상태 및 모바일 메뉴 상태 관리
+ * LiquidBackground와 Footer만 관리
+ * 네비게이션은 전역 레이아웃에서 관리됨
  */
 const HomeLayoutWrapper = ({ children }: HomeLayoutWrapperProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const handleToggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => !prev);
-  };
-
   return (
     <div className="relative min-h-screen text-white selection:bg-white selection:text-black">
       <LiquidBackground />
-      
-      <Navigation
-        isScrolled={isScrolled}
-        isMobileMenuOpen={isMobileMenuOpen}
-        onToggleMobileMenu={handleToggleMobileMenu}
-      />
 
       {children}
       
