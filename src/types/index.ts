@@ -3,8 +3,10 @@ export * from './blog';
 
 export interface Project {
   id: string;
+  slug: string;
   title: string;
   adCopy: string;
+  description: string;
   techHighlight: string;
   image: string;
   tags: string[];

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { Project } from '@/types';
 import { ArrowUpRight } from 'lucide-react';
 
@@ -8,7 +9,12 @@ interface ProjectCardProps {
 
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
   return (
-    <div className="group relative w-full border-t border-white/10 pt-12 pb-24 transition-all duration-700 hover:border-white/40">
+    <Link
+      href={`/projects/${project.slug}`}
+      className="group relative w-full border-t border-white/10 pt-12 pb-24 transition-all duration-700 hover:border-white/40 block cursor-pointer"
+      tabIndex={0}
+      aria-label={`View project: ${project.title}`}
+    >
       <div className="flex flex-col lg:flex-row gap-16">
         
         <div className="lg:w-5/12 flex flex-col justify-between order-2 lg:order-1 relative z-10">
@@ -61,8 +67,9 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
         </div>
 
       </div>
-    </div>
+    </Link>
   );
 };
 
 export default ProjectCard;
+
