@@ -12,7 +12,7 @@ export const NAV_LINKS: readonly NavLink[] = [
 /**
  * 연락처 이메일
  */
-export const CONTACT_EMAIL = 'contact@kimhyunjoong.dev';
+export const CONTACT_EMAIL = 'de0978@gmail.com';
 
 /**
  * 소셜 미디어 링크

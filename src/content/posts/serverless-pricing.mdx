@@ -1,0 +1,52 @@
+export const metadata = {
+  title: "Why your AWS bill is lying to you",
+  excerpt: "Uncovering the hidden costs of provisioned concurrency and how to fix it.",
+  category: "Business",
+  date: "2024-05-12",
+  readTime: "5 min",
+};
+
+# Why your AWS bill is lying to you
+
+AWS 비용 청구서를 볼 때마다 "이게 왜 이렇게 비싸지?"라고 생각해본 적 있으신가요? 많은 개발자들이 **프로비저닝된 동시성(Provisioned Concurrency)**의 숨겨진 비용을 간과하고 있습니다.
+
+## 문제의 핵심
+
+Lambda 함수의 콜드 스타트를 해결하기 위해 Provisioned Concurrency를 설정하면, AWS는 **항상 실행 중인** 인스턴스에 대해 비용을 청구합니다. 이는 실제 호출 횟수와 상관없이 고정 비용이 발생한다는 의미입니다.
+
+```javascript
+// 많은 팀이 하는 실수
+const config = {
+  provisionedConcurrency: 10, // 24시간 내내 10개 인스턴스 유지
+  // 실제 피크 시간은 하루 4시간...
+};
+```
+
+## 해결 방법
+
+### 1. Application Auto Scaling 활용
+
+```javascript
+// 트래픽 패턴에 따라 동적으로 조절
+const autoScaling = {
+  targetUtilization: 70,
+  minCapacity: 2,
+  maxCapacity: 20,
+};
+```
+
+### 2. 스케줄 기반 스케일링
+
+비즈니스 시간에만 높은 동시성을 유지하고, 야간에는 최소로 줄이세요.
+
+### 3. 콜드 스타트 최적화
+
+- 패키지 크기 최소화
+- 지연 로딩(Lazy Loading) 구현
+- Node.js top-level await 활용
+
+## 결론
+
+AWS 비용을 최적화하려면 **"설정하고 잊어버리기"** 접근 방식을 버리고, 실제 트래픽 패턴을 분석해야 합니다. 올바른 설정으로 **최대 65%** 비용 절감이 가능합니다.
+
+> 💡 팁: AWS Cost Explorer에서 Lambda 관련 비용을 시간대별로 분석해보세요.

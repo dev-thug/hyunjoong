@@ -1,0 +1,87 @@
+export const metadata = {
+  title: "Stop using useEffect for data fetching",
+  excerpt: "A deep dive into Server Actions and why the client boundary matters.",
+  category: "Engineering",
+  date: "2024-05-10",
+  readTime: "8 min",
+};
+
+# Stop using useEffect for data fetching
+
+React 개발자라면 `useEffect`로 데이터를 가져오는 패턴에 익숙할 것입니다. 하지만 Next.js App Router에서는 **더 나은 방법**이 있습니다.
+
+## 기존 방식의 문제점
+
+```javascript
+// ❌ 이 패턴은 이제 피해야 합니다
+export default function Page() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/data')
+      .then(res => res.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <Skeleton />;
+  return <Content data={data} />;
+}
+```
+
+이 방식의 단점:
+- **워터폴 요청**: 컴포넌트가 렌더링된 후에야 데이터 요청 시작
+- **JavaScript 필요**: SEO에 불리
+- **로딩 상태 관리**: 보일러플레이트 코드 증가
+
+## Server Components로 해결
+
+```javascript
+// ✅ App Router의 권장 방식
+export default async function Page() {
+  const data = await fetchData(); // 서버에서 실행
+  return <Content data={data} />;
+}
+```
+
+## Client Boundary 이해하기
+
+`'use client'` 디렉티브는 단순히 "클라이언트에서 실행"을 의미하지 않습니다. 이는 **경계선**을 정의합니다.
+
+```javascript
+// layout.tsx - Server Component
+import ClientSidebar from './Sidebar';
+
+export default function Layout({ children }) {
+  const user = await getUser(); // ✅ 서버에서 실행
+  
+  return (
+    <div>
+      <ClientSidebar user={user} /> {/* Props로 전달 */}
+      {children}
+    </div>
+  );
+}
+```
+
+## Server Actions 활용
+
+폼 제출이나 mutation도 Server Actions로 깔끔하게 처리할 수 있습니다.
+
+```javascript
+// actions.ts
+'use server';
+
+export async function createPost(formData: FormData) {
+  const title = formData.get('title');
+  await db.posts.create({ title });
+  revalidatePath('/posts');
+}
+```
+
+## 결론
+
+Next.js App Router를 사용한다면, **서버 우선 사고방식**으로 전환하세요. 대부분의 데이터 페칭은 서버에서 처리하고, 클라이언트는 인터랙션에만 집중하면 됩니다.

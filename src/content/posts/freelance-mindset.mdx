@@ -1,0 +1,62 @@
+export const metadata = {
+  title: "The gap between Code and Product",
+  excerpt: "How thinking like a CEO made me a better engineer.",
+  category: "Insight",
+  date: "2024-05-01",
+  readTime: "4 min",
+};
+
+# The gap between Code and Product
+
+개발자로서 커리어를 시작하면 "좋은 코드"에 집착하게 됩니다. 하지만 진정한 성장은 **코드와 비즈니스 사이의 간극**을 이해할 때 시작됩니다.
+
+## 깨달음의 순간
+
+프리랜서로 일하면서 가장 큰 교훈을 얻었습니다. 클라이언트는 "깔끔한 코드"에 관심이 없습니다. 그들이 원하는 것은:
+
+- **빠른 로딩 속도** → 이탈률 감소
+- **높은 전환율** → 매출 증가
+- **안정적인 서비스** → 고객 신뢰
+
+## CEO처럼 생각하기
+
+```
+기술적 관점: "Redux로 상태 관리를 최적화했다"
+비즈니스 관점: "페이지 로드 속도를 2초에서 0.5초로 단축해 
+              이탈률을 30% 감소시켰다"
+```
+
+## 실천 방법
+
+### 1. 메트릭을 추적하라
+
+```javascript
+// 단순 기능 구현이 아닌
+const handleClick = () => submitForm();
+
+// 비즈니스 임팩트 측정
+const handleClick = () => {
+  analytics.track('form_submitted', { 
+    formType, 
+    completionTime 
+  });
+  submitForm();
+};
+```
+
+### 2. 트레이드오프를 이해하라
+
+완벽한 코드 vs 빠른 출시? 대부분의 경우 **빠른 출시**가 옳습니다. 단, 기술 부채를 인식하고 관리하는 것이 중요합니다.
+
+### 3. 의사소통을 연습하라
+
+> "TypeScript 마이그레이션이 필요합니다"
+
+보다는
+
+> "TypeScript 도입으로 버그 발생률을 40% 줄이고, 
+> 신규 개발자 온보딩 시간을 2주에서 3일로 단축할 수 있습니다"
+
+## 결론
+
+훌륭한 엔지니어는 코드만 작성하지 않습니다. **비즈니스 맥락을 이해하고, 기술로 가치를 창출**합니다. 이것이 시니어와 주니어의 진정한 차이입니다.

@@ -1,13 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { BLOG_POSTS } from '@/constants';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import type { PostMetadata } from '@/types';
+
+interface BlogListProps {
+  readonly posts: PostMetadata[];
+}
 
 /**
  * 블로그 포스트 목록 컴포넌트
  */
-const BlogList = () => {
+const BlogList = ({ posts }: BlogListProps) => {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   const handleMouseEnter = (slug: string) => {
@@ -18,30 +23,30 @@ const BlogList = () => {
     setHoveredSlug(null);
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      // Navigate to blog post
-    }
-  };
-
   return (
     <div className="w-full flex flex-col gap-4">
       <div className="flex justify-between items-end mb-8 border-b border-white/10 pb-4 px-4">
         <h4 className="text-xs font-mono text-gray-500 uppercase tracking-[0.2em]">Latest Intelligence</h4>
-        <span className="text-xs font-mono text-gray-500">ARCHIVE</span>
+        <Link
+          href="/blog"
+          className="text-xs font-mono text-gray-500 hover:text-white transition-colors"
+          tabIndex={0}
+          aria-label="View all blog posts"
+        >
+          ARCHIVE
+        </Link>
       </div>
 
       <div className="space-y-2">
-        {BLOG_POSTS.map((post, idx) => (
-          <div 
+        {posts.map((post, idx) => (
+          <Link
             key={post.slug}
+            href={`/blog/${post.slug}`}
             onMouseEnter={() => handleMouseEnter(post.slug)}
             onMouseLeave={handleMouseLeave}
-            onKeyDown={handleKeyDown}
+            className="group relative rounded-xl transition-all duration-500 cursor-pointer p-8 border border-transparent hover:glass-panel hover:glass-interactive hover:bg-noise block"
             tabIndex={0}
-            role="button"
             aria-label={`Read blog post: ${post.title}`}
-            className="group relative rounded-xl transition-all duration-500 cursor-pointer p-8 border border-transparent hover:glass-panel hover:glass-interactive hover:bg-noise"
           >
             <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-6 relative z-10">
                 
@@ -73,7 +78,7 @@ const BlogList = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

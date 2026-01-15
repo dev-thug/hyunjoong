@@ -1,4 +1,5 @@
 export * from './navigation';
+export * from './blog';
 
 export interface Project {
   id: string;
