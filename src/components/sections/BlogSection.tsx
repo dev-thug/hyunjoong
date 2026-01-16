@@ -5,8 +5,8 @@ import { getAllPosts } from '@/lib/posts';
  * 블로그 섹션 컴포넌트
  * 메인 페이지에서 최신 블로그 포스트 표시
  */
-const BlogSection = () => {
-  const posts = getAllPosts();
+const BlogSection = async () => {
+  const posts = await getAllPosts();
 
   return (
     <section id="blog" className="py-16 md:py-24 lg:py-32 relative z-10">

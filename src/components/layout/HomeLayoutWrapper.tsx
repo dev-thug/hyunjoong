@@ -2,7 +2,7 @@
 
 import { type ReactNode } from 'react';
 import LiquidBackground from '@/components/LiquidBackground';
-import { Footer } from '@/components/layout';
+import Footer from '@/components/layout/Footer';
 
 interface HomeLayoutWrapperProps {
   readonly children: ReactNode;

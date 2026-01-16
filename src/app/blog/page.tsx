@@ -11,8 +11,8 @@ export const metadata: Metadata = {
 /**
  * 블로그 목록 페이지
  */
-export default function BlogPage() {
-  const posts = getAllPosts();
+export default async function BlogPage() {
+  const posts = await getAllPosts();
 
   return (
     <div>

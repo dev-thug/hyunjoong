@@ -1,10 +1,8 @@
-import { HomeLayoutWrapper } from '@/components/layout';
-import {
-  HeroSection,
-  AboutSection,
-  ProjectsSection,
-  BlogSection,
-} from '@/components/sections';
+import HomeLayoutWrapper from '@/components/layout/HomeLayoutWrapper';
+import HeroSection from '@/components/sections/HeroSection';
+import AboutSection from '@/components/sections/AboutSection';
+import ProjectsSection from '@/components/sections/ProjectsSection';
+import BlogSection from '@/components/sections/BlogSection';
 
 /**
  * 홈 페이지 (서버 컴포넌트)

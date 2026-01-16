@@ -11,8 +11,8 @@ interface BlogPostPageProps {
 /**
  * 정적 페이지 생성을 위한 슬러그 목록
  */
-export function generateStaticParams(): { slug: string }[] {
-  return generatePostParams();
+export async function generateStaticParams() {
+  return await generatePostParams();
 }
 
 /**
@@ -20,7 +20,7 @@ export function generateStaticParams(): { slug: string }[] {
  */
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   
   if (!post) {
     return { title: 'Post Not Found' };
@@ -37,14 +37,17 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
  */
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  
+  // 데이터 페칭 병렬화 (Parallel Data Fetching)
+  const [post, allPosts] = await Promise.all([
+    getPostBySlug(slug),
+    getAllPosts()
+  ]);
   
   if (!post) {
     notFound();
   }
 
-  // 이전/다음 포스트 찾기
-  const allPosts = getAllPosts();
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
   const prevPost = currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
   const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;

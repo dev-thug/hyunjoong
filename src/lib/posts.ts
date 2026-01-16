@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { promises as fs } from 'fs';
 import path from 'path';
 import type { PostMetadata, PostCategory } from '@/types/blog';
 
@@ -8,24 +8,24 @@ import type { PostMetadata, PostCategory } from '@/types/blog';
 const POSTS_DIRECTORY = path.join(process.cwd(), 'src/content/posts');
 
 /**
- * 모든 MDX 파일의 슬러그 목록 반환
+ * 모든 MDX 파일의 슬러그 목록 반환 (비동기)
  */
-export const getPostSlugs = (): string[] => {
-  if (!fs.existsSync(POSTS_DIRECTORY)) {
+export const getPostSlugs = async (): Promise<string[]> => {
+  try {
+    const files = await fs.readdir(POSTS_DIRECTORY);
+    return files
+      .filter((file) => file.endsWith('.mdx') || file.endsWith('.md'))
+      .map((file) => file.replace(/\.(mdx|md)$/, ''));
+  } catch (error) {
+    console.error('Error reading posts directory:', error);
     return [];
   }
-  
-  const files = fs.readdirSync(POSTS_DIRECTORY);
-  return files
-    .filter((file) => file.endsWith('.mdx') || file.endsWith('.md'))
-    .map((file) => file.replace(/\.(mdx|md)$/, ''));
 };
 
 /**
  * MDX 파일에서 export된 metadata 추출
  */
 const parseMetadataFromContent = (content: string): Record<string, string> | null => {
-  // export const metadata = { ... }; 패턴 추출
   const metadataMatch = content.match(/export\s+const\s+metadata\s*=\s*\{([\s\S]*?)\};/);
   
   if (!metadataMatch) {
@@ -35,7 +35,6 @@ const parseMetadataFromContent = (content: string): Record<string, string> | nul
   const metadataBlock = metadataMatch[1];
   const result: Record<string, string> = {};
   
-  // 각 필드를 개별적으로 추출
   const titleMatch = metadataBlock.match(/title:\s*"([^"]+)"/);
   const excerptMatch = metadataBlock.match(/excerpt:\s*"([^"]+)"/);
   const categoryMatch = metadataBlock.match(/category:\s*"([^"]+)"/);
@@ -52,22 +51,27 @@ const parseMetadataFromContent = (content: string): Record<string, string> | nul
 };
 
 /**
- * 슬러그로 특정 포스트 메타데이터 가져오기
+ * 슬러그로 특정 포스트 메타데이터 가져오기 (비동기)
  */
-export const getPostBySlug = (slug: string): PostMetadata | null => {
+export const getPostBySlug = async (slug: string): Promise<PostMetadata | null> => {
   const mdxPath = path.join(POSTS_DIRECTORY, `${slug}.mdx`);
   const mdPath = path.join(POSTS_DIRECTORY, `${slug}.md`);
   
-  let filePath: string;
-  if (fs.existsSync(mdxPath)) {
+  let filePath: string | null = null;
+  
+  try {
+    await fs.access(mdxPath);
     filePath = mdxPath;
-  } else if (fs.existsSync(mdPath)) {
-    filePath = mdPath;
-  } else {
-    return null;
+  } catch {
+    try {
+      await fs.access(mdPath);
+      filePath = mdPath;
+    } catch {
+      return null;
+    }
   }
   
-  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const fileContents = await fs.readFile(filePath, 'utf8');
   const metadata = parseMetadataFromContent(fileContents);
   
   if (!metadata || !metadata.title) {
@@ -85,22 +89,23 @@ export const getPostBySlug = (slug: string): PostMetadata | null => {
 };
 
 /**
- * 모든 포스트 메타데이터 가져오기 (날짜 내림차순 정렬)
+ * 모든 포스트 메타데이터 가져오기 (날짜 내림차순 정렬, 비동기 병렬 처리)
  */
-export const getAllPosts = (): PostMetadata[] => {
-  const slugs = getPostSlugs();
+export const getAllPosts = async (): Promise<PostMetadata[]> => {
+  const slugs = await getPostSlugs();
   
-  const posts = slugs
-    .map((slug) => getPostBySlug(slug))
+  const postPromises = slugs.map((slug) => getPostBySlug(slug));
+  const posts = await Promise.all(postPromises);
+  
+  return posts
     .filter((post): post is PostMetadata => post !== null)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
-  return posts;
 };
 
 /**
  * generateStaticParams용 슬러그 파라미터 목록
  */
-export const generatePostParams = (): { slug: string }[] => {
-  return getPostSlugs().map((slug) => ({ slug }));
+export const generatePostParams = async (): Promise<{ slug: string }[]> => {
+  const slugs = await getPostSlugs();
+  return slugs.map((slug) => ({ slug }));
 };

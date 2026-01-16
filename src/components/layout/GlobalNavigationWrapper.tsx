@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Navigation } from '@/components/layout';
+import Navigation from '@/components/layout/Navigation';
 import { SCROLL_THRESHOLD } from '@/constants';
 
 /**
