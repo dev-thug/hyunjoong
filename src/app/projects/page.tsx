@@ -1,11 +1,12 @@
-import Link from 'next/link';
-import { PROJECTS } from '@/constants';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import type { Metadata } from 'next';
+import Link from "next/link";
+import { PROJECTS } from "@/constants";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Projects | Kim Hyun-joong',
-  description: 'Selected projects showcasing full-stack development, serverless architecture, and business impact.',
+  title: "Projects | Kim Hyun-joong",
+  description:
+    "Selected projects showcasing full-stack development, serverless architecture, and business impact.",
 };
 
 /**
@@ -23,9 +24,11 @@ export default function ProjectsPage() {
           aria-label="Go back to home"
         >
           <ArrowLeft size={16} />
-          <span className="text-sm font-mono uppercase tracking-widest">Back to Home</span>
+          <span className="text-sm font-mono uppercase tracking-widest">
+            Back to Home
+          </span>
         </Link>
-        
+
         <h1 className="text-6xl md:text-8xl font-thin font-montserrat text-white/10 select-none">
           WORKS
         </h1>
@@ -50,7 +53,7 @@ export default function ProjectsPage() {
                 <img
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                  className="w-full h-full object-cover opacity-100 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                 />
               </div>
 
@@ -59,7 +62,7 @@ export default function ProjectsPage() {
                 <div>
                   <div className="flex items-center gap-4 mb-4">
                     <span className="text-xs font-mono text-gray-600">
-                      {String(idx + 1).padStart(2, '0')}
+                      {String(idx + 1).padStart(2, "0")}
                     </span>
                     <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
                       {project.techHighlight}
@@ -69,10 +72,8 @@ export default function ProjectsPage() {
                   <h2 className="text-3xl font-light text-white mb-3 group-hover:text-gray-200 transition-colors">
                     {project.title}
                   </h2>
-                  
-                  <p className="text-gray-500 line-clamp-2">
-                    {project.adCopy}
-                  </p>
+
+                  <p className="text-gray-500 line-clamp-2">{project.adCopy}</p>
                 </div>
 
                 <div className="flex items-center justify-between mt-6">
@@ -89,7 +90,10 @@ export default function ProjectsPage() {
 
                   <span className="inline-flex items-center gap-2 text-sm text-gray-500 group-hover:text-white transition-colors">
                     View Project
-                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight
+                      size={14}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
                   </span>
                 </div>
               </div>
