@@ -16,8 +16,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Kim Hyun-joong | Full-stack Architect",
-  description: "High-end portfolio for a Full-stack Engineer focusing on business impact and liquid visuals.",
+  title: "Full-stack Architect",
+  description:
+    "High-end portfolio for a Full-stack Engineer focusing on business impact and liquid visuals.",
 };
 
 export default async function RootLayout({
