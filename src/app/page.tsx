@@ -1,8 +1,16 @@
-import HomeLayoutWrapper from '@/components/layout/HomeLayoutWrapper';
-import HeroSection from '@/components/sections/HeroSection';
-import AboutSection from '@/components/sections/AboutSection';
-import ProjectsSection from '@/components/sections/ProjectsSection';
-import BlogSection from '@/components/sections/BlogSection';
+import { Suspense } from "react";
+import dynamic from "next/dynamic";
+import HomeLayoutWrapper from "@/components/layout/HomeLayoutWrapper";
+import HeroSection from "@/components/sections/HeroSection";
+
+// 초기 로딩에 필수적이지 않은 하단 섹션들을 dynamic import로 분리하여 번들 크기 최적화
+const AboutSection = dynamic(
+  () => import("@/components/sections/AboutSection"),
+);
+const ProjectsSection = dynamic(
+  () => import("@/components/sections/ProjectsSection"),
+);
+const BlogSection = dynamic(() => import("@/components/sections/BlogSection"));
 
 /**
  * 홈 페이지 (서버 컴포넌트)
@@ -11,10 +19,19 @@ import BlogSection from '@/components/sections/BlogSection';
 export default function Home() {
   return (
     <HomeLayoutWrapper>
+      {/* LCP 요소: 즉시 렌더링 */}
       <HeroSection />
+
+      {/* 하단 섹션들: 필요한 시점에 로드 */}
       <AboutSection />
       <ProjectsSection />
-      <BlogSection />
+
+      {/* 서버 컴포넌트 스트리밍: 데이터 읽기 중에도 상단 콘텐츠 즉시 노출 가능 */}
+      <Suspense
+        fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
+      >
+        <BlogSection />
+      </Suspense>
     </HomeLayoutWrapper>
   );
 }

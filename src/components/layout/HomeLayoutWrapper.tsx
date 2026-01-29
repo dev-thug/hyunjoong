@@ -1,8 +1,16 @@
-'use client';
+"use client";
 
-import { type ReactNode } from 'react';
-import LiquidBackground from '@/components/LiquidBackground';
-import Footer from '@/components/layout/Footer';
+import { type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import Footer from "@/components/layout/Footer";
+
+// WebGL 컴포넌트를 SSR에서 제외하고 지연 로드하여 초기 로딩 성능 개선
+const LiquidBackground = dynamic(
+  () => import("@/components/LiquidBackground"),
+  {
+    ssr: false,
+  },
+);
 
 interface HomeLayoutWrapperProps {
   readonly children: ReactNode;
@@ -19,7 +27,7 @@ const HomeLayoutWrapper = ({ children }: HomeLayoutWrapperProps) => {
       <LiquidBackground />
 
       {children}
-      
+
       <Footer />
     </div>
   );
