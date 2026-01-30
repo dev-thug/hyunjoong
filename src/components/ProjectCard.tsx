@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Project } from "@/types";
 import { ArrowUpRight } from "lucide-react";
 
@@ -65,10 +66,13 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
         {/* 이미지 영역 */}
         <div className="lg:w-7/12 order-1 lg:order-2 relative h-[220px] md:h-[350px] lg:h-[450px] xl:h-[500px] overflow-hidden rounded-lg md:rounded-sm group-hover:rounded-xl md:group-hover:rounded-2xl transition-all duration-700">
           <div className="absolute inset-0 bg-gray-900">
-            <img
+            <Image
               src={project.image}
               alt={project.title}
-              className="w-full h-full object-cover opacity-100 md:opacity-60 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 58vw, 50vw"
+              priority={index < 2}
+              className="object-cover opacity-100 md:opacity-60 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
             />
           </div>
 

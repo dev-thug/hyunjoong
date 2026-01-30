@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { cache } from 'react';
 import type { PostMetadata, PostCategory } from '@/types/blog';
 
 /**
@@ -23,7 +24,7 @@ const parseFileName = (fileName: string): { slug: string; lang: string } | null 
 /**
  * 모든 MDX 파일의 { slug, lang } 목록 반환 (비동기)
  */
-export const getPostIdentifiers = async (): Promise<{ slug: string; lang: string }[]> => {
+export const getPostIdentifiers = cache(async (): Promise<{ slug: string; lang: string }[]> => {
   try {
     const files = await fs.readdir(POSTS_DIRECTORY);
     return files
@@ -33,7 +34,7 @@ export const getPostIdentifiers = async (): Promise<{ slug: string; lang: string
     console.error('Error reading posts directory:', error);
     return [];
   }
-};
+});
 
 /**
  * MDX 파일에서 export된 metadata 추출
@@ -68,7 +69,7 @@ const parseMetadataFromContent = (content: string): Record<string, string> | nul
 /**
  * 슬러그와 언어로 특정 포스트 메타데이터 가져오기 (비동기)
  */
-export const getPostBySlug = async (slug: string, lang: string): Promise<PostMetadata | null> => {
+export const getPostBySlug = cache(async (slug: string, lang: string): Promise<PostMetadata | null> => {
   const mdxPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.mdx`);
   const mdPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.md`);
   
@@ -102,13 +103,13 @@ export const getPostBySlug = async (slug: string, lang: string): Promise<PostMet
     date: metadata.date || '',
     readTime: metadata.readTime || '5 min',
   };
-};
+});
 
 /**
  * 모든 포스트 메타데이터 가져오기 (날짜 내림차순 정렬, 비동기 병렬 처리)
  * @param lang 필터링할 언어 (선택 사항)
  */
-export const getAllPosts = async (lang?: string): Promise<PostMetadata[]> => {
+export const getAllPosts = cache(async (lang?: string): Promise<PostMetadata[]> => {
   const identifiers = await getPostIdentifiers();
   
   // 언어가 지정된 경우 해당 언어의 포스트만 필터링
@@ -122,7 +123,7 @@ export const getAllPosts = async (lang?: string): Promise<PostMetadata[]> => {
   return posts
     .filter((post): post is PostMetadata => post !== null)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-};
+});
 
 /**
  * generateStaticParams용 슬러그 파라미터 목록

@@ -3,8 +3,6 @@
 :root {
   --background: #050505;
   --foreground: #ffffff;
-  --font-inter: 'Inter', sans-serif;
-  --font-montserrat: 'Montserrat', sans-serif;
 }
 
 @theme inline {
