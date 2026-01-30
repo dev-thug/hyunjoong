@@ -1,6 +1,7 @@
 # 모바일 이미지 렌더링 개선 가이드라인
 
 ## 배경
+
 데스크톱 디자인을 위해 적용된 `grayscale` 필터와 낮은 `opacity` 설정이 호버(Hover) 기능이 없는 모바일 환경에서 이미지를 어둡고 회색으로 보이게 하여 사용자 경험을 저하시키는 문제가 발생했습니다.
 
 ## 개선 원칙
@@ -19,13 +20,14 @@
 ## 적용 사례 (Tailwind CSS)
 
 ```tsx
-<img 
-  src={src} 
-  className="w-full h-full object-cover opacity-100 md:opacity-60 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500" 
+<img
+  src={src}
+  className="w-full h-full object-cover opacity-100 md:opacity-60 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
 />
 ```
 
 ## 체크리스트
+
 - [ ] 모바일에서 이미지가 컬러로 보이는가?
 - [ ] 모바일에서 이미지의 불투명도가 적절하여 배경에 묻히지 않는가?
 - [ ] 데스크톱에서 호버 시 의도한 애니메이션과 색상 복원이 일어나는가?

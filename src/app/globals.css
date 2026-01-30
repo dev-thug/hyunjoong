@@ -112,3 +112,97 @@ body {
 .delay-600 { animation-delay: 0.6s; }
 .delay-800 { animation-delay: 0.8s; }
 .delay-1000 { animation-delay: 1.0s; }
+
+/* Prose Custom Styling for MDX Content */
+.prose-custom {
+  max-width: 760px;
+  margin: 0 auto;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+.prose-custom :first-child {
+  margin-top: 0;
+}
+
+/* Typography refinement for long-form reading */
+.prose-custom p {
+  text-rendering: optimizeLegibility;
+}
+
+/* Highlight.js Theme (Optimized Rainbow Palette) */
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0;
+  background: transparent;
+  color: #e4e4e7; /* Zinc-200 */
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #8B949E; /* Muted Steel */
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-doctag,
+.hljs-formula,
+.hljs-tag,
+.hljs-name,
+.hljs-section,
+.hljs-deletion,
+.hljs-subst {
+  color: #FF7EB6; /* Soft Pink */
+  font-weight: 500;
+}
+
+.hljs-literal,
+.hljs-number,
+.hljs-built_in,
+.hljs-title.function_,
+.hljs-title {
+  color: #79C0FF; /* Sky Blue */
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: #FFD580; /* Warm Apricot */
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-params,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id {
+  color: #D2A8FF; /* Lavender Purple */
+}
+
+.hljs-type,
+.hljs-class .hljs-title,
+.hljs-title.class_,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: #7EE787; /* Mint Green */
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}

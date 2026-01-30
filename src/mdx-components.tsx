@@ -1,4 +1,5 @@
 import type { MDXComponents } from 'mdx/types';
+import CodeBlock from '@/components/mdx/CodeBlock';
 
 /**
  * MDX 컴포넌트 스타일링 정의
@@ -8,23 +9,23 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // 헤딩 스타일
     h1: ({ children }) => (
-      <h1 className="text-4xl font-bold font-montserrat mb-6 text-white">
+      <h1 className="text-4xl font-bold font-montserrat mt-12 mb-6 text-zinc-100 tracking-tight leading-tight">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="text-3xl font-semibold font-montserrat mt-10 mb-4 text-white">
+      <h2 className="text-3xl font-semibold font-montserrat mt-16 mb-6 text-zinc-100 tracking-tight">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-2xl font-medium font-montserrat mt-8 mb-3 text-white">
+      <h3 className="text-2xl font-medium font-montserrat mt-12 mb-4 text-zinc-200 tracking-tight">
         {children}
       </h3>
     ),
     // 본문 스타일
     p: ({ children }) => (
-      <p className="text-gray-300 leading-relaxed mb-6 text-lg">
+      <p className="text-zinc-300 leading-8 mb-6 text-[1.125rem] font-normal antialiased">
         {children}
       </p>
     ),
@@ -32,7 +33,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     a: ({ href, children }) => (
       <a
         href={href}
-        className="text-blue-400 hover:text-blue-300 underline transition-colors"
+        className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 underline-offset-4 transition-colors"
         target={href?.startsWith('http') ? '_blank' : undefined}
         rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
       >
@@ -41,43 +42,49 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     // 리스트 스타일
     ul: ({ children }) => (
-      <ul className="list-disc list-inside text-gray-300 mb-6 space-y-2">
+      <ul className="list-disc pl-6 text-zinc-300 mb-6 space-y-3 leading-7">
         {children}
       </ul>
     ),
     ol: ({ children }) => (
-      <ol className="list-decimal list-inside text-gray-300 mb-6 space-y-2">
+      <ol className="list-decimal pl-6 text-zinc-300 mb-6 space-y-3 leading-7">
         {children}
       </ol>
     ),
     li: ({ children }) => (
-      <li className="text-gray-300">{children}</li>
+      <li className="text-zinc-300 pl-1">{children}</li>
     ),
     // 코드 스타일
-    code: ({ children }) => (
-      <code className="bg-gray-800 text-green-400 px-2 py-1 rounded text-sm font-mono">
-        {children}
-      </code>
-    ),
+    code: ({ children, className }) => {
+      const isInline = !className;
+      if (isInline) {
+        return (
+          <code className="bg-[#18181b] text-[#e4e4e7] px-1.5 py-0.5 rounded-md text-[0.85em] font-mono border border-zinc-800/50">
+            {children}
+          </code>
+        );
+      }
+      return <code className={className}>{children}</code>;
+    },
     pre: ({ children }) => (
-      <pre className="bg-gray-900 border border-gray-700 rounded-lg p-4 mb-6 overflow-x-auto">
+      <CodeBlock>
         {children}
-      </pre>
+      </CodeBlock>
     ),
     // 인용문 스타일
     blockquote: ({ children }) => (
-      <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-6">
+      <blockquote className="border-l-4 border-zinc-700 pl-6 italic text-zinc-400 my-8 bg-zinc-900/30 py-4 rounded-r-lg">
         {children}
       </blockquote>
     ),
     // 가로선
-    hr: () => <hr className="border-gray-700 my-8" />,
+    hr: () => <hr className="border-zinc-800 my-12" />,
     // 강조 스타일
     strong: ({ children }) => (
-      <strong className="font-bold text-white">{children}</strong>
+      <strong className="font-semibold text-zinc-100">{children}</strong>
     ),
     em: ({ children }) => (
-      <em className="italic text-gray-200">{children}</em>
+      <em className="italic text-zinc-200">{children}</em>
     ),
     ...components,
   };

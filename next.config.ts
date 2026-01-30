@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
+import rehypeHighlight from 'rehype-highlight';
 
 /**
  * Next.js 설정
@@ -17,6 +18,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    mdxRs: false,
   },
 };
 
@@ -24,7 +26,10 @@ const nextConfig: NextConfig = {
  * MDX 설정
  */
 const withMDX = createMDX({
-  extension: /\.(md|mdx)$/,
+  options: {
+    remarkPlugins: [],
+    rehypePlugins: [rehypeHighlight],
+  },
 });
 
 export default withMDX(nextConfig);
