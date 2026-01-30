@@ -15,7 +15,7 @@ const getLocale = (request: NextRequest): string => {
   return matchLocale(languages, locales, i18n.defaultLocale);
 };
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Check if there is any supported locale in the pathname

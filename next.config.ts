@@ -19,18 +19,12 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    mdxRs: false,
   },
 };
 
 /**
  * MDX 설정
  */
-const withMDX = createMDX({
-  options: {
-    remarkPlugins: [remarkGfm],
-    rehypePlugins: [rehypeHighlight],
-  },
-});
+const withMDX = createMDX({});
 
 export default withMDX(nextConfig);

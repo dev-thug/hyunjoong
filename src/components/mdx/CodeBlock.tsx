@@ -16,10 +16,10 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
 
   // 언어 정보 추출 (MDX에서 전달되는 className에서 language-xxx 추출)
   const getLanguage = () => {
-    if (React.isValidElement(children) && children.props.className) {
-      const className = children.props.className as string;
-      if (className.startsWith('language-')) {
-        return className.replace('language-', '').toUpperCase();
+    if (React.isValidElement(children)) {
+      const props = children.props as { className?: string };
+      if (props.className && props.className.startsWith('language-')) {
+        return props.className.replace('language-', '').toUpperCase();
       }
     }
     return null;
@@ -38,8 +38,11 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
     if (Array.isArray(node)) {
       return node.map(extractText).join('');
     }
-    if (React.isValidElement(node) && node.props.children) {
-      return extractText(node.props.children);
+    if (React.isValidElement(node)) {
+      const props = node.props as { children?: React.ReactNode };
+      if (props.children) {
+        return extractText(props.children);
+      }
     }
     return '';
   };

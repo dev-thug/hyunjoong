@@ -24,9 +24,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-  const { lang } = await params;
+  const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
@@ -54,9 +54,9 @@ export default async function LangLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 }) {
-  const { lang } = await params;
+  const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
   return (

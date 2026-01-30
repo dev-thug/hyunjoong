@@ -9,9 +9,9 @@ import { i18n, type Locale } from '@/i18n-config';
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ lang: Locale }>;
+  params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-  const { lang } = await params;
+  const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
 
