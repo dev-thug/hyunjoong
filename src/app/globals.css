@@ -115,8 +115,8 @@ body {
 
 /* Prose Custom Styling for MDX Content */
 .prose-custom {
-  max-width: 760px;
-  margin: 0 auto;
+  max-width: 100%;
+  margin: 0;
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -125,9 +125,11 @@ body {
   margin-top: 0;
 }
 
-/* Typography refinement for long-form reading */
-.prose-custom p {
+/* Typography refinement for long-form reading - Optimized for readability */
+.prose-custom p,
+.prose-custom li {
   text-rendering: optimizeLegibility;
+  line-height: 1.7;
 }
 
 /* Highlight.js Theme (Optimized Rainbow Palette) */

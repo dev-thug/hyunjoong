@@ -58,7 +58,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { default: PostContent } = await import(`@/content/posts/${slug}.mdx`);
 
   return (
-    <article>
+    <article className="max-w-[85ch] mx-auto w-full">
       {/* 헤더 */}
       <header className="mb-12">
         <Link

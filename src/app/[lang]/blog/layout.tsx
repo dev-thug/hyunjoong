@@ -11,7 +11,7 @@ interface BlogLayoutProps {
 export default function BlogLayout({ children }: BlogLayoutProps) {
   return (
     <div className="min-h-screen bg-[#050505] text-white pt-32 pb-20">
-      <div className="w-full max-w-[800px] mx-auto px-6">
+      <div className="w-full max-w-[1200px] mx-auto px-4 md:px-6">
         {children}
       </div>
     </div>
