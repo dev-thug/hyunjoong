@@ -1,0 +1,57 @@
+export const metadata = {
+  title: "Stop using useEffect for data fetching",
+  excerpt: "A deep dive into Server Actions and why the client boundary matters.",
+  category: "Engineering",
+  date: "2024-05-10",
+  readTime: "8 min",
+  lang: "en",
+};
+
+# Stop using useEffect for data fetching
+
+If you are a React developer, you might be familiar with the pattern of fetching data using `useEffect`. However, in Next.js App Router, there is a **better way**.
+
+## Problems with the existing approach
+
+```javascript
+// ❌ Avoid this pattern now
+export default function Page() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/data')
+      .then(res => res.json())
+      .then(data => {
+        setData(data);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <Skeleton />;
+  return <Content data={data} />;
+}
+```
+
+Disadvantages of this approach:
+- **Waterfall requests**: Data fetching starts only after the component renders.
+- **JavaScript required**: Bad for SEO.
+- **Loading state management**: Increased boilerplate code.
+
+## Solving with Server Components
+
+```javascript
+// ✅ Recommended approach in App Router
+export default async function Page() {
+  const data = await fetchData(); // Runs on the server
+  return <Content data={data} />;
+}
+```
+
+## Understanding the Client Boundary
+
+The `'use client'` directive doesn't just mean "run on the client". It defines a **boundary**.
+
+## Conclusion
+
+If you use Next.js App Router, switch to a **server-first mindset**. Handle most data fetching on the server and focus the client only on interactions.

@@ -8,6 +8,7 @@ export type PostCategory = 'Engineering' | 'Business' | 'Insight';
  */
 export interface PostMetadata {
   readonly slug: string;
+  readonly lang: string;
   readonly title: string;
   readonly excerpt: string;
   readonly category: PostCategory;

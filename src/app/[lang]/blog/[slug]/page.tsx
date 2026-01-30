@@ -21,16 +21,46 @@ export async function generateStaticParams() {
  * 동적 메타데이터 생성
  */
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { lang, slug } = await params;
+  const post = await getPostBySlug(slug, lang);
   
   if (!post) {
     return { title: 'Post Not Found' };
   }
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
   
+  // 다국어 버전 확인 (hreflang 설정을 위해)
+  const [koPost, enPost] = await Promise.all([
+    getPostBySlug(slug, 'ko'),
+    getPostBySlug(slug, 'en'),
+  ]);
+
+  const languages: Record<string, string> = {};
+  if (koPost) languages.ko = `${baseUrl}/ko/blog/${slug}`;
+  if (enPost) languages.en = `${baseUrl}/en/blog/${slug}`;
+  if (koPost) languages['x-default'] = `${baseUrl}/ko/blog/${slug}`;
+
   return {
-    title: `${post.title} | Kim Hyun-joong`,
+    title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: `${baseUrl}/${lang}/blog/${slug}`,
+      languages,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      url: `${baseUrl}/${lang}/blog/${slug}`,
+      type: 'article',
+      publishedTime: post.date,
+      locale: lang === 'ko' ? 'ko_KR' : 'en_US',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description: post.excerpt,
+    },
   };
 }
 
@@ -42,8 +72,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   
   // 데이터 페칭 병렬화 (Parallel Data Fetching)
   const [post, allPosts] = await Promise.all([
-    getPostBySlug(slug),
-    getAllPosts()
+    getPostBySlug(slug, lang),
+    getAllPosts(lang)
   ]);
   
   if (!post) {
@@ -55,7 +85,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
   // MDX 컴포넌트 동적 import
-  const { default: PostContent } = await import(`@/content/posts/${slug}.mdx`);
+  const { default: PostContent } = await import(`@/content/posts/${slug}.${lang}.mdx`);
 
   return (
     <article className="max-w-[85ch] mx-auto w-full">

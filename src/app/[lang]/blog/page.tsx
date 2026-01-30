@@ -3,10 +3,31 @@ import { getAllPosts } from '@/lib/posts';
 import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
-  title: 'Blog | Kim Hyun-joong',
-  description: 'Insights on full-stack development, serverless architecture, and business impact.',
-};
+import { getDictionary } from '@/get-dictionary';
+import { i18n, type Locale } from '@/i18n-config';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: Locale }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
+
+  return {
+    title: `Blog | ${dict.hero.architecture}`,
+    description: 'Insights on full-stack development, serverless architecture, and business impact.',
+    alternates: {
+      canonical: `${baseUrl}/${lang}/blog`,
+      languages: {
+        ko: `${baseUrl}/ko/blog`,
+        en: `${baseUrl}/en/blog`,
+        'x-default': `${baseUrl}/ko/blog`,
+      },
+    },
+  };
+}
 
 /**
  * 블로그 목록 페이지
@@ -17,7 +38,7 @@ export default async function BlogPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const posts = await getAllPosts();
+  const posts = await getAllPosts(lang);
 
   return (
     <div>

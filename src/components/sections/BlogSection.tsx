@@ -6,7 +6,7 @@ import { getAllPosts } from '@/lib/posts';
  * 메인 페이지에서 최신 블로그 포스트 표시
  */
 const BlogSection = async ({ lang }: { lang: string }) => {
-  const posts = await getAllPosts();
+  const posts = await getAllPosts(lang);
 
   return (
     <section id="blog" className="py-16 md:py-24 lg:py-32 relative z-10">
