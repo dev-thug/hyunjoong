@@ -86,6 +86,36 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     em: ({ children }) => (
       <em className="italic text-zinc-200">{children}</em>
     ),
+    // 테이블 스타일
+    table: ({ children }) => (
+      <div className="my-8 overflow-hidden rounded-xl border border-zinc-800/50 bg-[#09090b]/40 backdrop-blur-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            {children}
+          </table>
+        </div>
+      </div>
+    ),
+    thead: ({ children }) => (
+      <thead className="bg-white/5">
+        {children}
+      </thead>
+    ),
+    th: ({ children }) => (
+      <th className="px-4 py-3 text-left text-sm font-semibold text-white border-b border-zinc-800/50">
+        {children}
+      </th>
+    ),
+    td: ({ children }) => (
+      <td className="px-4 py-3 text-sm text-zinc-400 border-b border-zinc-800/20">
+        {children}
+      </td>
+    ),
+    tbody: ({ children }) => (
+      <tbody className="[&_tr:last-child_td]:border-b-0 [&_tr:nth-child(even)]:bg-white/[0.02]">
+        {children}
+      </tbody>
+    ),
     ...components,
   };
 }
