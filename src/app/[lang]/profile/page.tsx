@@ -1,6 +1,5 @@
-import Link from 'next/link';
-import { ArrowLeft, Mail, Github, Linkedin, Twitter } from 'lucide-react';
-import { CONTACT_EMAIL, BRAND } from '@/constants';
+import { Mail, Github, Linkedin, Twitter } from 'lucide-react';
+import { CONTACT_EMAIL } from '@/constants';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -55,17 +54,7 @@ export default function ProfilePage() {
   return (
     <div>
       {/* 헤더 */}
-      <div className="mb-12 md:mb-16">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6 md:mb-8"
-          tabIndex={0}
-          aria-label="Go back to home"
-        >
-          <ArrowLeft size={16} />
-          <span className="text-xs md:text-sm font-mono uppercase tracking-widest">Back to Home</span>
-        </Link>
-        
+      <div className="mb-12 md:mb-16 pt-6 md:pt-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin font-montserrat text-white/10 select-none">
           PROFILE
         </h1>

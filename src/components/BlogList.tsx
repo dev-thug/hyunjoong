@@ -7,12 +7,13 @@ import type { PostMetadata } from '@/types';
 
 interface BlogListProps {
   readonly posts: PostMetadata[];
+  readonly lang: string;
 }
 
 /**
  * 블로그 포스트 목록 컴포넌트
  */
-const BlogList = ({ posts }: BlogListProps) => {
+const BlogList = ({ posts, lang }: BlogListProps) => {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   const handleMouseEnter = (slug: string) => {
@@ -28,7 +29,7 @@ const BlogList = ({ posts }: BlogListProps) => {
       <div className="flex justify-between items-end mb-6 md:mb-8 border-b border-white/10 pb-3 md:pb-4 px-2 md:px-4">
         <h4 className="text-[10px] md:text-xs font-mono text-gray-500 uppercase tracking-[0.15em] md:tracking-[0.2em]">Latest Intelligence</h4>
         <Link
-          href="/blog"
+          href={`/${lang}/blog`}
           className="text-[10px] md:text-xs font-mono text-gray-500 hover:text-white transition-colors"
           tabIndex={0}
           aria-label="View all blog posts"
@@ -41,7 +42,7 @@ const BlogList = ({ posts }: BlogListProps) => {
         {posts.map((post, idx) => (
           <Link
             key={post.slug}
-            href={`/blog/${post.slug}`}
+            href={`/${lang}/blog/${post.slug}`}
             onMouseEnter={() => handleMouseEnter(post.slug)}
             onMouseLeave={handleMouseLeave}
             className="group relative rounded-lg md:rounded-xl transition-all duration-500 cursor-pointer p-4 md:p-6 lg:p-8 border border-transparent hover:glass-panel hover:glass-interactive hover:bg-noise block"

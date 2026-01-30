@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
 interface ProjectPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }
 
 /**
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
  * 프로젝트 상세 페이지
  */
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
   const project = getProjectBySlug(slug);
   
   if (!project) {
@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* 헤더 */}
       <header className="mb-12">
         <Link
-          href="/projects"
+          href={`/${lang}/projects`}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
           tabIndex={0}
           aria-label="Go back to projects list"
@@ -139,7 +139,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <div className="flex justify-between items-center gap-4">
           {prevProject ? (
             <Link
-              href={`/projects/${prevProject.slug}`}
+              href={`/${lang}/projects/${prevProject.slug}`}
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors"
               tabIndex={0}
               aria-label={`Previous project: ${prevProject.title}`}
@@ -158,7 +158,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           {nextProject ? (
             <Link
-              href={`/projects/${nextProject.slug}`}
+              href={`/${lang}/projects/${nextProject.slug}`}
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors text-right"
               tabIndex={0}
               aria-label={`Next project: ${nextProject.title}`}

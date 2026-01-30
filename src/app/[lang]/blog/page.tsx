@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/posts';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -11,23 +11,18 @@ export const metadata: Metadata = {
 /**
  * 블로그 목록 페이지
  */
-export default async function BlogPage() {
+export default async function BlogPage({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  const { lang } = await params;
   const posts = await getAllPosts();
 
   return (
     <div>
       {/* 헤더 */}
-      <div className="mb-16">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
-          tabIndex={0}
-          aria-label="Go back to home"
-        >
-          <ArrowLeft size={16} />
-          <span className="text-sm font-mono uppercase tracking-widest">Back to Home</span>
-        </Link>
-        
+      <div className="mb-16 pt-8">
         <h1 className="text-6xl md:text-8xl font-thin font-montserrat text-white/10 select-none">
           INTELLIGENCE
         </h1>
@@ -41,7 +36,7 @@ export default async function BlogPage() {
         {posts.map((post, idx) => (
           <Link
             key={post.slug}
-            href={`/blog/${post.slug}`}
+            href={`/${lang}/blog/${post.slug}`}
             className="group block p-6 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all duration-300"
             tabIndex={0}
             aria-label={`Read: ${post.title}`}

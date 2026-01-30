@@ -33,13 +33,13 @@ export default async function Home({
 
       {/* 하단 섹션들: 필요한 시점에 로드 */}
       <AboutSection dict={dict} />
-      <ProjectsSection dict={dict} />
+      <ProjectsSection dict={dict} lang={lang} />
 
       {/* 서버 컴포넌트 스트리밍: 데이터 읽기 중에도 상단 콘텐츠 즉시 노출 가능 */}
       <Suspense
         fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
       >
-        <BlogSection />
+        <BlogSection lang={lang} />
       </Suspense>
     </HomeLayoutWrapper>
   );

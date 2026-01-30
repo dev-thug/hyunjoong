@@ -45,7 +45,8 @@ const Navigation = ({
         <div className="flex justify-between items-center">
           <Link
             href={`/${lang}`}
-            className="text-xs font-bold font-montserrat tracking-[0.3em] mix-blend-difference z-50 animate-fade-up delay-0 hover:opacity-70 transition-opacity"
+            className="text-xs font-bold font-montserrat tracking-[0.3em] mix-blend-difference z-50 animate-fade-up delay-0 hover:scale-105 active:scale-95 transition-all duration-300 inline-block"
+            aria-label="Go to home page"
           >
             {BRAND.NAME}
           </Link>

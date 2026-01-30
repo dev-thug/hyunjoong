@@ -5,12 +5,13 @@ import { ArrowUpRight } from "lucide-react";
 interface ProjectCardProps {
   project: Project;
   index: number;
+  lang: string;
 }
 
-const ProjectCard = ({ project, index }: ProjectCardProps) => {
+const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
   return (
     <Link
-      href={`/projects/${project.slug}`}
+      href={`/${lang}/projects/${project.slug}`}
       className="group relative w-full border-t border-white/10 pt-6 md:pt-12 pb-12 md:pb-24 transition-all duration-700 hover:border-white/40 block cursor-pointer"
       tabIndex={0}
       aria-label={`View project: ${project.title}`}

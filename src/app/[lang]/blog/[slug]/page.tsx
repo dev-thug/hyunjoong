@@ -5,14 +5,16 @@ import { ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ lang: string; slug: string }>;
 }
 
 /**
  * 정적 페이지 생성을 위한 슬러그 목록
  */
 export async function generateStaticParams() {
-  return await generatePostParams();
+  const params = await generatePostParams();
+  // Add lang to params if needed by Next.js i18n routing
+  return params;
 }
 
 /**
@@ -36,7 +38,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
  * 블로그 포스트 상세 페이지
  */
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params;
+  const { lang, slug } = await params;
   
   // 데이터 페칭 병렬화 (Parallel Data Fetching)
   const [post, allPosts] = await Promise.all([
@@ -60,7 +62,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* 헤더 */}
       <header className="mb-12">
         <Link
-          href="/blog"
+          href={`/${lang}/blog`}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
           tabIndex={0}
           aria-label="Go back to blog list"
@@ -105,7 +107,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="flex justify-between items-center gap-4">
           {prevPost ? (
             <Link
-              href={`/blog/${prevPost.slug}`}
+              href={`/${lang}/blog/${prevPost.slug}`}
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors"
               tabIndex={0}
               aria-label={`Previous post: ${prevPost.title}`}
@@ -124,7 +126,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {nextPost ? (
             <Link
-              href={`/blog/${nextPost.slug}`}
+              href={`/${lang}/blog/${nextPost.slug}`}
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors text-right"
               tabIndex={0}
               aria-label={`Next post: ${nextPost.title}`}
