@@ -1,19 +1,26 @@
 'use client';
 
-import { NAV_LINKS, CONTACT_EMAIL, BRAND } from '@/constants';
+import { getNavLinks, CONTACT_EMAIL, BRAND } from '@/constants';
 import { Menu, X } from 'lucide-react';
+import Link from 'next/link';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface NavigationProps {
   readonly isScrolled: boolean;
   readonly isMobileMenuOpen: boolean;
   readonly onToggleMobileMenu: () => void;
+  readonly dict: any;
+  readonly lang: string;
 }
 
 const Navigation = ({
   isScrolled,
   isMobileMenuOpen,
   onToggleMobileMenu,
+  dict,
+  lang,
 }: NavigationProps) => {
+  const navLinks = getNavLinks(dict, lang);
   const handleKeyDown = (event: React.KeyboardEvent, action: () => void) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
@@ -36,9 +43,12 @@ const Navigation = ({
         }`}
       >
         <div className="flex justify-between items-center">
-          <div className="text-xs font-bold font-montserrat tracking-[0.3em] mix-blend-difference z-50 animate-fade-up delay-0">
+          <Link
+            href={`/${lang}`}
+            className="text-xs font-bold font-montserrat tracking-[0.3em] mix-blend-difference z-50 animate-fade-up delay-0 hover:opacity-70 transition-opacity"
+          >
             {BRAND.NAME}
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
           <div
@@ -46,16 +56,16 @@ const Navigation = ({
               isScrolled ? 'text-gray-200' : 'text-gray-400'
             }`}
           >
-            {NAV_LINKS.map((link) => (
-              <a
+            {navLinks.map((link) => (
+              <Link
                 key={link.href}
                 href={link.href}
                 className="hover:text-white transition-colors relative group"
                 tabIndex={0}
               >
                 {link.label}
-                <span className="absolute -bottom-2 left-0 w-0 h-[1px] bg-white transition-all duration-300 group-hover:w-full" />
-              </a>
+                <span className="absolute -bottom-2 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full" />
+              </Link>
             ))}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
@@ -63,8 +73,9 @@ const Navigation = ({
               tabIndex={0}
               aria-label="Send email to contact"
             >
-              Contact
+              {dict.navigation.contact}
             </a>
+            <LanguageSwitcher dict={dict} isScrolled={isScrolled} />
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,8 +95,8 @@ const Navigation = ({
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center space-y-8 md:hidden">
-          {NAV_LINKS.map((link) => (
-            <a
+          {navLinks.map((link) => (
+            <Link
               key={link.href}
               href={link.href}
               onClick={handleCloseMobileMenu}
@@ -94,8 +105,20 @@ const Navigation = ({
               tabIndex={0}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            onClick={handleCloseMobileMenu}
+            onKeyDown={(e) => handleKeyDown(e, handleCloseMobileMenu)}
+            className="text-3xl font-light"
+            tabIndex={0}
+          >
+            {dict.navigation.contact}
+          </a>
+          <div className="pt-4">
+            <LanguageSwitcher dict={dict} isScrolled={true} />
+          </div>
         </div>
       )}
     </>

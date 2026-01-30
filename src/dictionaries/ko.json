@@ -1,0 +1,39 @@
+{
+  "navigation": {
+    "works": "프로젝트",
+    "intelligence": "인텔리전스",
+    "profile": "프로필",
+    "contact": "문의하기",
+    "language": "English"
+  },
+  "hero": {
+    "title_beyond": "BEYOND",
+    "title_code": "CODE",
+    "role_title": "아키텍트의 역할",
+    "role_description": "코드를 작성하는 것은 기본입니다. 진정한 가치는 시스템을 살아있는 유기체로 바라보고 유동성, 확장성, 그리고 실질적인 비즈니스 속도를 최적화하는 데 있습니다.",
+    "status_open": "새로운 프로젝트 협업 가능",
+    "scroll": "스크롤",
+    "architecture": "풀스택 아키텍처",
+    "intelligence_subtitle": "비즈니스 인텔리전스"
+  },
+  "about": {
+    "philosophy_label": "철학",
+    "quote_main": "단순히 소프트웨어를 만드는 것이 아닙니다.",
+    "quote_sub": "비즈니스의 레버리지를 만듭니다.",
+    "description": "AI가 코드를 작성하는 시대에 엔지니어의 가치는 실행에서 아키텍처로 이동합니다. 저는 오버헤드 없이 확장 가능한 고영향력 서버리스 인프라를 전문으로 합니다.",
+    "stack_label": "핵심 스택",
+    "focus_label": "집중 분야",
+    "focus_value": "성능 / 전환율"
+  },
+  "projects": {
+    "title_bg": "WORKS",
+    "title": "주요 프로젝트"
+  },
+  "footer": {
+    "cta_main": "함께",
+    "cta_sub": "이야기해요."
+  },
+  "brand": {
+    "location": "DESIGNED IN SEOUL"
+  }
+}

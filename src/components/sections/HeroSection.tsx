@@ -1,7 +1,11 @@
 import SpotlightText from '@/components/SpotlightText';
 import { BRAND } from '@/constants';
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  readonly dict: any;
+}
+
+const HeroSection = ({ dict }: HeroSectionProps) => {
   return (
     <section className="relative min-h-screen flex flex-col justify-center px-4 md:px-6 overflow-hidden pt-16 md:pt-20">
       <div className="w-full max-w-[1400px] mx-auto relative h-full flex flex-col justify-between pb-8 md:pb-12">
@@ -11,8 +15,8 @@ const HeroSection = () => {
             Est. {BRAND.ESTABLISHED_YEAR}
           </span>
           <span className="text-[10px] font-mono uppercase tracking-widest text-right">
-            Full-stack Architecture<br />
-            Business Intelligence
+            {dict.hero.architecture}<br />
+            {dict.hero.intelligence_subtitle}
           </span>
         </div>
 
@@ -22,10 +26,10 @@ const HeroSection = () => {
 
           <h1 className="text-[13vw] md:text-[15vw] font-medium font-montserrat leading-[0.85] md:leading-[0.8] tracking-tighter select-none w-full">
             <div className="flex justify-start animate-reveal delay-200">
-              <SpotlightText>BEYOND</SpotlightText>
+              <SpotlightText>{dict.hero.title_beyond}</SpotlightText>
             </div>
             <div className="flex justify-end pr-[2vw] md:pr-[5vw] animate-reveal delay-500">
-              <SpotlightText className="italic font-light">CODE</SpotlightText>
+              <SpotlightText className="italic font-light">{dict.hero.title_code}</SpotlightText>
             </div>
           </h1>
         </div>
@@ -35,10 +39,10 @@ const HeroSection = () => {
           {/* Manifesto Text */}
           <div className="md:col-span-5 glass-panel p-5 md:p-8 rounded-xl md:rounded-2xl bg-noise backdrop-blur-3xl border border-white/5 hover:border-white/10 transition-colors duration-500 animate-fade-up delay-800">
             <h3 className="text-base md:text-lg font-light mb-3 md:mb-4 text-white font-montserrat">
-              The Architect&apos;s Role
+              {dict.hero.role_title}
             </h3>
             <p className="text-xs md:text-sm text-gray-400 font-light leading-relaxed">
-              Writing code is the baseline. The real value lies in seeing the system as a living organism—optimizing for liquidity, scalability, and tangible business velocity.
+              {dict.hero.role_description}
             </p>
           </div>
 
@@ -51,14 +55,14 @@ const HeroSection = () => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
               <span className="text-[10px] md:text-[10px] font-mono uppercase tracking-[0.15em] md:tracking-[0.2em] text-gray-300">
-                Open for New Ventures
+                {dict.hero.status_open}
               </span>
             </div>
 
             {/* Scroll Hint - 데스크톱에서만 */}
             <div className="hidden md:flex flex-col items-center gap-2 text-gray-600 animate-pulse">
               <div className="h-16 w-[1px] bg-gradient-to-b from-transparent to-gray-500" />
-              <span className="text-[10px] font-mono uppercase tracking-widest">Scroll</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest">{dict.hero.scroll}</span>
             </div>
           </div>
         </div>

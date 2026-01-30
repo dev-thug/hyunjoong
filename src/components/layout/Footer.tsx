@@ -1,6 +1,6 @@
 import { SOCIAL_LINKS, CONTACT_EMAIL, BRAND } from '@/constants';
 
-const Footer = () => {
+const Footer = ({ dict }: { readonly dict: any }) => {
   const handleKeyDown = (event: React.KeyboardEvent, href: string) => {
     if (event.key === 'Enter' || event.key === ' ') {
       window.location.href = href;
@@ -12,7 +12,7 @@ const Footer = () => {
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
         <div>
           <h4 className="text-[2.5rem] md:text-[4rem] lg:text-[5rem] xl:text-[7rem] font-bold font-montserrat leading-[0.85] md:leading-[0.8] tracking-tighter mb-6 md:mb-8 text-white/20 hover:text-white transition-colors duration-700 cursor-default">
-            LET&apos;S<br />TALK.
+            {dict.footer.cta_main}<br />{dict.footer.cta_sub}
           </h4>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
