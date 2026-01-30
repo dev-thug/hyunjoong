@@ -73,21 +73,19 @@ export const getPostBySlug = cache(async (slug: string, lang: string): Promise<P
   const mdxPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.mdx`);
   const mdPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.md`);
   
-  let filePath: string | null = null;
-  
+  let fileContents: string;
+  let currentLang = lang;
+
   try {
-    await fs.access(mdxPath);
-    filePath = mdxPath;
+    fileContents = await fs.readFile(mdxPath, 'utf8');
   } catch {
     try {
-      await fs.access(mdPath);
-      filePath = mdPath;
+      fileContents = await fs.readFile(mdPath, 'utf8');
     } catch {
       return null;
     }
   }
   
-  const fileContents = await fs.readFile(filePath, 'utf8');
   const metadata = parseMetadataFromContent(fileContents);
   
   if (!metadata || !metadata.title) {

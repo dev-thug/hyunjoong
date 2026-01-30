@@ -35,5 +35,20 @@
   },
   "brand": {
     "location": "DESIGNED IN SEOUL"
+  },
+  "blog": {
+    "back_to_blog": "블로그로 돌아가기",
+    "read_time": "읽기",
+    "previous": "이전 포스트",
+    "next": "다음 포스트",
+    "not_available_title": "한국어 번역이 없는 포스트입니다",
+    "not_available_description": "이 포스트는 {lang}로만 제공됩니다. 아래 버튼을 통해 해당 언어로 읽으실 수 있습니다.",
+    "read_in_language": "{lang}로 읽기"
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "연결할 수 없는 경로",
+    "description": "요청하신 페이지가 이동되었거나, 현재 아키텍처에 존재하지 않는 리소스입니다.",
+    "backHome": "홈으로 돌아가기"
   }
 }

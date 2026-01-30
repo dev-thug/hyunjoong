@@ -1,4 +1,5 @@
 import 'server-only';
+import { cache } from 'react';
 import type { Locale } from './i18n-config';
 
 const dictionaries = {
@@ -6,6 +7,6 @@ const dictionaries = {
   en: () => import('./dictionaries/en.json').then((module) => module.default),
 };
 
-export const getDictionary = async (locale: Locale) => {
+export const getDictionary = cache(async (locale: Locale) => {
   return dictionaries[locale]?.() ?? dictionaries.ko();
-};
+});
