@@ -124,34 +124,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </tbody>
     ),
-    thead: ({ children }) => (
-      <thead className="bg-zinc-800/30 border-b border-zinc-800">
-        {children}
-      </thead>
-    ),
-    th: ({ children }) => (
-      <th 
-        scope="col" 
-        className="px-4 py-3.5 text-sm font-semibold text-zinc-100 whitespace-nowrap"
-      >
-        {children}
-      </th>
-    ),
-    td: ({ children }) => (
-      <td className="px-4 py-4 text-sm text-zinc-400 border-b border-zinc-800/30 leading-relaxed">
-        {children}
-      </td>
-    ),
-    tr: ({ children }) => (
-      <tr className="transition-colors hover:bg-white/5 group">
-        {children}
-      </tr>
-    ),
-    tbody: ({ children }) => (
-      <tbody className="divide-y divide-zinc-800/30 [&_tr:last-child_td]:border-b-0">
-        {children}
-      </tbody>
-    ),
     ...components,
   };
 }
