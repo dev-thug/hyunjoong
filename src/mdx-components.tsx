@@ -89,30 +89,66 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     // 테이블 스타일
     table: ({ children }) => (
       <div className="my-8 overflow-hidden rounded-xl border border-zinc-800/50 bg-[#09090b]/40 backdrop-blur-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+          <table className="w-full border-collapse text-left">
             {children}
           </table>
         </div>
       </div>
     ),
     thead: ({ children }) => (
-      <thead className="bg-white/5">
+      <thead className="bg-zinc-800/30 border-b border-zinc-800">
         {children}
       </thead>
     ),
     th: ({ children }) => (
-      <th className="px-4 py-3 text-left text-sm font-semibold text-white border-b border-zinc-800/50">
+      <th 
+        scope="col" 
+        className="px-4 py-3.5 text-sm font-semibold text-zinc-100 whitespace-nowrap"
+      >
         {children}
       </th>
     ),
     td: ({ children }) => (
-      <td className="px-4 py-3 text-sm text-zinc-400 border-b border-zinc-800/20">
+      <td className="px-4 py-4 text-sm text-zinc-400 border-b border-zinc-800/30 leading-relaxed">
         {children}
       </td>
     ),
+    tr: ({ children }) => (
+      <tr className="transition-colors hover:bg-white/5 group">
+        {children}
+      </tr>
+    ),
     tbody: ({ children }) => (
-      <tbody className="[&_tr:last-child_td]:border-b-0 [&_tr:nth-child(even)]:bg-white/[0.02]">
+      <tbody className="divide-y divide-zinc-800/30 [&_tr:last-child_td]:border-b-0">
+        {children}
+      </tbody>
+    ),
+    thead: ({ children }) => (
+      <thead className="bg-zinc-800/30 border-b border-zinc-800">
+        {children}
+      </thead>
+    ),
+    th: ({ children }) => (
+      <th 
+        scope="col" 
+        className="px-4 py-3.5 text-sm font-semibold text-zinc-100 whitespace-nowrap"
+      >
+        {children}
+      </th>
+    ),
+    td: ({ children }) => (
+      <td className="px-4 py-4 text-sm text-zinc-400 border-b border-zinc-800/30 leading-relaxed">
+        {children}
+      </td>
+    ),
+    tr: ({ children }) => (
+      <tr className="transition-colors hover:bg-white/5 group">
+        {children}
+      </tr>
+    ),
+    tbody: ({ children }) => (
+      <tbody className="divide-y divide-zinc-800/30 [&_tr:last-child_td]:border-b-0">
         {children}
       </tbody>
     ),

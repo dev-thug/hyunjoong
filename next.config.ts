@@ -1,7 +1,5 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
-import rehypeHighlight from 'rehype-highlight';
-import remarkGfm from 'remark-gfm';
 
 /**
  * Next.js 설정
@@ -25,6 +23,11 @@ const nextConfig: NextConfig = {
 /**
  * MDX 설정
  */
-const withMDX = createMDX({});
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: ['remark-gfm'],
+    rehypePlugins: ['rehype-highlight'],
+  },
+});
 
 export default withMDX(nextConfig);
