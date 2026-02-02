@@ -39,6 +39,22 @@ export async function generateMetadata({
       default: dict.hero.meta_title,
     },
     description: dict.hero.meta_description,
+    metadataBase: new URL(baseUrl),
+    icons: {
+      icon: [
+        { url: "/images/favicon.svg", type: "image/svg+xml", sizes: "any" },
+        { url: "/images/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+        { url: "/images/favicon.ico", type: "image/x-icon", sizes: "any" },
+      ],
+      apple: [
+        {
+          url: "/images/apple-touch-icon.png",
+          type: "image/png",
+          sizes: "180x180",
+        },
+      ],
+    },
+    manifest: "/images/site.webmanifest",
     alternates: {
       canonical: `${baseUrl}/${lang}`,
       languages: {
@@ -47,7 +63,6 @@ export async function generateMetadata({
         "x-default": `${baseUrl}/ko`,
       },
     },
-    metadataBase: new URL(baseUrl),
     openGraph: {
       siteName: "Hyunjoong Kim",
       title: dict.hero.meta_title,
