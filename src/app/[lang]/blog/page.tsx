@@ -16,9 +16,8 @@ export async function generateMetadata({
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
 
   return {
-    title: `Blog | ${dict.hero.architecture}`,
-    description:
-      "Insights on full-stack development, serverless architecture, and business impact.",
+    title: dict.blog.page_title,
+    description: dict.blog.page_description,
     alternates: {
       canonical: `${baseUrl}/${lang}/blog`,
       languages: {

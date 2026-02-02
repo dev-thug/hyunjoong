@@ -6,11 +6,21 @@ import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
 
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description:
-    "Portfolio of full-stack development projects: serverless architecture, business impact, and technical case studies.",
-};
+/**
+ * 포트폴리오(프로젝트 목록) 페이지 메타데이터 (다국어)
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = (await params) as { lang: Locale };
+  const dict = await getDictionary(lang);
+  return {
+    title: dict.projects.meta_title,
+    description: dict.projects.meta_description,
+  };
+}
 
 /**
  * 포트폴리오(프로젝트 목록) 페이지

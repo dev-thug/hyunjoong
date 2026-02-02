@@ -21,6 +21,8 @@
   "projects": {
     "title_bg": "PORTFOLIO",
     "title": "주요 프로젝트",
+    "meta_title": "Portfolio",
+    "meta_description": "풀스택·서버리스 개발과 비즈니스 임팩트를 담은 프로젝트 포트폴리오. 기술 케이스 스터디와 실전 프로젝트 모음.",
     "page_subtitle": "풀스택·서버리스 개발과 비즈니스 임팩트를 담은 프로젝트 모음입니다.",
     "back_to_portfolio": "포트폴리오로 돌아가기",
     "back_to_portfolio_aria": "포트폴리오 목록으로 돌아가기"
@@ -29,6 +31,8 @@
     "location": "DESIGNED IN SEOUL"
   },
   "blog": {
+    "page_title": "Blog",
+    "page_description": "풀스택 개발, 서버리스 아키텍처, 비즈니스 임팩트에 대한 인사이트와 기술 블로그.",
     "back_to_blog": "블로그로 돌아가기",
     "read_time": "읽기",
     "previous": "이전 포스트",
@@ -36,6 +40,10 @@
     "not_available_title": "한국어 번역이 없는 포스트입니다",
     "not_available_description": "이 포스트는 {lang}로만 제공됩니다. 아래 버튼을 통해 해당 언어로 읽으실 수 있습니다.",
     "read_in_language": "{lang}로 읽기"
+  },
+  "profile": {
+    "meta_title": "Profile",
+    "meta_description": "풀스택 아키텍트. 서버리스 아키텍처, 비즈니스 인텔리전스, 확장 가능한 시스템을 전문으로 합니다."
   },
   "notFound": {
     "title": "404",

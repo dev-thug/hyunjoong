@@ -1,14 +1,17 @@
-import { MetadataRoute } from 'next';
+import { MetadataRoute } from "next";
+
+const DEFAULT_BASE_URL = "https://hyunjoong.com";
 
 /**
  * Robots.txt configuration for search engine crawling
  */
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
+      userAgent: "*",
+      allow: "/",
     },
-    sitemap: 'https://hyunjoong.com/sitemap.xml',
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

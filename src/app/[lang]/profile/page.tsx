@@ -1,12 +1,24 @@
 import { Mail, Github, Linkedin, Twitter } from "lucide-react";
 import { CONTACT_EMAIL, SOCIAL_LINKS } from "@/constants";
+import { getDictionary } from "@/get-dictionary";
 import type { Metadata } from "next";
+import type { Locale } from "@/i18n-config";
 
-export const metadata: Metadata = {
-  title: "Profile | Hyunjoong Kim",
-  description:
-    "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems.",
-};
+/**
+ * 프로필 페이지 메타데이터 (다국어)
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}): Promise<Metadata> {
+  const { lang } = (await params) as { lang: Locale };
+  const dict = await getDictionary(lang);
+  return {
+    title: dict.profile.meta_title,
+    description: dict.profile.meta_description,
+  };
+}
 
 /**
  * 프로필 페이지

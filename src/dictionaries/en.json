@@ -22,6 +22,8 @@
   "projects": {
     "title_bg": "PORTFOLIO",
     "title": "Selected Projects",
+    "meta_title": "Portfolio",
+    "meta_description": "Portfolio of full-stack development projects: serverless architecture, business impact, and technical case studies.",
     "page_subtitle": "Selected projects showcasing technical excellence and business impact.",
     "back_to_portfolio": "Back to Portfolio",
     "back_to_portfolio_aria": "Go back to portfolio list"
@@ -30,6 +32,8 @@
     "location": "DESIGNED IN SEOUL"
   },
   "blog": {
+    "page_title": "Blog",
+    "page_description": "Insights on full-stack development, serverless architecture, and business impact.",
     "back_to_blog": "Back to Blog",
     "read_time": "read",
     "previous": "Previous",
@@ -37,6 +41,10 @@
     "not_available_title": "Post not available in English",
     "not_available_description": "This post is only available in {lang}. You can read it in that language below.",
     "read_in_language": "Read in {lang}"
+  },
+  "profile": {
+    "meta_title": "Profile",
+    "meta_description": "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems."
   },
   "notFound": {
     "title": "404",
