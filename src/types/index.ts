@@ -7,7 +7,7 @@ export interface Project {
   title: string;
   adCopy: string;
   description: string;
-  techHighlight: string;
+  highlight: string;
   serviceUrl?: string;
   image: string;
   tags: string[];

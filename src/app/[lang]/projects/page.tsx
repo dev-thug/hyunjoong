@@ -65,7 +65,7 @@ export default async function ProjectsPage({
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
-                      {project.techHighlight}
+                      {project.highlight}
                     </span>
                   </div>
 

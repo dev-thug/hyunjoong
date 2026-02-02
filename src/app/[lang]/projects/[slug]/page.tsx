@@ -85,7 +85,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
         <div className="flex items-center gap-4 mb-4">
           <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
-            {project.techHighlight}
+            {project.highlight}
           </span>
         </div>
 

@@ -22,12 +22,15 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
           <div>
             {/* 메타 정보 */}
             <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-8">
-              <span className="text-[10px] md:text-xs font-mono text-gray-500" aria-hidden="true">
+              <span
+                className="text-[10px] md:text-xs font-mono text-gray-500"
+                aria-hidden="true"
+              >
                 NO. 0{index + 1}
               </span>
               <div className="h-px w-8 md:w-12 bg-gray-800" />
               <span className="text-[10px] md:text-xs font-mono text-gray-400 uppercase tracking-widest truncate">
-                {project.techHighlight}
+                {project.highlight}
               </span>
             </div>
 
@@ -50,7 +53,10 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
           </div>
 
           {/* 태그 */}
-          <div className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3" aria-label="Project tags">
+          <div
+            className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3"
+            aria-label="Project tags"
+          >
             {project.tags.map((tag) => (
               <span
                 key={tag}
