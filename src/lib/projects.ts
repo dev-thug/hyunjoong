@@ -73,12 +73,8 @@ const parseMetadataFromContent = (content: string): any | null => {
   const getLongString = (key: string) => {
     // key: "value" 또는 key: 'value' 패턴 매칭
     // 문자열 내부의 escaped quotes (\", \') 처리
-    const doubleQuoteRegex = new RegExp(
-      `${key}:\\s*"((?:[^"\\\\]|\\\\.)*)"`
-    );
-    const singleQuoteRegex = new RegExp(
-      `${key}:\\s*'((?:[^'\\\\]|\\\\.)*)'`
-    );
+    const doubleQuoteRegex = new RegExp(`${key}:\\s*"((?:[^"\\\\]|\\\\.)*)"`);
+    const singleQuoteRegex = new RegExp(`${key}:\\s*'((?:[^'\\\\]|\\\\.)*)'`);
 
     const doubleMatch = metadataBlock.match(doubleQuoteRegex);
     if (doubleMatch) {

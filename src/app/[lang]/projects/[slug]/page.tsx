@@ -97,19 +97,6 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {project.adCopy}
         </p>
 
-        {project.serviceUrl && (
-          <a
-            href={project.serviceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 mt-6 rounded-lg border border-gray-700 bg-white/5 text-white hover:bg-white/10 hover:border-gray-600 focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:outline-none transition-all duration-200 touch-action-manipulation"
-            aria-label={`Visit ${project.title} service (opens in new tab)`}
-          >
-            <span className="text-sm font-medium">Visit Live Service</span>
-            <ExternalLink size={16} aria-hidden="true" className="shrink-0" />
-          </a>
-        )}
-
         <hr className="border-gray-800 mt-8" />
       </header>
 
@@ -127,7 +114,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       {/* 메트릭스 */}
       <section
-        className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
+        className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8"
         aria-label="Project metrics"
       >
         {project.metrics.map((metric) => (
@@ -160,9 +147,29 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         ))}
       </div>
 
+      {/* 서비스 바로가기: 태그 아래 가로로 길게 */}
+      {project.serviceUrl && (
+        <a
+          href={project.serviceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-center gap-3 w-full py-4 px-6 rounded-xl border-2 border-white/25 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none transition-all duration-200 touch-action-manipulation mb-12"
+          aria-label={`Visit ${project.title} service (opens in new tab)`}
+        >
+          <span className="text-base font-bold">Visit Service</span>
+          <ExternalLink size={20} aria-hidden="true" className="shrink-0" />
+        </a>
+      )}
+
       {/* 상세 설명 */}
-      <section className="prose-custom mb-16" aria-labelledby="overview-heading">
-        <h2 id="overview-heading" className="text-2xl font-light text-white mb-6">
+      <section
+        className="prose-custom mb-16"
+        aria-labelledby="overview-heading"
+      >
+        <h2
+          id="overview-heading"
+          className="text-2xl font-light text-white mb-6"
+        >
           Project Overview
         </h2>
         <div className="text-gray-400 leading-relaxed text-lg">
@@ -173,8 +180,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* MDX 본문 컨텐츠 */}
       {ProjectContent && (
         <>
-          <hr className="border-gray-800 mb-16" aria-hidden="true" />
-          <section className="prose-custom mb-16" aria-label="Detailed project documentation">
+          <hr className="border-gray-800 my-8" aria-hidden="true" />
+          <section
+            className="prose-custom mb-16"
+            aria-label="Detailed project documentation"
+          >
             <ProjectContent />
           </section>
         </>

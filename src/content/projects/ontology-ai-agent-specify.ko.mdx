@@ -4,13 +4,21 @@ export const metadata = {
   adCopy: "파편화된 기업 데이터를 유기적 지식 자산으로.",
   description:
     "그래프 기반 온톨로지와 Multi-Source RAG(GitHub, Notion, Google Docs 연동)를 통해 기업 데이터를 '기업용 두뇌'로 전환하는 AI 에이전트 서비스입니다. 실시간 맥락 연결(Semantic Linking)과 인사이트 대시보드로 정보 탐색 시간 40% 단축, 무형 자산의 가시화 및 데이터 기반 의사결정을 지원합니다. ",
-  techHighlight: "Ontology · Multi-Source RAG · -40% Search Time",
+  techHighlight: "Ontology · Multi-Source RAG · AI Agent",
   serviceUrl: "https://specify.app",
   image: "/images/ko/specify.png",
-  tags: ["AI Agent", "AWS Bedrock", "Next.js", "Ontology", "RAG"],
+  tags: [
+    "AI Agent",
+    "AWS Bedrock",
+    "Next.js",
+    "Ontology",
+    "RAG",
+    "1인 프로젝트",
+  ],
   metrics: [
-    { label: "정보 탐색 시간 단축", value: "40%" },
-    { label: "초기 가입자 (OBT)", value: "16명" },
+    { label: "서비스 단계", value: "Open Beta" },
+    { label: "초기 가입자 (OBT)", value: "20명" },
+    { label: "평균 클릭률 (CTR)", value: "3.2%" },
   ],
   lang: "ko",
 };
@@ -18,14 +26,17 @@ export const metadata = {
 # Ontology AI-Agent Specify
 
 **"문서 도구는 왜 '기록'만 하고 '생각'은 하지 못할까?"**
+
 Specify는 이 질문에서 시작된 **기업용 AI 두뇌 서비스**입니다. 파편화된 기업 데이터를 그래프 기반 온톨로지(Ontology)로 구조화하여, 단순한 정보 저장을 넘어 지식 간의 인과관계를 스스로 규명하고 인사이트를 제안합니다.
 
 ## 💡 Core Problem & Solution
 
 **The Problem: 데이터 사일로(Data Silo)와 지식의 휘발**
+
 현대의 업무 환경에서 데이터는 폭발적으로 증가하지만, Notion, Slack, Google Docs 등에 파편화되어 존재합니다. 이로 인해 프로젝트 맥락(Context)이 단절되고, 과거의 시행착오가 반복되는 '비효율적 지식 관리' 문제가 발생합니다.
 
-**The Solution: 팔란티어(Palantir)식 온톨로지 문서 엔진**
+**The Solution: 팔란티어(Palantir)의 온톨로지 문서 엔진**
+
 글로벌 데이터 분석 기업 팔란티어의 데이터 구조화 방식에 착안하여, 문서 내 객체(Entity)와 관계(Relation)를 정의하는 엔진을 개발했습니다.
 
 - **Assetization:** 흩어진 텍스트를 유기적인 '지식 자산'으로 자동 전환
@@ -37,23 +48,22 @@ Specify는 이 질문에서 시작된 **기업용 AI 두뇌 서비스**입니다
 - **Semantic Linking (실시간 맥락 연결):** 문서를 작성하는 즉시 AI가 관련된 과거 히스토리, 기술 사양, 잠재적 리스크를 실시간으로 사이드바에 추천.
 - **Insight Dashboard:** 프로젝트의 '건강도'와 '기술 부채'를 시각화된 그래프(Knowledge Graph)로 제공하여 의사결정 속도 극대화.
 
-## 🏗 Technical Architecture & Achievements
+## 🏗 Technical Architecture
 
-**1. Cloud Native & Serverless Optimization**
+**1. Cloud Native & Event-Driven Architecture**
 
-- **AWS Lambda & EventBridge:** 이벤트 기반 아키텍처(EDA)를 설계하여 트래픽에 따라 유동적으로 리소스를 할당.
-- **Cost Efficiency:** 고정 서버 대비 **운영 비용 92% 절감** (월 600만 원 → 50만 원) 및 데이터 처리 시간 66% 단축 달성.
+- **Scalability:** AWS Lambda, SQS, EventBridge를 활용한 서버리스(Serverless) 아키텍처를 설계하여 트래픽 변동에 유연하게 대응하고 인프라 운영 복잡도를 최소화했습니다.
+- **Cost Optimization:** 사용량 기반의 리소스 할당을 통해 초기 스타트업 운영에 최적화된 고성능/저비용 구조를 구현했습니다.
 
-**2. AI & Real-time Sync**
+**2. AI & Real-time Collaboration**
 
-- **Gen AI:** AWS Bedrock과 LangChain을 활용한 에이전틱(Agentic) 워크플로우 구현. 단순 답변 생성을 넘어 자율적인 데이터 탐색 수행.
-- **CRDT (Yjs):** 끊김 없는 실시간 동시 편집 환경을 구축하여 팀 협업 효율성 증대.
+- **Gen AI Orchestration:** AWS Bedrock과 LangChain을 활용하여 단순 답변 생성을 넘어, 자율적으로 외부 데이터를 탐색하고 추론하는 에이전틱(Agentic) 워크플로우를 구축했습니다.
+- **CRDT (Yjs) Engine:** 끊김 없는 실시간 동시 편집 환경을 구현하여 팀 협업 시 데이터 정합성을 보장합니다.
 
-## 🚀 Business Impact (Traction)
+## 🚀 Traction & Status
 
-- **Market Validation:** 별도 마케팅 없이 오가닉 검색(Organic Search)만으로 오픈 베타 **CTR 3.2%** 기록, 자생적 수요 확인.
-- **Efficiency:** 도입 기업 대상 정보 탐색 시간 **평균 40% 단축** 효과 검증.
-- **Service:** [Specify 바로가기](https://specify.app)
+- **Market Validation:** 별도의 마케팅 비용 집행 없이 검색 기반 유기적 유입(Organic Search)만으로 **CTR 3.2%**를 기록하며 시장의 자생적 수요를 확인했습니다.
+- **Current Status:** Next.js 및 AWS Bedrock 기반의 MVP 개발을 완료하고, 현재 오픈 베타 테스트(OBT)를 통해 사용자 피드백 루프를 구축하여 온톨로지 엔진을 고도화하고 있습니다.
 
 ---
 
