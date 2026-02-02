@@ -1,9 +1,13 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
-import { getProjectBySlug, getAllProjects, generateProjectParams } from '@/lib/projects';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
-import type { Metadata } from 'next';
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import {
+  getProjectBySlug,
+  getAllProjects,
+  generateProjectParams,
+} from "@/lib/projects";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -19,16 +23,18 @@ export async function generateStaticParams() {
 /**
  * 동적 메타데이터 생성
  */
-export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ProjectPageProps): Promise<Metadata> {
   const { slug, lang } = await params;
   const project = await getProjectBySlug(slug, lang);
-  
+
   if (!project) {
-    return { title: 'Project Not Found' };
+    return { title: "Project Not Found" };
   }
-  
+
   return {
-    title: `${project.title} | Kim Hyun-joong`,
+    title: `${project.title} | Hyunjoong Kim`,
     description: project.adCopy,
   };
 }
@@ -39,7 +45,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { lang, slug } = await params;
   const project = await getProjectBySlug(slug, lang);
-  
+
   if (!project) {
     notFound();
   }
@@ -48,7 +54,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const allProjects = await getAllProjects(lang);
   const currentIndex = allProjects.findIndex((p) => p.slug === slug);
   const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
-  const nextProject = currentIndex < allProjects.length - 1 ? allProjects[currentIndex + 1] : null;
+  const nextProject =
+    currentIndex < allProjects.length - 1
+      ? allProjects[currentIndex + 1]
+      : null;
 
   return (
     <article className="max-w-5xl mx-auto">
@@ -60,7 +69,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           aria-label="Go back to projects list"
         >
           <ArrowLeft size={16} />
-          <span className="text-sm font-mono uppercase tracking-widest">Back to Projects</span>
+          <span className="text-sm font-mono uppercase tracking-widest">
+            Back to Projects
+          </span>
         </Link>
 
         <div className="flex items-center gap-4 mb-4">
@@ -72,7 +83,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <h1 className="text-4xl md:text-6xl font-bold font-montserrat text-white leading-tight">
           {project.title}
         </h1>
-        
+
         <p className="text-xl text-gray-400 mt-4 leading-relaxed">
           {project.adCopy}
         </p>
@@ -93,7 +104,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </div>
 
       {/* 메트릭스 */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12" aria-label="Project metrics">
+      <section
+        className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12"
+        aria-label="Project metrics"
+      >
         {project.metrics.map((metric) => (
           <div
             key={metric.label}
@@ -110,7 +124,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </section>
 
       {/* 태그 */}
-      <div className="flex flex-wrap gap-3 mb-12" aria-label="Technologies used">
+      <div
+        className="flex flex-wrap gap-3 mb-12"
+        aria-label="Technologies used"
+      >
         {project.tags.map((tag) => (
           <span
             key={tag}
@@ -123,14 +140,19 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
       {/* 상세 설명 */}
       <section className="prose-custom mb-16">
-        <h2 className="text-2xl font-light text-white mb-6">Project Overview</h2>
+        <h2 className="text-2xl font-light text-white mb-6">
+          Project Overview
+        </h2>
         <div className="text-gray-400 leading-relaxed text-lg">
           {project.description}
         </div>
       </section>
 
       {/* 네비게이션 */}
-      <nav className="mt-16 pt-8 border-t border-gray-800" aria-label="Project navigation">
+      <nav
+        className="mt-16 pt-8 border-t border-gray-800"
+        aria-label="Project navigation"
+      >
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
           {prevProject ? (
             <Link

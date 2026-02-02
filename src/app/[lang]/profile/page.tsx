@@ -3,7 +3,7 @@ import { CONTACT_EMAIL, SOCIAL_LINKS } from "@/constants";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Profile | Kim Hyun-joong",
+  title: "Profile | Hyunjoong Kim",
   description:
     "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems.",
 };

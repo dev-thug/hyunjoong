@@ -5,7 +5,7 @@ import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Projects | Kim Hyun-joong",
+  title: "Projects | Hyunjoong Kim",
   description:
     "Selected projects showcasing full-stack development, serverless architecture, and business impact.",
 };
@@ -58,7 +58,10 @@ export default async function ProjectsPage({
               <div className="md:w-2/3 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="text-xs font-mono text-gray-600" aria-hidden="true">
+                    <span
+                      className="text-xs font-mono text-gray-600"
+                      aria-hidden="true"
+                    >
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
