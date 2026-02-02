@@ -9,12 +9,11 @@ const LiquidBackground = dynamic(
   () => import("@/components/LiquidBackground"),
   {
     ssr: false,
-  },
+  }
 );
 
 interface HomeLayoutWrapperProps {
   readonly children: ReactNode;
-  readonly dict: any;
 }
 
 /**
@@ -22,14 +21,14 @@ interface HomeLayoutWrapperProps {
  * LiquidBackground와 Footer만 관리
  * 네비게이션은 전역 레이아웃에서 관리됨
  */
-const HomeLayoutWrapper = ({ children, dict }: HomeLayoutWrapperProps) => {
+const HomeLayoutWrapper = ({ children }: HomeLayoutWrapperProps) => {
   return (
     <div className="relative min-h-screen text-white selection:bg-white selection:text-black">
       <LiquidBackground />
 
       {children}
 
-      <Footer dict={dict} />
+      <Footer />
     </div>
   );
 };

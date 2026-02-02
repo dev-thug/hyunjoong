@@ -3,15 +3,17 @@ import { SOCIAL_LINKS, CONTACT_EMAIL, BRAND } from "@/constants";
 
 const SOCIAL_ICONS = [Github, Linkedin, Twitter] as const;
 
-const Footer = ({ dict }: { readonly dict: any }) => {
+const FOOTER_CTA = { main: "LET'S", sub: "TALK." } as const;
+
+const Footer = () => {
   return (
     <footer className="py-12 md:py-16 lg:py-20 border-t border-white/10 bg-[#020202] relative z-10">
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
         <div>
           <h4 className="text-[2.5rem] md:text-[4rem] lg:text-[5rem] xl:text-[7rem] font-bold font-montserrat leading-[0.85] md:leading-[0.8] tracking-tighter mb-6 md:mb-8 heading-decorative hover:text-white transition-colors duration-700 cursor-default">
-            {dict.footer.cta_main}
+            {FOOTER_CTA.main}
             <br />
-            {dict.footer.cta_sub}
+            {FOOTER_CTA.sub}
           </h4>
           <a
             href={`mailto:${CONTACT_EMAIL}`}

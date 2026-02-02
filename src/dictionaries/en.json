@@ -1,25 +1,15 @@
 {
-  "navigation": {
-    "works": "Works",
-    "intelligence": "Intelligence",
-    "profile": "Profile",
-    "contact": "Contact",
-    "language": "한국어"
-  },
   "hero": {
     "title_beyond": "BEYOND",
     "title_code": "CODE",
     "role_title": "The Architect's Role",
     "role_description": "Writing code is the baseline. The real value lies in seeing the system as a living organism—optimizing for liquidity, scalability, and tangible business velocity.",
-    "status_open": "Open for New Ventures",
     "scroll": "Scroll",
     "architecture": "Full-stack Architecture",
     "intelligence_subtitle": "Business Intelligence"
   },
   "about": {
     "philosophy_label": "The Philosophy",
-    "quote_main": "I don't just build software.",
-    "quote_sub": "I build leverage.",
     "description": "In an era where AI writes code, the value of an engineer shifts from execution to architecture. I specialize in high-impact, serverless infrastructures that scale without the overhead.",
     "stack_label": "Core Stack",
     "focus_label": "Focus",
@@ -28,10 +18,6 @@
   "projects": {
     "title_bg": "WORKS",
     "title": "Selected Projects"
-  },
-  "footer": {
-    "cta_main": "LET'S",
-    "cta_sub": "TALK."
   },
   "brand": {
     "location": "DESIGNED IN SEOUL"

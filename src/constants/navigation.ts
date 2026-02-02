@@ -1,14 +1,23 @@
 import type { NavLink, SocialLink } from "@/types/navigation";
 
+const NAV_LABELS = {
+  works: "Works",
+  intelligence: "Intelligence",
+  profile: "Profile",
+  contact: "Contact",
+} as const;
+
 /**
- * 메인 네비게이션 링크 생성 함수
+ * 메인 네비게이션 링크 생성 함수 (영어 고정)
  */
-export const getNavLinks = (dict: any, lang: string): readonly NavLink[] =>
+export const getNavLinks = (lang: string): readonly NavLink[] =>
   [
-    { href: `/${lang}/projects`, label: dict.navigation.works },
-    { href: `/${lang}/blog`, label: dict.navigation.intelligence },
-    { href: `/${lang}/profile`, label: dict.navigation.profile },
+    { href: `/${lang}/projects`, label: NAV_LABELS.works },
+    { href: `/${lang}/blog`, label: NAV_LABELS.intelligence },
+    { href: `/${lang}/profile`, label: NAV_LABELS.profile },
   ] as const;
+
+export const NAV_CONTACT_LABEL = NAV_LABELS.contact;
 
 /**
  * 연락처 이메일
@@ -37,8 +46,8 @@ export const SOCIAL_LINKS: readonly SocialLink[] = [
  */
 export const BRAND = {
   NAME: "HYUNJOONG.KIM",
-  TITLE: "Kim Hyun-joong | Full-stack Architect",
+  TITLE: "Hyunjoong Kim | Software Engineer",
   LOCATION: "DESIGNED IN SEOUL",
-  ESTABLISHED_YEAR: "2024",
+  ESTABLISHED_YEAR: "2025",
   COPYRIGHT_YEAR: "2026",
 } as const;

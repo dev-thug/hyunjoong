@@ -1,15 +1,19 @@
-'use client';
+"use client";
 
-import { getNavLinks, CONTACT_EMAIL, BRAND } from '@/constants';
-import { Menu, X } from 'lucide-react';
-import Link from 'next/link';
-import LanguageSwitcher from './LanguageSwitcher';
+import {
+  getNavLinks,
+  NAV_CONTACT_LABEL,
+  CONTACT_EMAIL,
+  BRAND,
+} from "@/constants";
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 interface NavigationProps {
   readonly isScrolled: boolean;
   readonly isMobileMenuOpen: boolean;
   readonly onToggleMobileMenu: () => void;
-  readonly dict: any;
   readonly lang: string;
 }
 
@@ -17,12 +21,11 @@ const Navigation = ({
   isScrolled,
   isMobileMenuOpen,
   onToggleMobileMenu,
-  dict,
   lang,
 }: NavigationProps) => {
-  const navLinks = getNavLinks(dict, lang);
+  const navLinks = getNavLinks(lang);
   const handleKeyDown = (event: React.KeyboardEvent, action: () => void) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       action();
     }
@@ -38,8 +41,8 @@ const Navigation = ({
       <nav
         className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[1400px] z-50 transition-all duration-700 ${
           isScrolled
-            ? 'glass-panel rounded-full py-4 px-8 bg-noise'
-            : 'py-8 px-0 border-transparent bg-transparent'
+            ? "glass-panel rounded-full py-4 px-8 bg-noise"
+            : "py-8 px-0 border-transparent bg-transparent"
         }`}
       >
         <div className="flex justify-between items-center">
@@ -54,7 +57,7 @@ const Navigation = ({
           {/* Desktop Navigation */}
           <div
             className={`hidden md:flex gap-12 items-center text-[10px] font-mono tracking-widest uppercase mix-blend-difference transition-all duration-500 animate-fade-up delay-200 ${
-              isScrolled ? 'text-gray-200' : 'text-gray-400'
+              isScrolled ? "text-gray-200" : "text-gray-400"
             }`}
           >
             {navLinks.map((link) => (
@@ -74,9 +77,9 @@ const Navigation = ({
               tabIndex={0}
               aria-label="Send email to contact"
             >
-              {dict.navigation.contact}
+              {NAV_CONTACT_LABEL}
             </a>
-            <LanguageSwitcher dict={dict} isScrolled={isScrolled} />
+            <LanguageSwitcher isScrolled={isScrolled} />
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,7 +87,9 @@ const Navigation = ({
             className="md:hidden text-white z-50"
             onClick={onToggleMobileMenu}
             onKeyDown={(e) => handleKeyDown(e, onToggleMobileMenu)}
-            aria-label={isMobileMenuOpen ? 'Close mobile menu' : 'Open mobile menu'}
+            aria-label={
+              isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"
+            }
             aria-expanded={isMobileMenuOpen}
             tabIndex={0}
           >
@@ -115,10 +120,10 @@ const Navigation = ({
             className="text-3xl font-light"
             tabIndex={0}
           >
-            {dict.navigation.contact}
+            {NAV_CONTACT_LABEL}
           </a>
           <div className="pt-4">
-            <LanguageSwitcher dict={dict} isScrolled={true} />
+            <LanguageSwitcher isScrolled={true} />
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
-import SpotlightText from '@/components/SpotlightText';
-import { BRAND } from '@/constants';
+import SpotlightText from "@/components/SpotlightText";
+import { BRAND } from "@/constants";
 
 interface HeroSectionProps {
   readonly dict: any;
@@ -15,7 +15,8 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
             Est. {BRAND.ESTABLISHED_YEAR}
           </span>
           <span className="text-[10px] font-mono uppercase tracking-widest text-right">
-            {dict.hero.architecture}<br />
+            {dict.hero.architecture}
+            <br />
             {dict.hero.intelligence_subtitle}
           </span>
         </div>
@@ -29,7 +30,9 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
               <SpotlightText>{dict.hero.title_beyond}</SpotlightText>
             </div>
             <div className="flex justify-end pr-[2vw] md:pr-[5vw] animate-reveal delay-500">
-              <SpotlightText className="italic font-light">{dict.hero.title_code}</SpotlightText>
+              <SpotlightText className="italic font-light">
+                {dict.hero.title_code}
+              </SpotlightText>
             </div>
           </h1>
         </div>
@@ -55,14 +58,16 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
               <span className="text-[10px] md:text-[10px] font-mono uppercase tracking-[0.15em] md:tracking-[0.2em] text-gray-300">
-                {dict.hero.status_open}
+                Open for New Ventures
               </span>
             </div>
 
             {/* Scroll Hint - 데스크톱에서만 */}
             <div className="hidden md:flex flex-col items-center gap-2 text-gray-600 animate-pulse">
               <div className="h-16 w-[1px] bg-gradient-to-b from-transparent to-gray-500" />
-              <span className="text-[10px] font-mono uppercase tracking-widest">{dict.hero.scroll}</span>
+              <span className="text-[10px] font-mono uppercase tracking-widest">
+                {dict.hero.scroll}
+              </span>
             </div>
           </div>
         </div>
@@ -72,4 +77,3 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
 };
 
 export default HeroSection;
-

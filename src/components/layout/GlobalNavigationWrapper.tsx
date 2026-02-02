@@ -5,7 +5,6 @@ import Navigation from "@/components/layout/Navigation";
 import { SCROLL_THRESHOLD } from "@/constants";
 
 interface GlobalNavigationWrapperProps {
-  readonly dict: any;
   readonly lang: string;
 }
 
@@ -13,7 +12,7 @@ interface GlobalNavigationWrapperProps {
  * 전역 네비게이션 래퍼
  * 모든 페이지에서 동일한 네비게이션과 이벤트 효과 제공
  */
-const GlobalNavigationWrapper = ({ dict, lang }: GlobalNavigationWrapperProps) => {
+const GlobalNavigationWrapper = ({ lang }: GlobalNavigationWrapperProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -35,7 +34,6 @@ const GlobalNavigationWrapper = ({ dict, lang }: GlobalNavigationWrapperProps) =
       isScrolled={isScrolled}
       isMobileMenuOpen={isMobileMenuOpen}
       onToggleMobileMenu={handleToggleMobileMenu}
-      dict={dict}
       lang={lang}
     />
   );

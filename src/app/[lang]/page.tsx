@@ -7,10 +7,10 @@ import { getDictionary } from "@/get-dictionary";
 
 // 초기 로딩에 필수적이지 않은 하단 섹션들을 dynamic import로 분리하여 번들 크기 최적화
 const AboutSection = dynamic(
-  () => import("@/components/sections/AboutSection"),
+  () => import("@/components/sections/AboutSection")
 );
 const ProjectsSection = dynamic(
-  () => import("@/components/sections/ProjectsSection"),
+  () => import("@/components/sections/ProjectsSection")
 );
 const BlogSection = dynamic(() => import("@/components/sections/BlogSection"));
 
@@ -27,7 +27,7 @@ export default async function Home({
   const dict = await getDictionary(lang);
 
   return (
-    <HomeLayoutWrapper dict={dict}>
+    <HomeLayoutWrapper>
       {/* LCP 요소: 즉시 렌더링 */}
       <HeroSection dict={dict} />
 

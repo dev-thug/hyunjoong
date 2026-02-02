@@ -62,7 +62,7 @@ export default async function LangLayout({
   return (
     <html lang={lang} className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${montserrat.variable} antialiased`}>
-        <GlobalNavigationWrapper dict={dict} lang={lang} />
+        <GlobalNavigationWrapper lang={lang} />
         {children}
       </body>
     </html>
