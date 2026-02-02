@@ -15,40 +15,50 @@ export default function ProfilePage() {
   const skills = [
     {
       category: "Frontend",
-      items: ["React", "Next.js", "TypeScript", "TailwindCSS", "WebGL"],
+      items: ["React", "Next.js", "TypeScript", "TailwindCSS"],
     },
     {
       category: "Backend",
       items: ["Node.js", "Python", "GraphQL", "REST API"],
     },
     {
-      category: "Cloud & DevOps",
-      items: ["AWS", "Amplify", "Lambda", "DynamoDB", "Docker"],
+      category: "Cloud",
+      items: ["Amplify Gen1 & Gen2", "Lambda", "DynamoDB", "ECS"],
     },
     {
-      category: "Data & AI",
-      items: ["Pinecone", "OpenAI", "Vector DB", "Analytics"],
+      category: "DevOps",
+      items: [
+        "Docker",
+        "CloudFormation/Terraform",
+        "CI/CD (GitHub Actions)",
+        "Kubernetes",
+      ],
     },
   ];
 
   const experiences = [
     {
-      period: "2024 — Present",
-      title: "Full-stack Architect",
-      company: "Freelance",
-      description: "High-impact serverless solutions for enterprise clients",
+      period: "2023.12 — Present",
+      title: "Tech Leader, Fullstack & AWS Cloud Developer",
+      company: "Fortuna Helix",
+      companyUrl: "https://fortunahelix.com/",
+      description:
+        "Leading backend and AWS cloud development, driving technical direction and delivery.",
     },
     {
-      period: "2022 — 2024",
-      title: "Senior Engineer",
-      company: "Tech Startup",
-      description: "Led architecture decisions for scalable platforms",
+      period: "2021.12 — 2023.12",
+      title: "Backend & AWS Cloud Developer",
+      company: "Healicure",
+      companyUrl: "https://yejin.clinic/",
+      description:
+        "Backend and AWS cloud development for healthcare and enterprise solutions.",
     },
     {
-      period: "2020 — 2022",
-      title: "Software Engineer",
-      company: "Digital Agency",
-      description: "Full-stack development for diverse client projects",
+      period: "2015.03 — 2022.02",
+      title: "Bachelor's Degree",
+      company: "Kumoh National Institute of Technology",
+      companyUrl: "https://www.kumoh.ac.kr/",
+      description: "Computer Software Engineering",
     },
   ];
 
@@ -145,9 +155,22 @@ export default function ProfilePage() {
                 <h3 className="text-lg md:text-xl font-light text-white mb-1">
                   {exp.title}
                 </h3>
-                <span className="text-sm text-gray-500 block mb-2">
-                  {exp.company}
-                </span>
+                {"companyUrl" in exp && exp.companyUrl ? (
+                  <a
+                    href={exp.companyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-gray-500 block mb-2 hover:text-white transition-colors"
+                    tabIndex={0}
+                    aria-label={`Visit ${exp.company} website`}
+                  >
+                    {exp.company}
+                  </a>
+                ) : (
+                  <span className="text-sm text-gray-500 block mb-2">
+                    {exp.company}
+                  </span>
+                )}
                 <p className="text-sm text-gray-400">{exp.description}</p>
               </div>
             </div>
