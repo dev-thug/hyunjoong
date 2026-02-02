@@ -1,5 +1,5 @@
 import { Mail, Github, Linkedin, Twitter } from "lucide-react";
-import { CONTACT_EMAIL } from "@/constants";
+import { CONTACT_EMAIL, SOCIAL_LINKS } from "@/constants";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -180,26 +180,32 @@ export default function ProfilePage() {
 
             <div className="flex gap-3">
               <a
-                href="#"
+                href={SOCIAL_LINKS[0].href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
                 tabIndex={0}
-                aria-label="Github profile"
+                aria-label={SOCIAL_LINKS[0].ariaLabel}
               >
                 <Github size={18} />
               </a>
               <a
-                href="#"
+                href={SOCIAL_LINKS[1].href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
                 tabIndex={0}
-                aria-label="LinkedIn profile"
+                aria-label={SOCIAL_LINKS[1].ariaLabel}
               >
                 <Linkedin size={18} />
               </a>
               <a
-                href="#"
+                href={SOCIAL_LINKS[2].href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
                 tabIndex={0}
-                aria-label="Twitter profile"
+                aria-label={SOCIAL_LINKS[2].ariaLabel}
               >
                 <Twitter size={18} />
               </a>

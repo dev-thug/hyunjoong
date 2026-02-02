@@ -19,9 +19,17 @@ export const CONTACT_EMAIL = "de0978@gmail.com";
  * 소셜 미디어 링크
  */
 export const SOCIAL_LINKS: readonly SocialLink[] = [
-  { href: "#", label: "Github", ariaLabel: "Visit Github profile" },
-  { href: "#", label: "LinkedIn", ariaLabel: "Visit LinkedIn profile" },
-  { href: "#", label: "Twitter", ariaLabel: "Visit Twitter profile" },
+  {
+    href: "https://github.com/dev-thug",
+    label: "Github",
+    ariaLabel: "Visit GitHub profile",
+  },
+  {
+    href: "https://www.linkedin.com/in/dev-thug/",
+    label: "LinkedIn",
+    ariaLabel: "Visit LinkedIn profile",
+  },
+  { href: "https://x.com/de0978", label: "X", ariaLabel: "Visit X profile" },
 ] as const;
 
 /**
