@@ -1,10 +1,11 @@
-import { Mail, Github, Linkedin, Twitter } from 'lucide-react';
-import { CONTACT_EMAIL } from '@/constants';
-import type { Metadata } from 'next';
+import { Mail, Github, Linkedin, Twitter } from "lucide-react";
+import { CONTACT_EMAIL } from "@/constants";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Profile | Kim Hyun-joong',
-  description: 'Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems.',
+  title: "Profile | Kim Hyun-joong",
+  description:
+    "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems.",
 };
 
 /**
@@ -13,41 +14,41 @@ export const metadata: Metadata = {
 export default function ProfilePage() {
   const skills = [
     {
-      category: 'Frontend',
-      items: ['React', 'Next.js', 'TypeScript', 'TailwindCSS', 'WebGL'],
+      category: "Frontend",
+      items: ["React", "Next.js", "TypeScript", "TailwindCSS", "WebGL"],
     },
     {
-      category: 'Backend',
-      items: ['Node.js', 'Python', 'GraphQL', 'REST API'],
+      category: "Backend",
+      items: ["Node.js", "Python", "GraphQL", "REST API"],
     },
     {
-      category: 'Cloud & DevOps',
-      items: ['AWS', 'Amplify', 'Lambda', 'DynamoDB', 'Docker'],
+      category: "Cloud & DevOps",
+      items: ["AWS", "Amplify", "Lambda", "DynamoDB", "Docker"],
     },
     {
-      category: 'Data & AI',
-      items: ['Pinecone', 'OpenAI', 'Vector DB', 'Analytics'],
+      category: "Data & AI",
+      items: ["Pinecone", "OpenAI", "Vector DB", "Analytics"],
     },
   ];
 
   const experiences = [
     {
-      period: '2024 — Present',
-      title: 'Full-stack Architect',
-      company: 'Freelance',
-      description: 'High-impact serverless solutions for enterprise clients',
+      period: "2024 — Present",
+      title: "Full-stack Architect",
+      company: "Freelance",
+      description: "High-impact serverless solutions for enterprise clients",
     },
     {
-      period: '2022 — 2024',
-      title: 'Senior Engineer',
-      company: 'Tech Startup',
-      description: 'Led architecture decisions for scalable platforms',
+      period: "2022 — 2024",
+      title: "Senior Engineer",
+      company: "Tech Startup",
+      description: "Led architecture decisions for scalable platforms",
     },
     {
-      period: '2020 — 2022',
-      title: 'Software Engineer',
-      company: 'Digital Agency',
-      description: 'Full-stack development for diverse client projects',
+      period: "2020 — 2022",
+      title: "Software Engineer",
+      company: "Digital Agency",
+      description: "Full-stack development for diverse client projects",
     },
   ];
 
@@ -55,7 +56,7 @@ export default function ProfilePage() {
     <div>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin font-montserrat text-white/10 select-none">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
           PROFILE
         </h1>
       </div>
@@ -69,20 +70,23 @@ export default function ProfilePage() {
               About Me
             </span>
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-light font-montserrat leading-tight text-white mb-6">
-              Building systems that <span className="text-gray-500 italic">scale with purpose</span>
+              Building systems that{" "}
+              <span className="text-gray-500 italic">scale with purpose</span>
             </h2>
           </div>
-          
+
           <div className="flex flex-col justify-end">
             <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed mb-6">
-              I&apos;m a Full-stack Architect based in Seoul, specializing in serverless architecture 
-              and high-performance web applications. With a focus on business impact, I build systems 
-              that not only work—but scale, convert, and deliver measurable results.
+              I&apos;m a Full-stack Architect based in Seoul, specializing in
+              serverless architecture and high-performance web applications.
+              With a focus on business impact, I build systems that not only
+              work—but scale, convert, and deliver measurable results.
             </p>
             <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed">
-              My approach combines deep technical expertise with strategic thinking. 
-              In an era where AI writes code, the real value lies in architecture decisions, 
-              system design, and understanding the business context.
+              My approach combines deep technical expertise with strategic
+              thinking. In an era where AI writes code, the real value lies in
+              architecture decisions, system design, and understanding the
+              business context.
             </p>
           </div>
         </div>
@@ -94,7 +98,7 @@ export default function ProfilePage() {
           <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
           Tech Stack
         </span>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           {skills.map((skill) => (
             <div
@@ -125,7 +129,7 @@ export default function ProfilePage() {
           <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
           Experience
         </span>
-        
+
         <div className="space-y-6 md:space-y-8">
           {experiences.map((exp, idx) => (
             <div
@@ -133,13 +137,17 @@ export default function ProfilePage() {
               className="group flex flex-col md:flex-row gap-4 md:gap-8 p-5 md:p-6 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all"
             >
               <div className="md:w-1/4">
-                <span className="text-xs font-mono text-gray-500">{exp.period}</span>
+                <span className="text-xs font-mono text-gray-500">
+                  {exp.period}
+                </span>
               </div>
               <div className="md:w-3/4">
                 <h3 className="text-lg md:text-xl font-light text-white mb-1">
                   {exp.title}
                 </h3>
-                <span className="text-sm text-gray-500 block mb-2">{exp.company}</span>
+                <span className="text-sm text-gray-500 block mb-2">
+                  {exp.company}
+                </span>
                 <p className="text-sm text-gray-400">{exp.description}</p>
               </div>
             </div>
@@ -158,7 +166,7 @@ export default function ProfilePage() {
               Open for new ventures and collaborations
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4">
             <a
               href={`mailto:${CONTACT_EMAIL}`}
@@ -169,7 +177,7 @@ export default function ProfilePage() {
               <Mail size={14} />
               Get in Touch
             </a>
-            
+
             <div className="flex gap-3">
               <a
                 href="#"

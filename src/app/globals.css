@@ -3,6 +3,10 @@
 :root {
   --background: #050505;
   --foreground: #ffffff;
+  /* Decorative heading opacity: ~3:1 contrast for large text on #050505 (WCAG AA 1.4.3) */
+  --heading-decorative-opacity: 0.22;
+  /* Section background decorative text (e.g. Projects "WORKS"); purely visual */
+  --heading-decorative-bg-opacity: 0.1;
 }
 
 @theme inline {
@@ -62,6 +66,16 @@ body {
   font-family: var(--font-montserrat);
 }
 
+/* Decorative page hero title - uses design token for readability (WCAG large text ~3:1) */
+.heading-decorative {
+  color: rgb(255 255 255 / var(--heading-decorative-opacity));
+}
+
+/* Section background decorative text (e.g. Projects "WORKS" bg) */
+.heading-decorative-bg {
+  color: rgb(255 255 255 / var(--heading-decorative-bg-opacity));
+}
+
 /* Cinematic Entrance Animations */
 @keyframes revealText {
   0% {
@@ -88,8 +102,12 @@ body {
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
 }
 
 .animate-reveal {
@@ -103,13 +121,27 @@ body {
   opacity: 0;
 }
 
-.delay-0 { animation-delay: 0s; }
-.delay-200 { animation-delay: 0.2s; }
-.delay-400 { animation-delay: 0.4s; }
-.delay-500 { animation-delay: 0.5s; }
-.delay-600 { animation-delay: 0.6s; }
-.delay-800 { animation-delay: 0.8s; }
-.delay-1000 { animation-delay: 1.0s; }
+.delay-0 {
+  animation-delay: 0s;
+}
+.delay-200 {
+  animation-delay: 0.2s;
+}
+.delay-400 {
+  animation-delay: 0.4s;
+}
+.delay-500 {
+  animation-delay: 0.5s;
+}
+.delay-600 {
+  animation-delay: 0.6s;
+}
+.delay-800 {
+  animation-delay: 0.8s;
+}
+.delay-1000 {
+  animation-delay: 1s;
+}
 
 /* Prose Custom Styling for MDX Content */
 .prose-custom {
@@ -141,7 +173,7 @@ body {
 
 .hljs-comment,
 .hljs-quote {
-  color: #8B949E; /* Muted Steel */
+  color: #8b949e; /* Muted Steel */
   font-style: italic;
 }
 
@@ -154,7 +186,7 @@ body {
 .hljs-section,
 .hljs-deletion,
 .hljs-subst {
-  color: #FF7EB6; /* Soft Pink */
+  color: #ff7eb6; /* Soft Pink */
   font-weight: 500;
 }
 
@@ -163,7 +195,7 @@ body {
 .hljs-built_in,
 .hljs-title.function_,
 .hljs-title {
-  color: #79C0FF; /* Sky Blue */
+  color: #79c0ff; /* Sky Blue */
 }
 
 .hljs-string,
@@ -171,7 +203,7 @@ body {
 .hljs-addition,
 .hljs-attribute,
 .hljs-meta .hljs-string {
-  color: #FFD580; /* Warm Apricot */
+  color: #ffd580; /* Warm Apricot */
 }
 
 .hljs-attr,
@@ -183,7 +215,7 @@ body {
 .hljs-link,
 .hljs-meta,
 .hljs-selector-id {
-  color: #D2A8FF; /* Lavender Purple */
+  color: #d2a8ff; /* Lavender Purple */
 }
 
 .hljs-type,
@@ -192,7 +224,7 @@ body {
 .hljs-selector-class,
 .hljs-selector-attr,
 .hljs-selector-pseudo {
-  color: #7EE787; /* Mint Green */
+  color: #7ee787; /* Mint Green */
 }
 
 .hljs-emphasis {

@@ -22,7 +22,7 @@ export default async function ProjectsPage({
     <div>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin font-montserrat text-white/10 select-none">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
           WORKS
         </h1>
         <p className="text-gray-400 mt-4 text-lg">

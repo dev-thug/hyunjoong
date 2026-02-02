@@ -1,10 +1,10 @@
-import Link from 'next/link';
-import { getAllPosts } from '@/lib/posts';
-import { ArrowRight } from 'lucide-react';
-import type { Metadata } from 'next';
+import Link from "next/link";
+import { getAllPosts } from "@/lib/posts";
+import { ArrowRight } from "lucide-react";
+import type { Metadata } from "next";
 
-import { getDictionary } from '@/get-dictionary';
-import { i18n, type Locale } from '@/i18n-config';
+import { getDictionary } from "@/get-dictionary";
+import { i18n, type Locale } from "@/i18n-config";
 
 export async function generateMetadata({
   params,
@@ -17,13 +17,14 @@ export async function generateMetadata({
 
   return {
     title: `Blog | ${dict.hero.architecture}`,
-    description: 'Insights on full-stack development, serverless architecture, and business impact.',
+    description:
+      "Insights on full-stack development, serverless architecture, and business impact.",
     alternates: {
       canonical: `${baseUrl}/${lang}/blog`,
       languages: {
         ko: `${baseUrl}/ko/blog`,
         en: `${baseUrl}/en/blog`,
-        'x-default': `${baseUrl}/ko/blog`,
+        "x-default": `${baseUrl}/ko/blog`,
       },
     },
   };
@@ -44,11 +45,12 @@ export default async function BlogPage({
     <div>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-thin font-montserrat text-white/10 select-none">
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
           INTELLIGENCE
         </h1>
         <p className="text-gray-400 mt-4 text-lg">
-          Full-stack development, serverless architecture, and business insights.
+          Full-stack development, serverless architecture, and business
+          insights.
         </p>
       </div>
 
@@ -65,19 +67,21 @@ export default async function BlogPage({
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <span className="text-xs font-mono text-gray-600">
-                  {String(idx + 1).padStart(2, '0')}
+                  {String(idx + 1).padStart(2, "0")}
                 </span>
-                <span className={`text-xs font-mono uppercase tracking-wider px-2 py-1 rounded border ${
-                  post.category === 'Business'
-                    ? 'border-green-500/30 text-green-400'
-                    : post.category === 'Engineering'
-                    ? 'border-blue-500/30 text-blue-400'
-                    : 'border-purple-500/30 text-purple-400'
-                }`}>
+                <span
+                  className={`text-xs font-mono uppercase tracking-wider px-2 py-1 rounded border ${
+                    post.category === "Business"
+                      ? "border-green-500/30 text-green-400"
+                      : post.category === "Engineering"
+                      ? "border-blue-500/30 text-blue-400"
+                      : "border-purple-500/30 text-purple-400"
+                  }`}
+                >
                   {post.category}
                 </span>
               </div>
-              
+
               <span className="text-xs font-mono text-gray-500">
                 {post.date} · {post.readTime}
               </span>
@@ -86,15 +90,16 @@ export default async function BlogPage({
             <h2 className="text-2xl font-light text-white mt-4 group-hover:text-gray-200 transition-colors">
               {post.title}
             </h2>
-            
-            <p className="text-gray-500 mt-2 line-clamp-2">
-              {post.excerpt}
-            </p>
+
+            <p className="text-gray-500 mt-2 line-clamp-2">{post.excerpt}</p>
 
             <div className="flex justify-end mt-4">
               <span className="inline-flex items-center gap-2 text-sm text-gray-500 group-hover:text-white transition-colors">
                 Read more
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight
+                  size={14}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </span>
             </div>
           </Link>

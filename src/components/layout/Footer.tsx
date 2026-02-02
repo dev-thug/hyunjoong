@@ -1,8 +1,8 @@
-import { SOCIAL_LINKS, CONTACT_EMAIL, BRAND } from '@/constants';
+import { SOCIAL_LINKS, CONTACT_EMAIL, BRAND } from "@/constants";
 
 const Footer = ({ dict }: { readonly dict: any }) => {
   const handleKeyDown = (event: React.KeyboardEvent, href: string) => {
-    if (event.key === 'Enter' || event.key === ' ') {
+    if (event.key === "Enter" || event.key === " ") {
       window.location.href = href;
     }
   };
@@ -11,8 +11,10 @@ const Footer = ({ dict }: { readonly dict: any }) => {
     <footer className="py-12 md:py-16 lg:py-20 border-t border-white/10 bg-[#020202] relative z-10">
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
         <div>
-          <h4 className="text-[2.5rem] md:text-[4rem] lg:text-[5rem] xl:text-[7rem] font-bold font-montserrat leading-[0.85] md:leading-[0.8] tracking-tighter mb-6 md:mb-8 text-white/20 hover:text-white transition-colors duration-700 cursor-default">
-            {dict.footer.cta_main}<br />{dict.footer.cta_sub}
+          <h4 className="text-[2.5rem] md:text-[4rem] lg:text-[5rem] xl:text-[7rem] font-bold font-montserrat leading-[0.85] md:leading-[0.8] tracking-tighter mb-6 md:mb-8 heading-decorative hover:text-white transition-colors duration-700 cursor-default">
+            {dict.footer.cta_main}
+            <br />
+            {dict.footer.cta_sub}
           </h4>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
@@ -40,7 +42,9 @@ const Footer = ({ dict }: { readonly dict: any }) => {
             ))}
           </div>
           <div className="text-[10px] text-gray-800 font-mono flex justify-between md:justify-end gap-4 md:gap-8">
-            <span>© {BRAND.COPYRIGHT_YEAR} {BRAND.NAME}</span>
+            <span>
+              © {BRAND.COPYRIGHT_YEAR} {BRAND.NAME}
+            </span>
             <span>{BRAND.LOCATION}</span>
           </div>
         </div>
@@ -50,4 +54,3 @@ const Footer = ({ dict }: { readonly dict: any }) => {
 };
 
 export default Footer;
-
