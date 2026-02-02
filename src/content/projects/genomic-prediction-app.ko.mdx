@@ -1,0 +1,72 @@
+export const metadata = {
+  id: "p2",
+  title: "유전체 분석-예측 플랫폼",
+  adCopy: "대용량 유전체 데이터 처리 Event-Driven 서버리스 시스템",
+  description:
+    "100~200GB 규모의 유전체 시퀀싱 데이터를 효율적으로 처리하는 서버리스 플랫폼입니다. AWS Batch와 EFS 병렬 처리로 1000개 샘플을 동시 연산하며, EFS I/O 스로틀링 및 Lambda 타임아웃 문제를 해결하여 안정성을 확보했습니다.",
+  highlight: "Fortuna Helix · Fullstack · 2023 - Present",
+  image: "/images/ko/genomic.png",
+  tags: [
+    "NextJS",
+    "NestJS",
+    "Fast API",
+    "TypeScript",
+    "Python",
+    "AWS Batch",
+    "Lambda",
+    "Step Function",
+    "AppSync",
+    "EventBridge",
+    "SQS",
+    "SNS",
+    "EFS",
+    "S3",
+    "Cognito",
+    "CloudWatch",
+    "ECR",
+    "CloudFormation",
+  ],
+  metrics: [
+    { label: "분석 시간", value: "66%↓" },
+    { label: "동시 처리", value: "1000개" },
+    { label: "비용 절감", value: "92%↓" },
+  ],
+  lang: "ko",
+};
+
+# Fortuna Helix - 유전체 분석 플랫폼
+
+**대용량 유전체 데이터 처리 Event-Driven 서버리스 시스템**
+
+100~200GB 규모의 유전체 시퀀싱 데이터를 효율적으로 처리하는 서버리스 플랫폼입니다. AWS Batch와 EFS 병렬 처리로 1000개 샘플을 동시 연산하며, EFS I/O 스로틀링 및 Lambda 타임아웃 문제를 해결하여 안정성을 확보했습니다.
+
+## 💡 주요 성과
+
+- **분석 시간 단축:** AWS Batch + EFS 병렬 처리로 분석 시간 30분 → 10분 (**66% 단축**)
+- **비용 절감:** 서버리스 전환으로 운영 비용 월 600만 원 → 50만 원 (**92% 절감**)
+- **EFS I/O 스로틀링:** 문제 분석 및 멀티 EFS 분산 구성 제안으로 처리량 확보
+- **Lambda 안정성:** 타임아웃 최적화 및 재시도 정책 설계로 안정성 확보
+- **PDF 리포트:** SQS FIFO + Lambda로 1000개 PDF 30초 생성
+- **Event-Driven 아키텍처:** EventBridge + SNS/SQS 기반 파이프라인 설계
+
+## 🏗 Technical Architecture
+
+**1. Compute & Storage**
+
+- **AWS Batch + EFS:** 대용량 유전체 시퀀싱 데이터(100~200GB) 병렬 처리, 1000개 샘플 동시 연산
+- **Lambda:** 리포트 생성·오케스트레이션, 타임아웃·재시도 정책으로 안정성 확보
+- **S3 · EFS:** 원시 데이터 및 중간 결과 저장, Batch 작업 간 공유
+
+**2. Event-Driven Pipeline**
+
+- **EventBridge + SNS/SQS:** 이벤트 기반 트리거, FIFO 큐로 순서 보장 및 PDF 대량 생성
+- **AppSync · Cognito:** API 및 인증
+- **CloudWatch · ECR:** 모니터링 및 컨테이너 이미지 관리
+
+## 🛠 Key Technologies
+
+NestJS, TypeScript, AWS Batch, Lambda, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR
+
+---
+
+_Developed with NestJS, AWS Batch, and Event-Driven Serverless Architecture._

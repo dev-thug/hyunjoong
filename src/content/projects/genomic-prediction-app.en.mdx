@@ -1,0 +1,68 @@
+export const metadata = {
+  id: "p2",
+  title: "Fortuna Helix - Genome Analysis Platform",
+  adCopy:
+    "Event-driven serverless system for large-scale genomic data processing",
+  description:
+    "A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS enable parallel processing of 1,000 samples at once, while addressing EFS I/O throttling and Lambda timeout issues to ensure stability.",
+  highlight: "AWS Batch · 66% Faster Analysis · 92% Cost Reduction",
+  image: "/images/en/genomic.png",
+  tags: [
+    "NestJS",
+    "TypeScript",
+    "AWS Batch",
+    "Lambda",
+    "AppSync",
+    "EventBridge",
+    "SQS",
+    "SNS",
+    "EFS",
+    "S3",
+    "Cognito",
+    "CloudWatch",
+    "ECR",
+  ],
+  metrics: [
+    { label: "Analysis Time", value: "66%↓" },
+    { label: "Concurrent", value: "1000" },
+    { label: "Cost Reduction", value: "92%↓" },
+  ],
+  lang: "en",
+};
+
+# Fortuna Helix - Genome Analysis Platform
+
+**Event-driven serverless system for large-scale genomic data processing**
+
+A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS enable parallel processing of 1,000 samples at once, while addressing EFS I/O throttling and Lambda timeout issues to ensure stability.
+
+## 💡 Key Outcomes
+
+- **Faster analysis:** AWS Batch + EFS parallel processing reduced analysis time from 30 min → 10 min (**66% reduction**)
+- **Cost savings:** Serverless migration cut monthly operating cost from ₩6M → ₩500K (**92% reduction**)
+- **EFS I/O throttling:** Root-cause analysis and multi-EFS distributed setup to improve throughput
+- **Lambda stability:** Timeout tuning and retry policy design for reliable execution
+- **PDF reports:** SQS FIFO + Lambda generates 1,000 PDFs in ~30 seconds
+- **Event-driven architecture:** EventBridge + SNS/SQS–based pipeline design
+
+## 🏗 Technical Architecture
+
+**1. Compute & Storage**
+
+- **AWS Batch + EFS:** Parallel processing of large genomic sequencing data (100–200GB), 1,000 samples per run
+- **Lambda:** Report generation and orchestration; timeout and retry policies for stability
+- **S3 · EFS:** Raw data and intermediate results; shared storage across Batch jobs
+
+**2. Event-Driven Pipeline**
+
+- **EventBridge + SNS/SQS:** Event-based triggers; FIFO queues for ordering and bulk PDF generation
+- **AppSync · Cognito:** API and authentication
+- **CloudWatch · ECR:** Monitoring and container image management
+
+## 🛠 Key Technologies
+
+NestJS, TypeScript, AWS Batch, Lambda, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR
+
+---
+
+_Developed with NestJS, AWS Batch, and event-driven serverless architecture._
