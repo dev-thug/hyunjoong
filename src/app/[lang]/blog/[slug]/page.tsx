@@ -54,7 +54,7 @@ export async function generateMetadata({
     return { title: "Post Not Found" };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
 
   const languages: Record<string, string> = {};
   if (koPost) languages.ko = `${baseUrl}/ko/blog/${slug}`;

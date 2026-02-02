@@ -35,7 +35,7 @@ export async function generateMetadata({
     return { title: "Project Not Found" };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
 
   // Build language alternates - check if project exists in both languages
   const languages: Record<string, string> = {};

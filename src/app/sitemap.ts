@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { getPostIdentifiers } from "@/lib/posts";
 import { getProjectIdentifiers } from "@/lib/projects";
 
-const DEFAULT_BASE_URL = "https://hyunjoong.com";
+const DEFAULT_BASE_URL = "https://hyunjoong.kim";
 
 /**
  * Dynamic sitemap generation for all pages, blog posts, and projects

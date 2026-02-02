@@ -26,7 +26,7 @@ export default async function Home({
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
 
   const personSchema = {
     "@context": "https://schema.org",
