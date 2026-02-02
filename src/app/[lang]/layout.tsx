@@ -33,10 +33,10 @@ export async function generateMetadata({
 
   return {
     title: {
-      template: `%s | ${dict.hero.architecture}`,
-      default: `${dict.hero.title_beyond} ${dict.hero.title_code} | ${dict.hero.architecture}`,
+      template: dict.hero.meta_title_template,
+      default: dict.hero.meta_title,
     },
-    description: dict.hero.role_description,
+    description: dict.hero.meta_description,
     alternates: {
       canonical: `${baseUrl}/${lang}`,
       languages: {
@@ -46,6 +46,24 @@ export async function generateMetadata({
       },
     },
     metadataBase: new URL(baseUrl),
+    openGraph: {
+      siteName: "Hyunjoong Kim",
+      title: dict.hero.meta_title,
+      description: dict.hero.meta_description,
+      locale: lang === "ko" ? "ko_KR" : "en_US",
+      images: [
+        {
+          url: "/images/og-profile.png",
+          alt: "Hyunjoong Kim",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: dict.hero.meta_title,
+      description: dict.hero.meta_description,
+      images: ["/images/og-profile.png"],
+    },
   };
 }
 

@@ -33,9 +33,43 @@ export async function generateMetadata({
     return { title: "Project Not Found" };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
+  
+  // Build language alternates - check if project exists in both languages
+  const languages: Record<string, string> = {};
+  const koProject = await getProjectBySlug(slug, 'ko');
+  const enProject = await getProjectBySlug(slug, 'en');
+  
+  if (koProject) languages.ko = `${baseUrl}/ko/projects/${slug}`;
+  if (enProject) languages.en = `${baseUrl}/en/projects/${slug}`;
+  if (koProject) languages['x-default'] = `${baseUrl}/ko/projects/${slug}`;
+
   return {
     title: `${project.title} | Hyunjoong Kim`,
-    description: project.adCopy,
+    description: project.description || project.adCopy,
+    alternates: {
+      canonical: `${baseUrl}/${lang}/projects/${slug}`,
+      languages,
+    },
+    openGraph: {
+      title: project.title,
+      description: project.description || project.adCopy,
+      url: `${baseUrl}/${lang}/projects/${slug}`,
+      type: 'website',
+      locale: lang === 'ko' ? 'ko_KR' : 'en_US',
+      images: [
+        {
+          url: project.image,
+          alt: `${project.title} showcase image`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: project.title,
+      description: project.description || project.adCopy,
+      images: [project.image],
+    },
   };
 }
 

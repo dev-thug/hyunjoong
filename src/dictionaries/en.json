@@ -6,11 +6,15 @@
     "role_description": "Writing code is the baseline. The real value lies in seeing the system as a living organism—optimizing for liquidity, scalability, and tangible business velocity.",
     "scroll": "Scroll",
     "architecture": "Full-stack Architecture",
-    "intelligence_subtitle": "Business Intelligence"
+    "intelligence_subtitle": "Business Intelligence",
+    "meta_title": "Hyunjoong Kim | Full-Stack Developer Portfolio",
+    "meta_description": "Full-stack developer Hyunjoong Kim's portfolio. Projects and blog on serverless, full-stack development, and business impact.",
+    "meta_title_template": "%s | Full-Stack Developer Portfolio"
   },
   "about": {
     "philosophy_label": "The Philosophy",
     "description": "In an era where AI writes code, an engineer's value shifts from execution to architecture. I specialize in full-stack development built on scalable serverless infrastructure—keeping overhead low while maximizing business impact.",
+    "intro_with_portfolio": "This developer portfolio showcases serverless and full-stack development projects, focused on minimizing overhead while maximizing business impact and technical insights.",
     "stack_label": "Core Stack",
     "focus_label": "Focus",
     "focus_value": "Performance / Conversion"

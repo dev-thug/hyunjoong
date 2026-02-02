@@ -26,21 +26,60 @@ export default async function Home({
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
+
+  const personSchema = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Hyunjoong Kim",
+    alternateName: lang === "ko" ? "김현중" : "Hyunjoong Kim",
+    jobTitle: "Full-Stack Developer",
+    description: dict.hero.meta_description,
+    url: `${baseUrl}/${lang}`,
+    image: `${baseUrl}/images/og-profile.png`,
+    sameAs: [
+      "https://github.com/hyunjoongkim",
+      "https://linkedin.com/in/hyunjoongkim",
+    ],
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: dict.hero.meta_title,
+    description: dict.hero.meta_description,
+    url: `${baseUrl}/${lang}`,
+    author: {
+      "@type": "Person",
+      name: "Hyunjoong Kim",
+    },
+  };
+
   return (
-    <HomeLayoutWrapper>
-      {/* LCP 요소: 즉시 렌더링 */}
-      <HeroSection dict={dict} />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <HomeLayoutWrapper>
+        {/* LCP 요소: 즉시 렌더링 */}
+        <HeroSection dict={dict} />
 
-      {/* 하단 섹션들: 필요한 시점에 로드 */}
-      <AboutSection dict={dict} />
-      <ProjectsSection dict={dict} lang={lang} />
+        {/* 하단 섹션들: 필요한 시점에 로드 */}
+        <AboutSection dict={dict} />
+        <ProjectsSection dict={dict} lang={lang} />
 
-      {/* 서버 컴포넌트 스트리밍: 데이터 읽기 중에도 상단 콘텐츠 즉시 노출 가능 */}
-      <Suspense
-        fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
-      >
-        <BlogSection lang={lang} />
-      </Suspense>
-    </HomeLayoutWrapper>
+        {/* 서버 컴포넌트 스트리밍: 데이터 읽기 중에도 상단 콘텐츠 즉시 노출 가능 */}
+        <Suspense
+          fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
+        >
+          <BlogSection lang={lang} />
+        </Suspense>
+      </HomeLayoutWrapper>
+    </>
   );
 }

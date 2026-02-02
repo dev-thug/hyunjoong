@@ -65,14 +65,22 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       title: currentPost.title,
       description: currentPost.excerpt,
       url: `${baseUrl}/${lang}/blog/${slug}`,
+      siteName: 'Hyunjoong Kim',
       type: 'article',
       publishedTime: currentPost.date,
       locale: currentPost.lang === 'ko' ? 'ko_KR' : 'en_US',
+      images: [
+        {
+          url: '/images/og-profile.png',
+          alt: 'Hyunjoong Kim',
+        },
+      ],
     },
     twitter: {
       card: 'summary_large_image',
       title: currentPost.title,
       description: currentPost.excerpt,
+      images: ['/images/og-profile.png'],
     },
   };
 }
