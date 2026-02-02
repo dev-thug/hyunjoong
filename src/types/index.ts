@@ -14,6 +14,7 @@ export interface Project {
     label: string;
     value: string;
   }[];
+  lang: string;
 }
 
 export interface BlogPost {

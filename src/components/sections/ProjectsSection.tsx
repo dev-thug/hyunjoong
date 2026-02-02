@@ -1,12 +1,14 @@
 import ProjectCard from "@/components/ProjectCard";
-import { PROJECTS } from "@/constants";
+import { getAllProjects } from "@/lib/projects";
 
 interface ProjectsSectionProps {
   readonly dict: any;
   readonly lang: string;
 }
 
-const ProjectsSection = ({ dict, lang }: ProjectsSectionProps) => {
+const ProjectsSection = async ({ dict, lang }: ProjectsSectionProps) => {
+  const projects = await getAllProjects(lang);
+
   return (
     <section id="projects" className="py-16 md:py-24 relative z-10">
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6">
@@ -20,7 +22,7 @@ const ProjectsSection = ({ dict, lang }: ProjectsSectionProps) => {
         </div>
 
         <div className="flex flex-col gap-12 md:gap-16 lg:gap-20">
-          {PROJECTS.map((project, index) => (
+          {projects.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={project}

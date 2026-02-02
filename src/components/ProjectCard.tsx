@@ -13,8 +13,7 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
   return (
     <Link
       href={`/${lang}/projects/${project.slug}`}
-      className="group relative w-full border-t border-white/10 pt-6 md:pt-12 pb-12 md:pb-24 transition-all duration-700 hover:border-white/40 block cursor-pointer"
-      tabIndex={0}
+      className="group relative w-full border-t border-white/10 pt-6 md:pt-12 pb-12 md:pb-24 transition-all duration-700 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/20 outline-none block cursor-pointer"
       aria-label={`View project: ${project.title}`}
     >
       <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
@@ -23,7 +22,7 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
           <div>
             {/* 메타 정보 */}
             <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-8">
-              <span className="text-[10px] md:text-xs font-mono text-gray-500">
+              <span className="text-[10px] md:text-xs font-mono text-gray-500" aria-hidden="true">
                 NO. 0{index + 1}
               </span>
               <div className="h-px w-8 md:w-12 bg-gray-800" />
@@ -51,7 +50,7 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
           </div>
 
           {/* 태그 */}
-          <div className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3">
+          <div className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3" aria-label="Project tags">
             {project.tags.map((tag) => (
               <span
                 key={tag}
@@ -68,7 +67,7 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
           <div className="absolute inset-0 bg-gray-900">
             <Image
               src={project.image}
-              alt={project.title}
+              alt={`Showcase image for ${project.title}`}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 58vw, 50vw"
               priority={index < 2}

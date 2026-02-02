@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { PROJECTS } from "@/constants";
+import Image from "next/image";
+import { getAllProjects } from "@/lib/projects";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 
@@ -18,8 +19,10 @@ export default async function ProjectsPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
+  const projects = await getAllProjects(lang);
+
   return (
-    <div>
+    <main>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
@@ -31,22 +34,23 @@ export default async function ProjectsPage({
       </div>
 
       {/* 프로젝트 목록 */}
-      <div className="space-y-8">
-        {PROJECTS.map((project, idx) => (
+      <section className="space-y-8" aria-label="Project list">
+        {projects.map((project, idx) => (
           <Link
             key={project.id}
             href={`/${lang}/projects/${project.slug}`}
-            className="group block p-8 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all duration-300"
-            tabIndex={0}
+            className="group block p-8 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-all duration-300"
             aria-label={`View project: ${project.title}`}
           >
             <div className="flex flex-col md:flex-row gap-8">
               {/* 이미지 */}
-              <div className="md:w-1/3 aspect-video rounded-lg overflow-hidden bg-gray-900">
-                <img
+              <div className="md:w-1/3 aspect-video rounded-lg overflow-hidden bg-gray-900 relative">
+                <Image
                   src={project.image}
-                  alt={project.title}
-                  className="w-full h-full object-cover opacity-100 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                  alt={`Cover image for ${project.title}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover opacity-100 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                 />
               </div>
 
@@ -54,7 +58,7 @@ export default async function ProjectsPage({
               <div className="md:w-2/3 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-4 mb-4">
-                    <span className="text-xs font-mono text-gray-600">
+                    <span className="text-xs font-mono text-gray-600" aria-hidden="true">
                       {String(idx + 1).padStart(2, "0")}
                     </span>
                     <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
@@ -93,7 +97,7 @@ export default async function ProjectsPage({
             </div>
           </Link>
         ))}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
