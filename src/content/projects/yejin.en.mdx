@@ -1,0 +1,61 @@
+export const metadata = {
+  id: "p3",
+  title: "AI-EMR Yejin Clinic",
+  adCopy: "AI-powered EMR system for Korean medicine clinics",
+  description:
+    "An AI prescription-recommendation EMR built for Korean medicine practitioners. As clinicians enter patient symptoms, the system suggests prescriptions in real time. Amplify Gen1 multi-tenant auth and DynamoDB access-pattern optimization cut initial consultation time from 27 min to 12 min.",
+  highlight: "Healicure · Fullstack · 2021 - 2023",
+  image: "/images/yejin.png",
+  tags: [
+    "ReactJS",
+    "TypeScript",
+    "AWS Amplify Gen1",
+    "Lambda",
+    "DynamoDB",
+    "GraphQL",
+    "Cognito",
+    "CloudFormation",
+  ],
+  metrics: [
+    { label: "Intake Time", value: "55%↓" },
+    { label: "Network Overhead", value: "60%↓" },
+    { label: "TIPS Selection", value: "2023.05" },
+  ],
+  lang: "en",
+};
+
+# Healicure - Yejin Clinic
+
+**AI-powered EMR system for Korean medicine clinics**
+
+An AI prescription-recommendation EMR built for Korean medicine practitioners. As clinicians enter patient symptoms, the system suggests prescriptions in real time. AWS Amplify Gen1 multi-tenant auth and DynamoDB access-pattern optimization cut initial consultation (intake) time from 27 min to 12 min.
+
+## 💡 Key Outcomes
+
+- **Faster intake:** AI prescription recommendations reduced initial consultation time from 27 min → 12 min (**55% reduction**)
+- **TIPS selection contribution:** Beta testing at 3 clinics with 30 intake logs contributed to TIPS program selection (May 2023)
+- **GraphQL optimization:** Query optimization reduced network overhead by **60%**
+- **DynamoDB key design:** Access-pattern analysis and key schema optimization
+- **Multi-tenant auth:** Amplify Gen1–based multi-tenant authentication and data isolation per clinic
+
+## 🏗 Technical Architecture
+
+**1. Frontend & Auth**
+
+- **ReactJS · TypeScript:** EMR UI and real-time AI prescription recommendation interface
+- **AWS Amplify Gen1:** Multi-tenant authentication and per-clinic data isolation
+- **Cognito:** User authentication and authorization
+
+**2. Backend & Data**
+
+- **Lambda · GraphQL:** API and AI prescription logic; query optimization cut overhead by 60%
+- **DynamoDB:** Access-pattern–driven key design for consistent low-latency reads
+- **CloudFormation:** Infrastructure as code and deployment automation
+
+## 🛠 Key Technologies
+
+ReactJS, TypeScript, AWS Amplify Gen1, Lambda, DynamoDB, GraphQL, Cognito, CloudFormation
+
+---
+
+_Developed with React, AWS Amplify Gen1, and AI-driven EMR for Korean medicine clinics._
