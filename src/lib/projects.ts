@@ -128,6 +128,7 @@ const parseMetadataFromContent = (content: string): any | null => {
     adCopy: getLongString("adCopy"),
     description: getLongString("description"),
     techHighlight: getValue("techHighlight"),
+    serviceUrl: getValue("serviceUrl"),
     image: getValue("image"),
     lang: getValue("lang"),
     tags: getArray("tags"),

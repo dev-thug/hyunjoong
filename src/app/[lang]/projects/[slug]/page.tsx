@@ -6,7 +6,7 @@ import {
   getAllProjects,
   generateProjectParams,
 } from "@/lib/projects";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 
 interface ProjectPageProps {
@@ -96,6 +96,19 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <p className="text-xl text-gray-400 mt-4 leading-relaxed">
           {project.adCopy}
         </p>
+
+        {project.serviceUrl && (
+          <a
+            href={project.serviceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-3 mt-6 rounded-lg border border-gray-700 bg-white/5 text-white hover:bg-white/10 hover:border-gray-600 focus-visible:ring-2 focus-visible:ring-white/20 focus-visible:outline-none transition-all duration-200 touch-action-manipulation"
+            aria-label={`Visit ${project.title} service (opens in new tab)`}
+          >
+            <span className="text-sm font-medium">Visit Live Service</span>
+            <ExternalLink size={16} aria-hidden="true" className="shrink-0" />
+          </a>
+        )}
 
         <hr className="border-gray-800 mt-8" />
       </header>

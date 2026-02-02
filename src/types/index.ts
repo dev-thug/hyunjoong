@@ -8,6 +8,7 @@ export interface Project {
   adCopy: string;
   description: string;
   techHighlight: string;
+  serviceUrl?: string;
   image: string;
   tags: string[];
   metrics: {
