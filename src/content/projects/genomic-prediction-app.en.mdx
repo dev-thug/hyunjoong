@@ -1,17 +1,21 @@
 export const metadata = {
   id: "p2",
-  title: "Fortuna Helix - Genome Analysis Platform",
+  title: "Genome Analysis Platform",
   adCopy:
     "Event-driven serverless system for large-scale genomic data processing",
   description:
-    "A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS enable parallel processing of 1,000 samples at once, while addressing EFS I/O throttling and Lambda timeout issues to ensure stability.",
-  highlight: "AWS Batch · 66% Faster Analysis · 92% Cost Reduction",
+    "A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS run up to 1,000 samples in parallel, while EFS I/O throttling and Lambda timeout issues were addressed to ensure stable operation.",
+  highlight: "Fortuna Helix · Fullstack · 2023 - Present",
   image: "/images/en/genomic.png",
   tags: [
+    "NextJS",
     "NestJS",
+    "Fast API",
     "TypeScript",
+    "Python",
     "AWS Batch",
     "Lambda",
+    "Step Function",
     "AppSync",
     "EventBridge",
     "SQS",
@@ -21,6 +25,7 @@ export const metadata = {
     "Cognito",
     "CloudWatch",
     "ECR",
+    "CloudFormation",
   ],
   metrics: [
     { label: "Analysis Time", value: "66%↓" },
@@ -30,19 +35,19 @@ export const metadata = {
   lang: "en",
 };
 
-# Fortuna Helix - Genome Analysis Platform
+# Fortuna Helix - Genome Analysis & Prediction Platform
 
 **Event-driven serverless system for large-scale genomic data processing**
 
-A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS enable parallel processing of 1,000 samples at once, while addressing EFS I/O throttling and Lambda timeout issues to ensure stability.
+A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS run up to 1,000 samples in parallel, while EFS I/O throttling and Lambda timeout issues were addressed to ensure stable operation.
 
 ## 💡 Key Outcomes
 
-- **Faster analysis:** AWS Batch + EFS parallel processing reduced analysis time from 30 min → 10 min (**66% reduction**)
-- **Cost savings:** Serverless migration cut monthly operating cost from ₩6M → ₩500K (**92% reduction**)
-- **EFS I/O throttling:** Root-cause analysis and multi-EFS distributed setup to improve throughput
+- **Faster analysis:** AWS Batch + EFS parallel processing cut analysis time from 30 min → 10 min (**66% reduction**)
+- **Cost savings:** Serverless migration reduced monthly operating cost from ₩6M → ₩500K (**92% reduction**)
+- **EFS I/O throttling:** Root-cause analysis and a multi-EFS distributed setup to improve throughput
 - **Lambda stability:** Timeout tuning and retry policy design for reliable execution
-- **PDF reports:** SQS FIFO + Lambda generates 1,000 PDFs in ~30 seconds
+- **PDF reports:** SQS FIFO + Lambda generates 1,000 PDFs in about 30 seconds
 - **Event-driven architecture:** EventBridge + SNS/SQS–based pipeline design
 
 ## 🏗 Technical Architecture
@@ -61,7 +66,7 @@ A serverless platform that efficiently processes 100–200GB of genomic sequenci
 
 ## 🛠 Key Technologies
 
-NestJS, TypeScript, AWS Batch, Lambda, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR
+NextJS, NestJS, Fast API, TypeScript, Python, AWS Batch, Lambda, Step Function, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR, CloudFormation
 
 ---
 
