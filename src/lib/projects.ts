@@ -66,6 +66,35 @@ const parseMetadataFromContent = (content: string): any | null => {
     return match ? match[1] : null;
   };
 
+  /**
+   * 멀티라인 문자열 값 추출 (escaped quotes 포함)
+   * description, adCopy 등의 긴 텍스트 필드에 사용
+   */
+  const getLongString = (key: string) => {
+    // key: "value" 또는 key: 'value' 패턴 매칭
+    // 문자열 내부의 escaped quotes (\", \') 처리
+    const doubleQuoteRegex = new RegExp(
+      `${key}:\\s*"((?:[^"\\\\]|\\\\.)*)"`
+    );
+    const singleQuoteRegex = new RegExp(
+      `${key}:\\s*'((?:[^'\\\\]|\\\\.)*)'`
+    );
+
+    const doubleMatch = metadataBlock.match(doubleQuoteRegex);
+    if (doubleMatch) {
+      // Unescape quotes
+      return doubleMatch[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+    }
+
+    const singleMatch = metadataBlock.match(singleQuoteRegex);
+    if (singleMatch) {
+      // Unescape quotes
+      return singleMatch[1].replace(/\\'/g, "'").replace(/\\\\/g, "\\");
+    }
+
+    return null;
+  };
+
   const getArray = (key: string) => {
     const regex = new RegExp(`${key}:\\s*\\[([\\s\\S]*?)\\]`);
     const match = metadataBlock.match(regex);
@@ -96,8 +125,8 @@ const parseMetadataFromContent = (content: string): any | null => {
   return {
     id: getValue("id"),
     title: getValue("title"),
-    adCopy: getValue("adCopy"),
-    description: getValue("description"),
+    adCopy: getLongString("adCopy"),
+    description: getLongString("description"),
     techHighlight: getValue("techHighlight"),
     image: getValue("image"),
     lang: getValue("lang"),

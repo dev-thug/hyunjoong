@@ -1,5 +1,5 @@
-export * from './navigation';
-export * from './blog';
+export * from "./navigation";
+export * from "./blog";
 
 export interface Project {
   id: string;
@@ -21,7 +21,7 @@ export interface BlogPost {
   slug: string;
   title: string;
   excerpt: string;
-  category: 'Engineering' | 'Business' | 'Insight';
+  category: "Engineering" | "Business" | "Insight";
   date: string;
   readTime: string;
   likes: number;

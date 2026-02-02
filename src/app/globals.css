@@ -110,6 +110,23 @@ body {
   }
 }
 
+/* Honor user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-reveal,
+  .animate-fade-up {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 .animate-reveal {
   animation: revealText 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
@@ -149,6 +166,7 @@ body {
   margin: 0;
   word-break: keep-all;
   overflow-wrap: break-word;
+  min-width: 0;
 }
 
 .prose-custom :first-child {
@@ -159,7 +177,18 @@ body {
 .prose-custom p,
 .prose-custom li {
   text-rendering: optimizeLegibility;
-  line-height: 1.7;
+  line-height: 1.75;
+}
+
+/* Ensure text can truncate properly in flex containers */
+.prose-custom * {
+  min-width: 0;
+}
+
+/* Touch interaction optimization */
+.touch-action-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Highlight.js Theme (Optimized Rainbow Palette) */

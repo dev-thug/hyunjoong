@@ -1,5 +1,5 @@
-import type { MDXComponents } from 'mdx/types';
-import CodeBlock from '@/components/mdx/CodeBlock';
+import type { MDXComponents } from "mdx/types";
+import CodeBlock from "@/components/mdx/CodeBlock";
 
 /**
  * MDX 컴포넌트 스타일링 정의
@@ -9,23 +9,23 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     // 헤딩 스타일
     h1: ({ children }) => (
-      <h1 className="text-4xl font-bold font-montserrat mt-12 mb-6 text-zinc-100 tracking-tight leading-tight">
+      <h1 className="text-3xl md:text-4xl font-bold font-montserrat first:mt-0 mt-12 mb-6 text-zinc-100 tracking-tight leading-tight scroll-mt-20 text-balance">
         {children}
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="text-3xl font-semibold font-montserrat mt-16 mb-6 text-zinc-100 tracking-tight">
+      <h2 className="text-2xl md:text-3xl font-semibold font-montserrat mt-16 mb-6 text-zinc-100 tracking-tight scroll-mt-20 text-balance">
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-2xl font-medium font-montserrat mt-12 mb-4 text-zinc-200 tracking-tight">
+      <h3 className="text-xl md:text-2xl font-medium font-montserrat mt-12 mb-4 text-zinc-200 tracking-tight scroll-mt-20 text-balance">
         {children}
       </h3>
     ),
     // 본문 스타일
     p: ({ children }) => (
-      <p className="text-zinc-300 leading-8 mb-6 text-[1.125rem] font-normal antialiased">
+      <p className="text-zinc-300 leading-8 mb-6 text-[1.0625rem] md:text-[1.125rem] font-normal antialiased">
         {children}
       </p>
     ),
@@ -33,9 +33,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     a: ({ href, children }) => (
       <a
         href={href}
-        className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/30 underline-offset-4 transition-colors"
-        target={href?.startsWith('http') ? '_blank' : undefined}
-        rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+        className="text-blue-400 hover:text-blue-300 focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:outline-none rounded-sm underline decoration-blue-400/30 underline-offset-4 transition-colors duration-200"
+        target={href?.startsWith("http") ? "_blank" : undefined}
+        rel={href?.startsWith("http") ? "noopener noreferrer" : undefined}
       >
         {children}
       </a>
@@ -51,9 +51,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
         {children}
       </ol>
     ),
-    li: ({ children }) => (
-      <li className="text-zinc-300 pl-1">{children}</li>
-    ),
+    li: ({ children }) => <li className="text-zinc-300 pl-1">{children}</li>,
     // 코드 스타일
     code: ({ children, className }) => {
       const isInline = !className;
@@ -66,11 +64,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       }
       return <code className={className}>{children}</code>;
     },
-    pre: ({ children }) => (
-      <CodeBlock>
-        {children}
-      </CodeBlock>
-    ),
+    pre: ({ children }) => <CodeBlock>{children}</CodeBlock>,
     // 인용문 스타일
     blockquote: ({ children }) => (
       <blockquote className="border-l-4 border-zinc-700 pl-6 italic text-zinc-400 my-8 bg-zinc-900/30 py-4 rounded-r-lg">
@@ -83,16 +77,12 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     strong: ({ children }) => (
       <strong className="font-semibold text-zinc-100">{children}</strong>
     ),
-    em: ({ children }) => (
-      <em className="italic text-zinc-200">{children}</em>
-    ),
+    em: ({ children }) => <em className="italic text-zinc-200">{children}</em>,
     // 테이블 스타일
     table: ({ children }) => (
       <div className="my-8 overflow-hidden rounded-xl border border-zinc-800/50 bg-[#09090b]/40 backdrop-blur-sm">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
-          <table className="w-full border-collapse text-left">
-            {children}
-          </table>
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent touch-action-manipulation">
+          <table className="w-full border-collapse text-left" role="table">{children}</table>
         </div>
       </div>
     ),
@@ -102,8 +92,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </thead>
     ),
     th: ({ children }) => (
-      <th 
-        scope="col" 
+      <th
+        scope="col"
         className="px-4 py-3.5 text-sm font-semibold text-zinc-100 whitespace-nowrap"
       >
         {children}
@@ -115,9 +105,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </td>
     ),
     tr: ({ children }) => (
-      <tr className="transition-colors hover:bg-white/5 group">
-        {children}
-      </tr>
+      <tr className="transition-colors hover:bg-white/5 group">{children}</tr>
     ),
     tbody: ({ children }) => (
       <tbody className="divide-y divide-zinc-800/30 [&_tr:last-child_td]:border-b-0">

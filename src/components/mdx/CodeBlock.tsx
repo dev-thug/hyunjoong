@@ -64,7 +64,7 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
     <div className="group relative mb-8 rounded-xl bg-[#09090b] border border-zinc-800/50 shadow-2xl overflow-hidden">
       {/* Code Block Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-[#09090b]/80 border-b border-zinc-800/50 backdrop-blur-md">
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5" aria-hidden="true">
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700/50" />
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700/50" />
           <div className="w-2.5 h-2.5 rounded-full bg-zinc-700/50" />
@@ -78,17 +78,17 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-2 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-all focus:outline-none"
+          className="flex items-center gap-1.5 px-2 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:outline-none transition-all duration-200"
           aria-label={isCopied ? 'Copied' : 'Copy code'}
         >
           {isCopied ? (
             <>
-              <Check size={12} className="text-emerald-400" />
+              <Check size={12} className="text-emerald-400" aria-hidden="true" />
               <span className="text-[10px] font-medium text-emerald-400">COPIED</span>
             </>
           ) : (
             <>
-              <Copy size={12} />
+              <Copy size={12} aria-hidden="true" />
               <span className="text-[10px] font-medium">COPY</span>
             </>
           )}

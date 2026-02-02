@@ -59,16 +59,25 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       ? allProjects[currentIndex + 1]
       : null;
 
+  // MDX 컨텐츠 동적 import
+  let ProjectContent: React.ComponentType | null = null;
+  try {
+    const mdxModule = await import(`@/content/projects/${slug}.${lang}.mdx`);
+    ProjectContent = mdxModule.default;
+  } catch (error) {
+    console.error(`Failed to load MDX content for ${slug}.${lang}:`, error);
+  }
+
   return (
     <article className="max-w-5xl mx-auto">
       {/* 헤더 */}
       <header className="mb-12">
         <Link
           href={`/${lang}/projects`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white focus-visible:ring-2 focus-visible:ring-white/20 outline-none rounded-md transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-gray-400 hover:text-white focus-visible:ring-2 focus-visible:ring-white/20 outline-none rounded-md transition-colors duration-200 mb-8"
           aria-label="Go back to projects list"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={16} aria-hidden="true" />
           <span className="text-sm font-mono uppercase tracking-widest">
             Back to Projects
           </span>
@@ -139,14 +148,24 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </div>
 
       {/* 상세 설명 */}
-      <section className="prose-custom mb-16">
-        <h2 className="text-2xl font-light text-white mb-6">
+      <section className="prose-custom mb-16" aria-labelledby="overview-heading">
+        <h2 id="overview-heading" className="text-2xl font-light text-white mb-6">
           Project Overview
         </h2>
         <div className="text-gray-400 leading-relaxed text-lg">
           {project.description}
         </div>
       </section>
+
+      {/* MDX 본문 컨텐츠 */}
+      {ProjectContent && (
+        <>
+          <hr className="border-gray-800 mb-16" aria-hidden="true" />
+          <section className="prose-custom mb-16" aria-label="Detailed project documentation">
+            <ProjectContent />
+          </section>
+        </>
+      )}
 
       {/* 네비게이션 */}
       <nav
@@ -157,14 +176,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {prevProject ? (
             <Link
               href={`/${lang}/projects/${prevProject.slug}`}
-              className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors"
+              className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors duration-200"
               aria-label={`Previous project: ${prevProject.title}`}
             >
               <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                <ArrowLeft size={12} />
+                <ArrowLeft size={12} aria-hidden="true" />
                 Previous
               </span>
-              <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors line-clamp-1">
+              <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors duration-200 line-clamp-1">
                 {prevProject.title}
               </span>
             </Link>
@@ -175,14 +194,14 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {nextProject ? (
             <Link
               href={`/${lang}/projects/${nextProject.slug}`}
-              className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors text-right"
+              className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors duration-200 text-right"
               aria-label={`Next project: ${nextProject.title}`}
             >
               <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center justify-end gap-2">
                 Next
-                <ArrowRight size={12} />
+                <ArrowRight size={12} aria-hidden="true" />
               </span>
-              <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors line-clamp-1">
+              <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors duration-200 line-clamp-1">
                 {nextProject.title}
               </span>
             </Link>
