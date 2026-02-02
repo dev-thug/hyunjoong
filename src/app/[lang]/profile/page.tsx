@@ -87,7 +87,7 @@ export default function ProfilePage() {
 
           <div className="flex flex-col justify-end">
             <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed mb-6">
-              I&apos;m a Full-stack Architect based in Seoul, specializing in
+              I&apos;m a Full-stack developer based in Seoul, specializing in
               serverless architecture and high-performance web applications.
               With a focus on business impact, I build systems that not only
               work—but scale, convert, and deliver measurable results.

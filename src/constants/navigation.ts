@@ -1,7 +1,7 @@
 import type { NavLink, SocialLink } from "@/types/navigation";
 
 const NAV_LABELS = {
-  works: "Works",
+  portfolio: "Portfolio",
   intelligence: "Intelligence",
   profile: "Profile",
   contact: "Contact",
@@ -12,7 +12,7 @@ const NAV_LABELS = {
  */
 export const getNavLinks = (lang: string): readonly NavLink[] =>
   [
-    { href: `/${lang}/projects`, label: NAV_LABELS.works },
+    { href: `/${lang}/projects`, label: NAV_LABELS.portfolio },
     { href: `/${lang}/blog`, label: NAV_LABELS.intelligence },
     { href: `/${lang}/profile`, label: NAV_LABELS.profile },
   ] as const;

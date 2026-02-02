@@ -6,8 +6,10 @@ import {
   getAllProjects,
   generateProjectParams,
 } from "@/lib/projects";
+import { getDictionary } from "@/get-dictionary";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
+import type { Locale } from "@/i18n-config";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -34,15 +36,15 @@ export async function generateMetadata({
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.com";
-  
+
   // Build language alternates - check if project exists in both languages
   const languages: Record<string, string> = {};
-  const koProject = await getProjectBySlug(slug, 'ko');
-  const enProject = await getProjectBySlug(slug, 'en');
-  
+  const koProject = await getProjectBySlug(slug, "ko");
+  const enProject = await getProjectBySlug(slug, "en");
+
   if (koProject) languages.ko = `${baseUrl}/ko/projects/${slug}`;
   if (enProject) languages.en = `${baseUrl}/en/projects/${slug}`;
-  if (koProject) languages['x-default'] = `${baseUrl}/ko/projects/${slug}`;
+  if (koProject) languages["x-default"] = `${baseUrl}/ko/projects/${slug}`;
 
   return {
     title: `${project.title} | Hyunjoong Kim`,
@@ -55,8 +57,8 @@ export async function generateMetadata({
       title: project.title,
       description: project.description || project.adCopy,
       url: `${baseUrl}/${lang}/projects/${slug}`,
-      type: 'website',
-      locale: lang === 'ko' ? 'ko_KR' : 'en_US',
+      type: "website",
+      locale: lang === "ko" ? "ko_KR" : "en_US",
       images: [
         {
           url: project.image,
@@ -65,7 +67,7 @@ export async function generateMetadata({
       ],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: project.title,
       description: project.description || project.adCopy,
       images: [project.image],
@@ -77,15 +79,18 @@ export async function generateMetadata({
  * 프로젝트 상세 페이지
  */
 export default async function ProjectPage({ params }: ProjectPageProps) {
-  const { lang, slug } = await params;
-  const project = await getProjectBySlug(slug, lang);
+  const { lang, slug } = (await params) as { lang: Locale; slug: string };
+  const [project, dict, allProjects] = await Promise.all([
+    getProjectBySlug(slug, lang),
+    getDictionary(lang),
+    getAllProjects(lang),
+  ]);
 
   if (!project) {
     notFound();
   }
 
   // 모든 프로젝트를 가져와서 이전/다음 프로젝트 찾기
-  const allProjects = await getAllProjects(lang);
   const currentIndex = allProjects.findIndex((p) => p.slug === slug);
   const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
   const nextProject =
@@ -109,11 +114,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <Link
           href={`/${lang}/projects`}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white focus-visible:ring-2 focus-visible:ring-white/20 outline-none rounded-md transition-colors duration-200 mb-8"
-          aria-label="Go back to projects list"
+          aria-label={dict.projects.back_to_portfolio_aria}
         >
           <ArrowLeft size={16} aria-hidden="true" />
           <span className="text-sm font-mono uppercase tracking-widest">
-            Back to Projects
+            {dict.projects.back_to_portfolio}
           </span>
         </Link>
 

@@ -1,35 +1,40 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getAllProjects } from "@/lib/projects";
+import { getDictionary } from "@/get-dictionary";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import type { Locale } from "@/i18n-config";
 
 export const metadata: Metadata = {
-  title: "Projects | Hyunjoong Kim",
+  title: "Portfolio",
   description:
-    "Selected projects showcasing full-stack development, serverless architecture, and business impact.",
+    "Portfolio of full-stack development projects: serverless architecture, business impact, and technical case studies.",
 };
 
 /**
- * 프로젝트 목록 페이지
+ * 포트폴리오(프로젝트 목록) 페이지
  */
 export default async function ProjectsPage({
   params,
 }: {
   params: Promise<{ lang: string }>;
 }) {
-  const { lang } = await params;
-  const projects = await getAllProjects(lang);
+  const { lang } = (await params) as { lang: Locale };
+  const [projects, dict] = await Promise.all([
+    getAllProjects(lang),
+    getDictionary(lang),
+  ]);
 
   return (
     <main>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
-          WORKS
+          {dict.projects.title_bg}
         </h1>
         <p className="text-gray-400 mt-4 text-lg">
-          Selected projects showcasing technical excellence and business impact.
+          {dict.projects.page_subtitle}
         </p>
       </div>
 

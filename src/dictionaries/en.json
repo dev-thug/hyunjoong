@@ -5,7 +5,7 @@
     "role_title": "The Architect's Role",
     "role_description": "Writing code is the baseline. The real value lies in seeing the system as a living organism—optimizing for liquidity, scalability, and tangible business velocity.",
     "scroll": "Scroll",
-    "architecture": "Full-stack Architecture",
+    "architecture": "Full-stack developer",
     "intelligence_subtitle": "Business Intelligence",
     "meta_title": "Hyunjoong Kim | Full-Stack Developer Portfolio",
     "meta_description": "Full-stack developer Hyunjoong Kim's portfolio. Projects and blog on serverless, full-stack development, and business impact.",
@@ -20,8 +20,11 @@
     "focus_value": "Performance / Conversion"
   },
   "projects": {
-    "title_bg": "WORKS",
-    "title": "Selected Projects"
+    "title_bg": "PORTFOLIO",
+    "title": "Selected Projects",
+    "page_subtitle": "Selected projects showcasing technical excellence and business impact.",
+    "back_to_portfolio": "Back to Portfolio",
+    "back_to_portfolio_aria": "Go back to portfolio list"
   },
   "brand": {
     "location": "DESIGNED IN SEOUL"
