@@ -15,6 +15,7 @@ export interface PostMetadata {
   readonly date: string;
   readonly readTime: string;
   readonly keywords?: string[];
+  readonly hidden?: boolean;
 }
 
 /**

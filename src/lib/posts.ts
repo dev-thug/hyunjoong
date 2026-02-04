@@ -67,6 +67,7 @@ const parseMetadataFromContent = (
   const langMatch = metadataBlock.match(/lang:\s*"([^"]+)"/);
   // keywords: comma-separated string; value must not contain double quotes
   const keywordsMatch = metadataBlock.match(/keywords:\s*"([^"]*)"/);
+  const hiddenMatch = metadataBlock.match(/hidden:\s*(true|false)/);
 
   if (titleMatch) result.title = titleMatch[1];
   if (excerptMatch) result.excerpt = excerptMatch[1];
@@ -75,6 +76,7 @@ const parseMetadataFromContent = (
   if (readTimeMatch) result.readTime = readTimeMatch[1];
   if (langMatch) result.lang = langMatch[1];
   if (keywordsMatch) result.keywords = keywordsMatch[1];
+  if (hiddenMatch) result.hidden = hiddenMatch[1];
 
   return result;
 };
@@ -113,6 +115,8 @@ export const getPostBySlug = cache(
           .filter(Boolean)
       : undefined;
 
+    const hidden = metadata.hidden === "true";
+
     return {
       slug,
       lang: metadata.lang || lang,
@@ -122,19 +126,25 @@ export const getPostBySlug = cache(
       date: metadata.date || "",
       readTime: metadata.readTime || "5 min",
       ...(keywords?.length ? { keywords } : {}),
+      ...(hidden ? { hidden: true } : {}),
     };
   }
 );
 
+const DEFAULT_GET_ALL_POSTS_OPTIONS = { includeHidden: false } as const;
+
 /**
  * 모든 포스트 메타데이터 가져오기 (날짜 내림차순 정렬, 비동기 병렬 처리)
  * @param lang 필터링할 언어 (선택 사항)
+ * @param options.includeHidden true면 히든 포스트 포함, 기본값 false(공개만)
  */
 export const getAllPosts = cache(
-  async (lang?: string): Promise<PostMetadata[]> => {
+  async (
+    lang?: string,
+    options: { includeHidden?: boolean } = DEFAULT_GET_ALL_POSTS_OPTIONS
+  ): Promise<PostMetadata[]> => {
     const identifiers = await getPostIdentifiers();
 
-    // 언어가 지정된 경우 해당 언어의 포스트만 필터링
     const filteredIdentifiers = lang
       ? identifiers.filter((id) => id.lang === lang)
       : identifiers;
@@ -144,9 +154,12 @@ export const getAllPosts = cache(
     );
     const posts = await Promise.all(postPromises);
 
-    return posts
+    const resolved = posts
       .filter((post): post is PostMetadata => post !== null)
+      .filter((post) => options.includeHidden === true || !post.hidden)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return resolved;
   }
 );
 

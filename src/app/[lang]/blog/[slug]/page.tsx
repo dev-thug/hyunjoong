@@ -64,6 +64,9 @@ export async function generateMetadata({
   return {
     title: currentPost.title,
     description: currentPost.excerpt,
+    ...(currentPost.hidden
+      ? { robots: { index: false, follow: false } as const }
+      : {}),
     alternates: {
       canonical: `${baseUrl}/${currentPost.lang}/blog/${slug}`,
       languages,
@@ -103,7 +106,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   let [dict, post, allPosts] = await Promise.all([
     getDictionary(lang as Locale),
     getPostBySlug(slug, lang),
-    getAllPosts(lang),
+    getAllPosts(lang, { includeHidden: true }),
   ]);
 
   let isFallback = false;
@@ -123,7 +126,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     // 폴백 데이터 페칭도 병렬화
     [post, allPosts] = await Promise.all([
       getPostBySlug(slug, availableVersion.lang),
-      getAllPosts(availableVersion.lang),
+      getAllPosts(availableVersion.lang, { includeHidden: true }),
     ]);
 
     isFallback = true;
