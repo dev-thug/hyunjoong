@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getPostIdentifiers } from "@/lib/posts";
+import { getAllPosts } from "@/lib/posts";
 import { getProjectIdentifiers } from "@/lib/projects";
 
 const DEFAULT_BASE_URL = "https://hyunjoong.kim";
@@ -10,9 +10,9 @@ const DEFAULT_BASE_URL = "https://hyunjoong.kim";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
 
-  // Fetch all blog posts and projects in parallel
-  const [postIdentifiers, projectIdentifiers] = await Promise.all([
-    getPostIdentifiers(),
+  // Fetch all blog posts (with date for lastModified) and projects in parallel
+  const [allPosts, projectIdentifiers] = await Promise.all([
+    getAllPosts(),
     getProjectIdentifiers(),
   ]);
 
@@ -68,15 +68,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Blog post pages
-  const blogPages: MetadataRoute.Sitemap = postIdentifiers.map(
-    ({ slug, lang }) => ({
-      url: `${baseUrl}/${lang}/blog/${slug}`,
-      lastModified: new Date(),
+  // Blog post pages (lastModified from post date; fallback to now if invalid)
+  const blogPages: MetadataRoute.Sitemap = allPosts.map((post) => {
+    const parsed = post.date ? new Date(post.date) : null;
+    const lastModified =
+      parsed && !Number.isNaN(parsed.getTime()) ? parsed : new Date();
+    return {
+      url: `${baseUrl}/${post.lang}/blog/${post.slug}`,
+      lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,
-    })
-  );
+    };
+  });
 
   // Project pages
   const projectPages: MetadataRoute.Sitemap = projectIdentifiers.map(

@@ -1,7 +1,7 @@
 /**
  * 블로그 포스트 카테고리
  */
-export type PostCategory = 'Engineering' | 'Business' | 'Insight';
+export type PostCategory = "Engineering" | "Business" | "Insight";
 
 /**
  * 블로그 포스트 메타데이터 인터페이스
@@ -14,6 +14,7 @@ export interface PostMetadata {
   readonly category: PostCategory;
   readonly date: string;
   readonly readTime: string;
+  readonly keywords?: string[];
 }
 
 /**

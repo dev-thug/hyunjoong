@@ -145,128 +145,165 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     `@/content/posts/${slug}.${contentLang}.mdx`
   );
 
-  return (
-    <article className="max-w-[85ch] mx-auto w-full">
-      {/* 헤더 */}
-      <header className="mb-12">
-        <Link
-          href={`/${lang}/blog`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
-          tabIndex={0}
-          aria-label={dict.blog.back_to_blog}
-        >
-          <ArrowLeft size={16} />
-          <span className="text-sm font-mono uppercase tracking-widest">
-            {dict.blog.back_to_blog}
-          </span>
-        </Link>
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const articleUrl = `${baseUrl}/${post.lang}/blog/${slug}`;
+  const ogImageUrl = `${baseUrl}/images/og-profile.png`;
 
-        {isFallback && availableVersion && (
-          <div className="mb-12 p-6 rounded-xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm">
-            <div className="flex items-start gap-4">
-              <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
-                <AlertCircle size={20} />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white mb-1">
-                  {dict.blog.not_available_title}
-                </h3>
-                <p className="text-gray-400 text-sm mb-4">
-                  {dict.blog.not_available_description.replace(
-                    "{lang}",
-                    availableVersion.lang === "ko" ? "한국어" : "English"
-                  )}
-                </p>
-                <Link
-                  href={`/${availableVersion.lang}/blog/${slug}`}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-gray-200 transition-colors"
-                >
-                  <Languages size={14} />
-                  {dict.blog.read_in_language.replace(
-                    "{lang}",
-                    availableVersion.lang === "ko" ? "한국어" : "English"
-                  )}
-                </Link>
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    url: articleUrl,
+    author: {
+      "@type": "Person",
+      name: "Hyunjoong Kim",
+      url: baseUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Hyunjoong Kim",
+      logo: {
+        "@type": "ImageObject",
+        url: ogImageUrl,
+      },
+    },
+    image: ogImageUrl,
+    articleSection: post.category,
+    ...(post.keywords?.length ? { keywords: post.keywords } : {}),
+  };
+
+  const jsonLdScript = JSON.stringify(jsonLd).replace(/</g, "\\u003c");
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: jsonLdScript }}
+      />
+      <article className="max-w-[85ch] mx-auto w-full">
+        {/* 헤더 */}
+        <header className="mb-12">
+          <Link
+            href={`/${lang}/blog`}
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
+            tabIndex={0}
+            aria-label={dict.blog.back_to_blog}
+          >
+            <ArrowLeft size={16} />
+            <span className="text-sm font-mono uppercase tracking-widest">
+              {dict.blog.back_to_blog}
+            </span>
+          </Link>
+
+          {isFallback && availableVersion && (
+            <div className="mb-12 p-6 rounded-xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm">
+              <div className="flex items-start gap-4">
+                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
+                  <AlertCircle size={20} />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-1">
+                    {dict.blog.not_available_title}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4">
+                    {dict.blog.not_available_description.replace(
+                      "{lang}",
+                      availableVersion.lang === "ko" ? "한국어" : "English"
+                    )}
+                  </p>
+                  <Link
+                    href={`/${availableVersion.lang}/blog/${slug}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-gray-200 transition-colors"
+                  >
+                    <Languages size={14} />
+                    {dict.blog.read_in_language.replace(
+                      "{lang}",
+                      availableVersion.lang === "ko" ? "한국어" : "English"
+                    )}
+                  </Link>
+                </div>
               </div>
             </div>
+          )}
+
+          <div className="flex items-center gap-4 mb-4">
+            <span
+              className={`text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full ${
+                post.category === "Business"
+                  ? "bg-green-500/10 text-green-400 border border-green-500/30"
+                  : post.category === "Engineering"
+                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
+                  : "bg-purple-500/10 text-purple-400 border border-purple-500/30"
+              }`}
+            >
+              {post.category}
+            </span>
+            <span className="text-sm text-gray-500 font-mono">
+              {post.date} · {post.readTime} {dict.blog.read_time}
+            </span>
           </div>
-        )}
 
-        <div className="flex items-center gap-4 mb-4">
-          <span
-            className={`text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full ${
-              post.category === "Business"
-                ? "bg-green-500/10 text-green-400 border border-green-500/30"
-                : post.category === "Engineering"
-                ? "bg-blue-500/10 text-blue-400 border border-blue-500/30"
-                : "bg-purple-500/10 text-purple-400 border border-purple-500/30"
-            }`}
-          >
-            {post.category}
-          </span>
-          <span className="text-sm text-gray-500 font-mono">
-            {post.date} · {post.readTime} {dict.blog.read_time}
-          </span>
+          <h1 className="text-4xl md:text-5xl font-bold font-montserrat text-white leading-tight">
+            {post.title}
+          </h1>
+
+          <p className="text-xl text-gray-400 mt-4 leading-relaxed">
+            {post.excerpt}
+          </p>
+
+          <hr className="border-gray-800 mt-8" />
+        </header>
+
+        {/* 본문 */}
+        <div className="prose-custom">
+          <PostContent />
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-bold font-montserrat text-white leading-tight">
-          {post.title}
-        </h1>
+        {/* 네비게이션 */}
+        <nav className="mt-16 pt-8 border-t border-gray-800">
+          <div className="flex justify-between items-center gap-4">
+            {prevPost ? (
+              <Link
+                href={`/${lang}/blog/${prevPost.slug}`}
+                className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors"
+                tabIndex={0}
+                aria-label={`${dict.blog.previous}: ${prevPost.title}`}
+              >
+                <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                  <ArrowLeft size={12} />
+                  {dict.blog.previous}
+                </span>
+                <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors line-clamp-1">
+                  {prevPost.title}
+                </span>
+              </Link>
+            ) : (
+              <div className="flex-1" />
+            )}
 
-        <p className="text-xl text-gray-400 mt-4 leading-relaxed">
-          {post.excerpt}
-        </p>
-
-        <hr className="border-gray-800 mt-8" />
-      </header>
-
-      {/* 본문 */}
-      <div className="prose-custom">
-        <PostContent />
-      </div>
-
-      {/* 네비게이션 */}
-      <nav className="mt-16 pt-8 border-t border-gray-800">
-        <div className="flex justify-between items-center gap-4">
-          {prevPost ? (
-            <Link
-              href={`/${lang}/blog/${prevPost.slug}`}
-              className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors"
-              tabIndex={0}
-              aria-label={`${dict.blog.previous}: ${prevPost.title}`}
-            >
-              <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                <ArrowLeft size={12} />
-                {dict.blog.previous}
-              </span>
-              <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors line-clamp-1">
-                {prevPost.title}
-              </span>
-            </Link>
-          ) : (
-            <div className="flex-1" />
-          )}
-
-          {nextPost ? (
-            <Link
-              href={`/${lang}/blog/${nextPost.slug}`}
-              className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors text-right"
-              tabIndex={0}
-              aria-label={`${dict.blog.next}: ${nextPost.title}`}
-            >
-              <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center justify-end gap-2">
-                {dict.blog.next}
-                <ArrowRight size={12} />
-              </span>
-              <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors line-clamp-1">
-                {nextPost.title}
-              </span>
-            </Link>
-          ) : (
-            <div className="flex-1" />
-          )}
-        </div>
-      </nav>
-    </article>
+            {nextPost ? (
+              <Link
+                href={`/${lang}/blog/${nextPost.slug}`}
+                className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 transition-colors text-right"
+                tabIndex={0}
+                aria-label={`${dict.blog.next}: ${nextPost.title}`}
+              >
+                <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center justify-end gap-2">
+                  {dict.blog.next}
+                  <ArrowRight size={12} />
+                </span>
+                <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors line-clamp-1">
+                  {nextPost.title}
+                </span>
+              </Link>
+            ) : (
+              <div className="flex-1" />
+            )}
+          </div>
+        </nav>
+      </article>
+    </>
   );
 }
