@@ -10,6 +10,7 @@ import { ArrowLeft, ArrowRight, Languages, AlertCircle } from "lucide-react";
 import type { Metadata } from "next";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import Giscus from "@/components/mdx/Giscus";
 
 interface BlogPostPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -263,6 +264,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         <div className="prose-custom">
           <PostContent />
         </div>
+
+        {/* 댓글 */}
+        <Giscus lang={lang as 'ko' | 'en'} />
 
         {/* 네비게이션 */}
         <nav className="mt-16 pt-8 border-t border-gray-800">
