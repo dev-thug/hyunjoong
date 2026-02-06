@@ -1,5 +1,10 @@
 # hyunjoong.kim
 
+[![Live Demo](https://img.shields.io/badge/Live-hyunjoong.kim-blue?style=flat-square)](https://hyunjoong.kim)
+[![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
+
+> **🌐 Live Site: [https://hyunjoong.kim](https://hyunjoong.kim)**
+
 개인 포트폴리오 및 기술 블로그 웹사이트입니다.
 
 ## Tech Stack
@@ -16,6 +21,7 @@
 
 - **다국어 지원 (i18n)**: 한국어/영어 자동 감지 및 전환
 - **MDX 블로그**: 코드 하이라이팅, 커스텀 컴포넌트 지원
+- **댓글 시스템**: Giscus 기반 GitHub Discussions 연동
 - **SEO 최적화**: 메타데이터, Open Graph, JSON-LD, sitemap, robots.txt
 - **반응형 디자인**: 모바일/태블릿/데스크톱 최적화
 - **다크 테마**: 기본 다크 모드 UI
@@ -117,11 +123,18 @@ export const metadata = {
 | `BlogImage` | 크기 조절, 캡션, 정렬 지원 이미지 |
 | `ImageGallery` | 여러 이미지 그리드 레이아웃 |
 | `CodeBlock` | 코드 하이라이팅 + 복사 버튼 |
+| `Giscus` | GitHub Discussions 기반 댓글 시스템 |
 
 ## Environment Variables
 
 ```env
+# Base URL
 NEXT_PUBLIC_BASE_URL=https://hyunjoong.kim
+
+# Giscus 댓글 시스템 (https://giscus.app 에서 설정)
+NEXT_PUBLIC_GISCUS_REPO=your-username/your-repo
+NEXT_PUBLIC_GISCUS_REPO_ID=your-repo-id
+NEXT_PUBLIC_GISCUS_CATEGORY_ID=your-category-id
 ```
 
 ## License
