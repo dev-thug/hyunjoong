@@ -1,5 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import CodeBlock from "@/components/mdx/CodeBlock";
+import BlogImage from "@/components/mdx/BlogImage";
+import ImageGallery from "@/components/mdx/ImageGallery";
 
 /**
  * MDX 컴포넌트 스타일링 정의
@@ -78,6 +80,23 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       <strong className="font-semibold text-zinc-100">{children}</strong>
     ),
     em: ({ children }) => <em className="italic text-zinc-200">{children}</em>,
+    // 이미지 스타일 (기본 마크다운 이미지)
+    img: ({ src, alt, ...props }) => (
+      <span className="block my-8">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={alt ?? ""}
+          className="mx-auto rounded-xl shadow-lg shadow-black/20 max-w-full h-auto"
+          loading="lazy"
+          {...props}
+        />
+      </span>
+    ),
+    // 커스텀 이미지 컴포넌트 (크기 조절, 캡션 등 지원)
+    BlogImage,
+    // 이미지 갤러리 컴포넌트 (여러 이미지 그리드 표시)
+    ImageGallery,
     // 테이블 스타일
     table: ({ children }) => (
       <div className="my-8 overflow-hidden rounded-xl border border-zinc-800/50 bg-[#09090b]/40 backdrop-blur-sm">

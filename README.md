@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# hyunjoong.kim
+
+개인 포트폴리오 및 기술 블로그 웹사이트입니다.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4
+- **Content**: MDX
+- **Icons**: Lucide React
+- **Charts**: Recharts
+- **Deployment**: Vercel
+
+## Features
+
+- **다국어 지원 (i18n)**: 한국어/영어 자동 감지 및 전환
+- **MDX 블로그**: 코드 하이라이팅, 커스텀 컴포넌트 지원
+- **SEO 최적화**: 메타데이터, Open Graph, JSON-LD, sitemap, robots.txt
+- **반응형 디자인**: 모바일/태블릿/데스크톱 최적화
+- **다크 테마**: 기본 다크 모드 UI
+
+## Project Structure
+
+```
+src/
+├── app/                    # Next.js App Router 페이지
+│   └── [lang]/             # 다국어 라우팅
+│       ├── blog/           # 블로그 목록 및 상세
+│       ├── projects/       # 프로젝트 목록 및 상세
+│       └── profile/        # 프로필 페이지
+├── components/
+│   ├── layout/             # Navigation, Footer 등 레이아웃
+│   ├── sections/           # Hero, About, Blog, Projects 섹션
+│   └── mdx/                # MDX 커스텀 컴포넌트
+├── content/
+│   ├── posts/              # 블로그 포스트 (.mdx)
+│   └── projects/           # 프로젝트 소개 (.mdx)
+├── dictionaries/           # 다국어 번역 파일 (ko.json, en.json)
+├── lib/                    # 유틸리티 함수
+└── types/                  # TypeScript 타입 정의
+```
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# 프로덕션 빌드
+npm run build
+
+# 프로덕션 서버 실행
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Writing Blog Posts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+블로그 포스트는 `src/content/posts/` 디렉토리에 MDX 파일로 작성합니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 파일 네이밍
 
-## Learn More
+```
+{slug}.{lang}.mdx
+예: nextjs-architecture.ko.mdx
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 메타데이터 형식
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```javascript
+export const metadata = {
+  title: "포스트 제목",
+  excerpt: "포스트 요약",
+  category: "Engineering", // Engineering | Business | Insight
+  date: "2024-05-10",
+  readTime: "8 min",
+  lang: "ko",
+  keywords: ["Next.js", "React"], // 선택
+  hidden: false, // 선택, true면 목록에서 숨김
+};
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 이미지 삽입
 
-## Deploy on Vercel
+이미지 파일은 `public/images/blog/` 디렉토리에 저장합니다.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```mdx
+// 기본 마크다운 이미지
+![이미지 설명](/images/blog/image.png)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+// BlogImage 컴포넌트 (크기 조절, 캡션 지원)
+<BlogImage
+  src="/images/blog/image.png"
+  alt="이미지 설명"
+  size="lg"
+  caption="이미지 캡션"
+  align="center"
+/>
+
+// ImageGallery 컴포넌트 (여러 이미지 그리드)
+<ImageGallery
+  images={[
+    { src: "/images/blog/img1.png", alt: "이미지1" },
+    { src: "/images/blog/img2.png", alt: "이미지2" },
+  ]}
+  columns={2}
+/>
+```
+
+## MDX Components
+
+| 컴포넌트 | 설명 |
+|---------|------|
+| `BlogImage` | 크기 조절, 캡션, 정렬 지원 이미지 |
+| `ImageGallery` | 여러 이미지 그리드 레이아웃 |
+| `CodeBlock` | 코드 하이라이팅 + 복사 버튼 |
+
+## Environment Variables
+
+```env
+NEXT_PUBLIC_BASE_URL=https://hyunjoong.kim
+```
+
+## License
+
+MIT
