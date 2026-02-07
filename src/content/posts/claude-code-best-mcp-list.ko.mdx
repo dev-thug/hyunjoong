@@ -17,22 +17,61 @@ Claude Code의 진정한 강력함은 **MCP(Model Context Protocol)** 생태계�
 
 ---
 
+## 0. 설치 전 준비사항
+
+모든 MCP는 터미널에서 `claude mcp add` 명령어 한 줄로 설치할 수 있습니다. 설치 후 `claude mcp list`로 등록된 MCP 목록을 확인하세요.
+
+```bash
+# 설치된 MCP 목록 확인
+claude mcp list
+
+# 특정 MCP 상세 정보 확인
+claude mcp get <서버이름>
+```
+
+> **참고**: Node.js v18 이상이 설치되어 있어야 합니다. 일부 MCP는 API 키가 필요하며, `-e` 플래그로 환경변수를 전달할 수 있습니다.
+
+---
+
 ## 1. 필수로 갖춰야 할 MCP 추천 TOP 5
 
 ### ① Sequential Thinking ⭐⭐⭐⭐⭐
 복잡한 문제를 해결할 때 가장 중요한 것은 '논리적 추론'입니다. 이 MCP는 Claude가 서두르지 않고 단계별로 사고하게 하여 아키텍처 설계나 디버깅의 정확도를 비약적으로 높여줍니다.
 
+```bash
+claude mcp add sequential-thinking -- npx -y @model-context-protocol/server-sequential-thinking
+```
+
 ### ② GitHub MCP ⭐⭐⭐⭐⭐
 이슈 생성, PR 작성, 브랜치 관리 등 모든 Git 워크플로우를 터미널 안에서 해결할 수 있게 해주는 필수 도구입니다.
+
+```bash
+# GitHub Personal Access Token이 필요합니다
+claude mcp add github -e GITHUB_PERSONAL_ACCESS_TOKEN=<your_token> -- npx -y @modelcontextprotocol/server-github
+```
 
 ### ③ Context7 ⭐⭐⭐⭐⭐
 가장 큰 고민 중 하나인 AI의 지식 단절 문제를 해결합니다. 50개 이상의 최신 프레임워크 문서를 실시간으로 참조하여, 구버전 API를 추천하는 등의 실수를 방지합니다.
 
+```bash
+claude mcp add context7 -- npx -y @upstash/context7-mcp
+```
+
 ### ④ Filesystem MCP ⭐⭐⭐⭐⭐
 대규모 리팩토링이나 일괄 파일 처리 시 매우 유용합니다. 정해진 경로 내에서 안전하게 파일을 생성하고 수정하는 능력을 극대화해줍니다.
 
+```bash
+# 허용할 디렉토리 경로를 지정합니다
+claude mcp add filesystem -- npx -y @modelcontextprotocol/server-filesystem /path/to/allowed/directory
+```
+
 ### ⑤ PostgreSQL MCP ⭐⭐⭐⭐
 DB 스키마 분석과 쿼리 최적화 업무를 수행할 때 필수적입니다. 데이터베이스의 구조를 Claude가 직접 파악하고 코딩에 반영할 수 있게 돕습니다.
+
+```bash
+# PostgreSQL 연결 URL을 지정합니다
+claude mcp add postgres -- npx -y @modelcontextprotocol/server-postgres postgresql://user:password@localhost:5432/mydb
+```
 
 ---
 
@@ -46,15 +85,39 @@ DB 스키마 분석과 쿼리 최적화 업무를 수행할 때 필수적입니�
 - **Docker MCP**: 컨테이너 관리 및 Dockerfile 자동 최적화
 - **활용**: 서버리스 아키텍처 배포와 실시간 모니터링 자동화
 
+```bash
+# AWS Knowledge MCP (원격 HTTP 서버)
+claude mcp add aws-docs --transport http https://knowledge-mcp.global.api.aws
+
+# Docker MCP
+claude mcp add docker -- uvx mcp-server-docker
+```
+
 ### 🎨 프론트엔드 개발자
 - **Playwright MCP**: 브라우저 자동화 및 E2E 테스트 코드 생성
 - **Fetch MCP**: 웹 페이지 콘텐츠 분석 및 API 문서 추출
 - **활용**: "로그인 과정을 검증하는 테스트 시나리오를 작성하고 바로 실행해줘"
 
+```bash
+# Playwright MCP
+claude mcp add playwright -- npx @playwright/mcp@latest
+
+# Fetch MCP
+claude mcp add fetch -- npx -y @modelcontextprotocol/server-fetch
+```
+
 ### ⚙️ 백엔드 개발자
 - **Sentry MCP**: 프로덕션 에러 로그 실시간 분석 및 수정 제안
 - **SQLite MCP**: 로컬 테스트 DB의 효율적 관리
 - **활용**: 실시간 장애 대응 및 디버깅 가속화
+
+```bash
+# Sentry MCP (인증 토큰 필요)
+claude mcp add sentry -- npx -y @modelcontextprotocol/server-sentry --auth-token <your_sentry_token>
+
+# SQLite MCP
+claude mcp add sqlite -- npx -y @modelcontextprotocol/server-sqlite
+```
 
 ---
 
@@ -66,6 +129,17 @@ DB 스키마 분석과 쿼리 최적화 업무를 수행할 때 필수적입니�
 - **정보 검색**: Brave Search MCP (프라이버시 중심 웹 검색)
 - **생산성**: Google Workspace MCP (Sheets, Drive 연동)
 - **웹 자동화**: Puppeteer MCP (브라우저 제어)
+
+```bash
+# Linear MCP (API 키 필요: https://linear.app/settings/api)
+claude mcp add linear -e LINEAR_API_KEY=<your_api_key> -- npx -y linear-mcp-server
+
+# Brave Search MCP (API 키 필요: https://brave.com/search/api/)
+claude mcp add brave-search -e BRAVE_API_KEY=<your_api_key> -- npx -y @modelcontextprotocol/server-brave-search
+
+# Puppeteer MCP
+claude mcp add puppeteer -- npx -y @modelcontextprotocol/server-puppeteer
+```
 
 ---
 
