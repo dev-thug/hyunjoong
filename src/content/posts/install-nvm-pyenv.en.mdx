@@ -1,0 +1,157 @@
+export const metadata = {
+  title: "[Mac Setup] The Definitive Guide to Installing Node.js (v22) & Python (3.12) for Developers",
+  excerpt: "Set up Node.js v22 and Python 3.12 on your Mac the right way using nvm and pyenv. No permission errors, no version conflicts — just the officially recommended approach.",
+  category: "Engineering",
+  date: "2026-02-12",
+  readTime: "5 min",
+  lang: "en",
+  keywords: ["macOS", "nvm", "pyenv", "Node.js", "Python", "dev environment", "Mac setup"],
+  hidden: false,
+};
+
+# [Mac Setup] The Definitive Guide to Installing Node.js (v22) & Python (3.12) for Developers
+
+When you get a new Mac or do a fresh reinstall, the very first thing on your to-do list is setting up your dev environment.
+But if you jump straight to `brew install node` or `brew install python`, you're setting yourself up for permission errors (EACCES) and version conflicts down the road.
+
+This guide walks through the most **official and reliable way** to install Node.js (v22) and Python (3.12).
+
+> **TL;DR**
+> * **Node.js:** Install `nvm` via the **official install script** — not Homebrew.
+> * **Python:** Install `pyenv` via Homebrew, but install the **build dependencies** first.
+
+---
+
+## 1. Prerequisites (Terminal & Xcode Tools)
+
+Before anything else, open Terminal and take care of the basics.
+
+**1) Check your shell**
+Make sure you're running `zsh` — the default shell on macOS. You should see `zsh` in the terminal window title.
+
+**2) Install Xcode Command Line Tools**
+These provide the compilers that every dev tool depends on.
+
+```bash
+xcode-select --install
+```
+
+*(If a popup says it's already installed, you're good to go.)*
+
+---
+
+## 2. Installing Node.js (v22) with NVM
+
+A common mistake is running `brew install nvm`. The official nvm docs do not support Homebrew installation and actually recommend removing it. We'll use the **official install script** instead.
+
+### Step 1. Run the NVM install script
+
+Paste the following command in your terminal to install nvm.
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+```
+
+*(The version `v0.40.1` may differ depending on the latest release.)*
+
+### Step 2. Configure environment variables (important!)
+
+Even after installation, the `nvm` command won't work right away. You need to add the configuration to your `~/.zshrc` file.
+
+```bash
+# 1. Open your config file
+nano ~/.zshrc
+
+# 2. Check if the following lines exist at the bottom. If not, paste them in.
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# 3. Save and exit (Ctrl+O -> Enter -> Ctrl+X)
+```
+
+### Step 3. Apply the config and install Node.js v22
+
+```bash
+# Apply the config
+source ~/.zshrc
+
+# Install Node.js v22
+nvm install 22
+
+# Set it as the default version
+nvm use 22
+nvm alias default 22
+```
+
+If `node -v` returns `v22.x.x`, you're all set!
+
+---
+
+## 3. Installing Python (3.12) with Pyenv
+
+macOS ships with a system Python, but you should never touch it. Use `pyenv` for version management instead. Unlike nvm, `pyenv` is best installed via **Homebrew**.
+
+### Step 1. Install build dependencies (required)
+
+Skip this step and you'll hit a "Build failed" error when installing Python.
+
+```bash
+brew install openssl readline sqlite3 xz zlib tcl-tk
+```
+
+### Step 2. Install Pyenv
+
+```bash
+brew install pyenv
+```
+
+### Step 3. Configure environment variables (the most critical step)
+
+Pyenv won't be recognized by your terminal until you update `~/.zshrc`.
+
+```bash
+# 1. Append environment variables to your config (paste each line into your terminal)
+echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
+echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(pyenv init -)"' >> ~/.zshrc
+
+# 2. Apply the config
+source ~/.zshrc
+```
+
+### Step 4. Install Python 3.12
+
+Install the latest stable release in the 3.12 line.
+
+```bash
+# List available 3.12 versions (optional)
+# pyenv install --list | grep 3.12
+
+# Install Python 3.12 (this may take a few minutes)
+pyenv install 3.12.9
+
+# Set it as the global default
+pyenv global 3.12.9
+```
+
+*(3.12.9 is an example at the time of writing — use the highest 3.12.x version available when you install.)*
+
+If `python --version` returns `Python 3.12.9`, you're done!
+
+---
+
+## 4. Wrap-up & Verification
+
+All installations are complete. Quit Terminal entirely, reopen it, and run the following commands to verify everything.
+
+```bash
+node -v   # Should show v22.x.x
+python --version  # Should show Python 3.12.x
+```
+
+This approach follows the officially recommended "cleanest" installation method for each language ecosystem. If different projects require different versions, you can easily switch with `nvm use` or `pyenv local`.
+
+Happy coding with your fresh dev environment!
+
+---
