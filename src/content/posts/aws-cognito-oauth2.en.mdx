@@ -1,0 +1,329 @@
+export const metadata = {
+  title: "AWS Cognito + Google/Apple OAuth2 Integration Guide",
+  excerpt: "A complete step-by-step walkthrough from creating a Cognito User Pool to configuring Google/Apple social login and testing the full OAuth2 flow.",
+  category: "Engineering",
+  date: "2026-02-12",
+  readTime: "10 min",
+  lang: "en",
+  keywords: ["AWS Cognito", "OAuth2", "Google Login", "Apple Sign In", "Social Login", "Federation"],
+  hidden: false,
+};
+
+# AWS Cognito + Google/Apple OAuth2 Integration Guide
+
+> A step-by-step process you can follow along
+
+---
+
+## Overview
+
+```
+1. Create an AWS Cognito User Pool
+2. Register your app with each social IdP (Google/Apple) → Obtain Client ID/Secret
+3. Register social IdPs in Cognito + Configure Attribute Mapping
+4. Configure the App Client (Callback URLs, OAuth Flows, etc.)
+5. Set up a domain (Hosted UI or custom domain)
+6. Test
+```
+
+---
+
+## STEP 1. Create an AWS Cognito User Pool
+
+1. AWS Console → **Cognito** → Click **Create user pool**
+2. **Sign-in options**: Select `Email`
+3. Check **Federated identity providers** → Check **Google** and **Apple**
+4. Password policy: Keep defaults (or adjust to fit your project)
+5. MFA: Configure as needed (use `No MFA` for testing)
+6. Self-service account recovery: Configure as needed
+7. **Required attributes**: Select `email`
+   - ⚠️ Apple only sends the `name` attribute on first login, so making `name` a required attribute can cause issues. Stick with `email` only as required
+8. Email delivery: Select `Send email with Cognito` (or integrate with SES)
+9. Enter a **User pool name**
+10. **Skip** social IdP setup for now (you can configure it after pool creation)
+11. User pool creation complete
+
+### Values to note after creation
+- **User Pool ID** (e.g., `ap-northeast-2_AbCdEfG`)
+- **Region** (e.g., `ap-northeast-2`)
+
+---
+
+## STEP 2. Configure the Cognito Domain
+
+1. Navigate to your User Pool → **App integration** tab
+2. Under the **Domain** section, create a domain
+   - **Cognito domain**: `https://<your-prefix>.auth.<region>.amazoncognito.com`
+   - Or use a **custom domain**
+3. Note this domain URL (you'll need it for Google/Apple setup)
+
+### Key URL patterns
+```
+Authorization endpoint: https://<domain>/oauth2/authorize
+Token endpoint:         https://<domain>/oauth2/token
+IdP response URL:       https://<domain>/oauth2/idpresponse  ← Used as the redirect URI for social IdPs
+```
+
+---
+
+## STEP 3-A. Google OAuth Setup
+
+### 3-A-1. Create a project in Google Cloud Console
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or select an existing one)
+
+### 3-A-2. Configure the OAuth consent screen
+
+1. **APIs & Services** → **OAuth consent screen**
+2. Enter an app name
+3. Enter a support email
+4. Add `amazoncognito.com` to **Authorized domains** ← Important!
+5. Enter a developer contact email
+6. **Save and Continue**
+
+### 3-A-3. Create an OAuth Client ID
+
+1. **APIs & Services** → **Credentials** → **Create Credentials** → **OAuth client ID**
+2. Application type: `Web application`
+3. Enter a name
+4. **Authorized JavaScript origins**:
+   ```
+   https://<your-cognito-domain-prefix>.auth.<region>.amazoncognito.com
+   ```
+5. **Authorized redirect URIs**:
+   ```
+   https://<your-cognito-domain-prefix>.auth.<region>.amazoncognito.com/oauth2/idpresponse
+   ```
+6. Click **Create**
+
+### 3-A-4. Values to note
+- **Client ID** (e.g., `123456789.apps.googleusercontent.com`)
+- **Client Secret**
+
+### 3-A-5. Register Google as an IdP in Cognito
+
+1. AWS Console → Cognito → Your User Pool → **Sign-in experience** tab
+2. **Federated identity provider sign-in** → **Add identity provider**
+3. Select **Google**
+4. Enter:
+   - **Client ID**: The Client ID from Google
+   - **Client secret**: The Client Secret from Google
+   - **Authorized scopes**: `openid email profile`
+5. **Attribute mapping**:
+   | Google attribute | Cognito attribute |
+   |-----------------|-------------------|
+   | email           | email             |
+   | sub             | username          |
+   | name            | name              |
+   | given_name      | given_name        |
+   | family_name     | family_name       |
+6. Click **Add identity provider**
+
+---
+
+## STEP 3-B. Apple Sign In Setup
+
+> ⚠️ Requires an Apple Developer Program membership ($99/year)
+
+### 3-B-1. Register an App ID
+
+1. [Apple Developer Portal](https://developer.apple.com/) → **Certificates, Identifiers & Profiles**
+2. Left menu **Identifiers** → Click the **+** icon
+3. Select **App IDs** → **Continue**
+4. Type: Select **App** → **Continue**
+5. Enter:
+   - **Description**: A description of your app
+   - **Bundle ID**: Your app's bundle ID (e.g., `com.mycompany.myapp`)
+6. Under **Capabilities**, check **Sign In with Apple** → Click **Edit**
+   - Select "Enable as a primary App ID"
+7. **Continue** → **Register**
+
+### Values to note
+- **Team ID**: Shown as the App ID Prefix (e.g., `ABCDE12345`)
+
+### 3-B-2. Register a Services ID
+
+1. **Identifiers** → **+** → Select **Services IDs** → **Continue**
+2. Enter:
+   - **Description**: A description of the service
+   - **Identifier**: A service ID (e.g., `com.mycompany.myapp.signin`)
+     → This is the **Apple Services ID** you'll enter in Cognito later
+3. **Continue** → **Register**
+4. Click the newly created Services ID → Check **Sign In with Apple** → **Configure**
+5. **Web Authentication Configuration**:
+   - **Primary App ID**: Select the App ID you created above
+   - **Domains and Subdomains**:
+     ```
+     <your-cognito-domain-prefix>.auth.<region>.amazoncognito.com
+     ```
+   - **Return URLs**:
+     ```
+     https://<your-cognito-domain-prefix>.auth.<region>.amazoncognito.com/oauth2/idpresponse
+     ```
+6. **Save** → **Continue** → **Save**
+
+### 3-B-3. Generate a Private Key
+
+1. Left menu **Keys** → Click the **+** icon
+2. Enter a **Key Name**
+3. Check **Sign In with Apple** → **Configure**
+4. Select the Primary App ID → **Save**
+5. **Continue** → **Register**
+6. **Download the .p8 file** ← You can only download this once! Store it securely
+
+### Values to note
+- **Key ID**: Found in the keys list (e.g., `ABC123DEFG`)
+- **Private Key**: The contents of the .p8 file
+
+### 3-B-4. Register Apple as an IdP in Cognito
+
+1. AWS Console → Cognito → Your User Pool → **Sign-in experience** tab
+2. **Federated identity provider sign-in** → **Add identity provider**
+3. Select **Sign in with Apple**
+4. Enter:
+   - **Services ID**: The Services ID from step 3-B-2 (e.g., `com.mycompany.myapp.signin`)
+   - **Team ID**: Your Apple Developer account's Team ID
+   - **Key ID**: The Key ID from step 3-B-3
+   - **Private Key**: The full contents of the .p8 file (paste the entire text)
+   - **Authorized scopes**: `name email`
+5. **Attribute mapping**:
+   | Apple attribute | Cognito attribute |
+   |----------------|-------------------|
+   | email          | email             |
+   | sub            | username          |
+   | name           | name              |
+6. Click **Add identity provider**
+
+> ⚠️ Apple only sends the user's name on the **very first login**. Subsequent logins will only provide email and sub.
+
+---
+
+## STEP 4. App Client Configuration
+
+1. Cognito → User Pool → **App integration** tab → **App clients** section
+2. Select an existing app client or **Create app client**
+3. App type: **Public client** (SPA/mobile) or **Confidential client** (server-side)
+4. **Generate client secret**:
+   - SPA → Uncheck (use Authorization Code + PKCE)
+   - Server-side app → Check (use Client Secret)
+5. Edit the **Hosted UI settings**:
+   - **Identity providers**: Check `Google` and `Sign in with Apple`
+   - **Callback URL**: The redirect URL after login completes
+     ```
+     http://localhost:3000/auth/callback  (development)
+     https://yourdomain.com/auth/callback (production)
+     ```
+   - **Sign-out URL**:
+     ```
+     http://localhost:3000  (development)
+     https://yourdomain.com (production)
+     ```
+   - **OAuth 2.0 grant types**: Select `Authorization code grant` (recommended)
+   - **OpenID Connect scopes**: Select `openid`, `email`, `profile`
+6. **Save changes**
+
+### Values to note
+- **App Client ID**
+- **App Client Secret** (if using a confidential client)
+
+---
+
+## STEP 5. Testing
+
+### Method 1: Test with the Hosted UI
+
+Open this URL in your browser:
+
+```
+https://<domain>/login?response_type=code&client_id=<App Client ID>&redirect_uri=<Callback URL>&scope=openid+email+profile
+```
+
+Example:
+```
+https://myapp.auth.ap-northeast-2.amazoncognito.com/login?response_type=code&client_id=abc123def456&redirect_uri=http://localhost:3000/auth/callback&scope=openid+email+profile
+```
+
+→ If you see Google/Apple login buttons, you're good to go
+
+### Method 2: Redirect directly to a social IdP
+
+```
+https://<domain>/oauth2/authorize?identity_provider=Google&response_type=code&client_id=<App Client ID>&redirect_uri=<Callback URL>&scope=openid+email+profile
+```
+
+`identity_provider` values:
+- Google: `Google`
+- Apple: `SignInWithApple`
+
+### Post-login flow
+
+```
+1. User completes authentication with Google/Apple
+2. Redirected to Cognito's /oauth2/idpresponse
+3. Cognito generates an Authorization Code
+4. Redirected to your app's callback URL (?code=XXXX)
+5. Your app exchanges the code at the /oauth2/token endpoint
+6. Receives ID Token, Access Token, and Refresh Token
+```
+
+### Token exchange example (server-side)
+
+```bash
+curl -X POST https://<domain>/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=authorization_code" \
+  -d "code=<authorization_code>" \
+  -d "client_id=<App Client ID>" \
+  -d "redirect_uri=<Callback URL>"
+```
+
+---
+
+## Checklist
+
+| Item | Done |
+|------|------|
+| Cognito domain configured | ☐ |
+| `amazoncognito.com` added to Google OAuth consent screen | ☐ |
+| Google redirect URI set to `/oauth2/idpresponse` | ☐ |
+| Apple Services ID Return URL set to `/oauth2/idpresponse` | ☐ |
+| Apple .p8 key file stored securely | ☐ |
+| Google/Apple IdPs registered in Cognito | ☐ |
+| Google/Apple enabled as Identity Providers in App Client | ☐ |
+| Callback URL matches the App Client configuration | ☐ |
+| OAuth scopes include `openid`, `email`, `profile` | ☐ |
+| Attribute mapping configured | ☐ |
+
+---
+
+## Common Mistakes & Troubleshooting
+
+### `invalid_client` error
+- The App Client has a secret, but you didn't include it in the token request
+- For SPAs, make sure to **uncheck** "Generate client secret" when creating the App Client
+
+### `invalid redirect_url` (Apple)
+- You entered the **App ID** instead of the **Services ID** when configuring the Apple IdP in Cognito
+- Don't confuse the Services ID (e.g., `com.mycompany.myapp.signin`) with the App ID (bundle ID)
+
+### User info missing after Google login
+- Verify that `email` and `profile` are included in the Google OAuth authorized scopes
+- Check that the Cognito attribute mapping is configured correctly
+
+### Name is null on Apple re-login
+- This is expected behavior. Apple only sends the name on the **first authentication**
+- Don't set `name` as a required attribute in your User Pool
+
+### Social login buttons not showing in Hosted UI
+- Make sure the IdP is **enabled** in the App Client's **Hosted UI settings**
+- After registering an IdP, you need to **separately enable** it in the App Client
+
+---
+
+## References
+
+- [AWS Docs: Adding social login](https://docs.aws.amazon.com/cognito/latest/developerguide/tutorial-create-user-pool-social-idp.html)
+- [AWS Blog: Setting up Sign in with Apple](https://aws.amazon.com/blogs/security/how-to-set-up-sign-in-with-apple-for-amazon-cognito/)
+- [AWS Blog: OAuth 2.0 in Cognito](https://aws.amazon.com/blogs/security/how-to-use-oauth-2-0-in-amazon-cognito-learn-about-the-different-oauth-2-0-grants/)
+- [Google OAuth setup: AWS re:Post](https://repost.aws/knowledge-center/cognito-google-social-identity-provider)

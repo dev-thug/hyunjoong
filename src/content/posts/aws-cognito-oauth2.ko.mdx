@@ -1,0 +1,329 @@
+export const metadata = {
+  title: "AWS Cognito + Google/Apple OAuth2 연동 가이드",
+  excerpt: "따라만 하면 되는 Step-by-Step 프로세스. Cognito User Pool 생성부터 Google/Apple 소셜 로그인 설정, 테스트까지 한 번에 정리합니다.",
+  category: "Engineering",
+  date: "2026-02-12",
+  readTime: "10 min",
+  lang: "ko",
+  keywords: ["AWS Cognito", "OAuth2", "Google Login", "Apple Sign In", "Social Login", "Federation"],
+  hidden: false,
+};
+
+# AWS Cognito + Google/Apple OAuth2 연동 가이드
+
+> 따라만 하면 되는 Step-by-Step 프로세스
+
+---
+
+## 전체 흐름 요약
+
+```
+1. AWS Cognito User Pool 생성
+2. 각 소셜 IdP(Google/Apple)에서 앱 등록 → Client ID/Secret 발급
+3. Cognito에 소셜 IdP 등록 + Attribute Mapping
+4. App Client 설정 (콜백 URL, OAuth Flow 등)
+5. 도메인 설정 (Hosted UI 또는 커스텀 도메인)
+6. 테스트
+```
+
+---
+
+## STEP 1. AWS Cognito User Pool 생성
+
+1. AWS Console → **Cognito** → **사용자 풀 생성** 클릭
+2. **로그인 옵션**: `이메일` 선택
+3. **Federated identity providers** 체크 → **Google**, **Apple** 체크
+4. 암호 정책: 기본값 유지 (또는 프로젝트에 맞게 조정)
+5. MFA: 필요에 따라 설정 (테스트 시 `MFA 없음`)
+6. 셀프 서비스 계정 복구: 필요에 따라 설정
+7. **필수 속성**: `email` 선택
+   - ⚠️ Apple은 `name` 속성을 첫 로그인 시에만 전달하므로, `name`을 필수 속성으로 설정하면 문제가 생길 수 있음. 가급적 `email`만 필수로 설정
+8. 이메일 전송: `Cognito로 이메일 전송` 선택 (또는 SES 연동)
+9. **사용자 풀 이름** 입력
+10. 소셜 IdP 설정은 일단 **건너뛰기** (풀 생성 후 설정 가능)
+11. 사용자 풀 생성 완료
+
+### 생성 후 메모해둘 값
+- **User Pool ID** (예: `ap-northeast-2_AbCdEfG`)
+- **리전** (예: `ap-northeast-2`)
+
+---
+
+## STEP 2. Cognito 도메인 설정
+
+1. 생성한 User Pool → **앱 통합** 탭
+2. **도메인** 섹션에서 도메인 생성
+   - **Cognito 도메인**: `https://<고유접두사>.auth.<리전>.amazoncognito.com`
+   - 또는 **커스텀 도메인** 사용 가능
+3. 이 도메인 URL을 메모 (Google/Apple 설정 시 필요)
+
+### 핵심 URL 패턴
+```
+인증 엔드포인트: https://<도메인>/oauth2/authorize
+토큰 엔드포인트: https://<도메인>/oauth2/token
+IdP 응답 URL:   https://<도메인>/oauth2/idpresponse  ← 소셜 IdP 리다이렉트 URI로 사용
+```
+
+---
+
+## STEP 3-A. Google OAuth 설정
+
+### 3-A-1. Google Cloud Console에서 프로젝트 생성
+
+1. [Google Cloud Console](https://console.cloud.google.com/) 접속
+2. 새 프로젝트 생성 (또는 기존 프로젝트 선택)
+
+### 3-A-2. OAuth 동의 화면 설정
+
+1. **API 및 서비스** → **OAuth 동의 화면**
+2. 앱 이름 입력
+3. 지원 이메일 입력
+4. **승인된 도메인**에 `amazoncognito.com` 추가 ← 중요!
+5. 개발자 연락처 이메일 입력
+6. **저장 후 계속**
+
+### 3-A-3. OAuth 클라이언트 ID 생성
+
+1. **API 및 서비스** → **사용자 인증 정보** → **사용자 인증 정보 만들기** → **OAuth 클라이언트 ID**
+2. 애플리케이션 유형: `웹 애플리케이션`
+3. 이름 입력
+4. **승인된 JavaScript 원본**:
+   ```
+   https://<Cognito도메인접두사>.auth.<리전>.amazoncognito.com
+   ```
+5. **승인된 리디렉션 URI**:
+   ```
+   https://<Cognito도메인접두사>.auth.<리전>.amazoncognito.com/oauth2/idpresponse
+   ```
+6. **만들기** 클릭
+
+### 3-A-4. 메모해둘 값
+- **클라이언트 ID** (예: `123456789.apps.googleusercontent.com`)
+- **클라이언트 보안 비밀번호** (Client Secret)
+
+### 3-A-5. Cognito에 Google IdP 등록
+
+1. AWS Console → Cognito → 해당 User Pool → **로그인 환경** 탭
+2. **자격 증명 공급자** → **자격 증명 공급자 추가**
+3. **Google** 선택
+4. 입력:
+   - **클라이언트 ID**: Google에서 받은 Client ID
+   - **클라이언트 보안 암호**: Google에서 받은 Client Secret
+   - **승인 범위**: `openid email profile`
+5. **속성 매핑**:
+   | Google 속성 | Cognito 속성 |
+   |-------------|-------------|
+   | email       | email       |
+   | sub         | username    |
+   | name        | name        |
+   | given_name  | given_name  |
+   | family_name | family_name |
+6. **자격 증명 공급자 추가** 클릭
+
+---
+
+## STEP 3-B. Apple Sign In 설정
+
+> ⚠️ Apple Developer Program 가입 필요 (연 $99)
+
+### 3-B-1. App ID 등록
+
+1. [Apple Developer Portal](https://developer.apple.com/) → **Certificates, Identifiers & Profiles**
+2. 왼쪽 메뉴 **Identifiers** → **+** 아이콘 클릭
+3. **App IDs** 선택 → **Continue**
+4. 타입: **App** 선택 → **Continue**
+5. 입력:
+   - **Description**: 앱 설명
+   - **Bundle ID**: 앱 번들 ID (예: `com.mycompany.myapp`)
+6. **Capabilities**에서 **Sign In with Apple** 체크 → **Edit** 클릭
+   - "Enable as a primary App ID" 선택
+7. **Continue** → **Register**
+
+### 메모해둘 값
+- **Team ID**: App ID Prefix에 표시됨 (예: `ABCDE12345`)
+
+### 3-B-2. Services ID 등록
+
+1. **Identifiers** → **+** → **Services IDs** 선택 → **Continue**
+2. 입력:
+   - **Description**: 서비스 설명
+   - **Identifier**: 서비스 ID (예: `com.mycompany.myapp.signin`)
+     → 이 값이 나중에 Cognito에 입력할 **Apple Services ID**
+3. **Continue** → **Register**
+4. 생성된 Services ID 클릭 → **Sign In with Apple** 체크 → **Configure**
+5. **Web Authentication Configuration**:
+   - **Primary App ID**: 위에서 만든 App ID 선택
+   - **Domains and Subdomains**:
+     ```
+     <Cognito도메인접두사>.auth.<리전>.amazoncognito.com
+     ```
+   - **Return URLs**:
+     ```
+     https://<Cognito도메인접두사>.auth.<리전>.amazoncognito.com/oauth2/idpresponse
+     ```
+6. **Save** → **Continue** → **Save**
+
+### 3-B-3. Private Key 생성
+
+1. 왼쪽 메뉴 **Keys** → **+** 아이콘
+2. **Key Name** 입력
+3. **Sign In with Apple** 체크 → **Configure**
+4. Primary App ID 선택 → **Save**
+5. **Continue** → **Register**
+6. **.p8 파일 다운로드** ← 한 번만 다운로드 가능! 반드시 안전하게 보관
+
+### 메모해둘 값
+- **Key ID**: 키 목록에서 확인 가능 (예: `ABC123DEFG`)
+- **Private Key**: .p8 파일 내용
+
+### 3-B-4. Cognito에 Apple IdP 등록
+
+1. AWS Console → Cognito → 해당 User Pool → **로그인 환경** 탭
+2. **자격 증명 공급자** → **자격 증명 공급자 추가**
+3. **Sign in with Apple** 선택
+4. 입력:
+   - **Services ID**: 위 3-B-2에서 만든 Services ID (예: `com.mycompany.myapp.signin`)
+   - **Team ID**: Apple Developer 계정의 Team ID
+   - **Key ID**: 위 3-B-3에서 생성한 Key ID
+   - **Private Key**: .p8 파일 내용 (텍스트 전체 복붙)
+   - **승인 범위**: `name email`
+5. **속성 매핑**:
+   | Apple 속성 | Cognito 속성 |
+   |-----------|-------------|
+   | email     | email       |
+   | sub       | username    |
+   | name      | name        |
+6. **자격 증명 공급자 추가** 클릭
+
+> ⚠️ Apple은 사용자 이름(name)을 **첫 번째 로그인 시에만** 전달합니다. 이후 로그인에서는 email과 sub만 제공됩니다.
+
+---
+
+## STEP 4. App Client 설정
+
+1. Cognito → User Pool → **앱 통합** 탭 → **앱 클라이언트** 섹션
+2. 기존 앱 클라이언트 선택 또는 **앱 클라이언트 생성**
+3. 앱 유형: **퍼블릭 클라이언트** (SPA/모바일) 또는 **기밀 클라이언트** (서버사이드)
+4. **클라이언트 보안 암호 생성**:
+   - SPA → 체크 해제 (Authorization Code + PKCE 사용)
+   - 서버 사이드 앱 → 체크 (Client Secret 사용)
+5. **호스팅 UI 설정** 편집:
+   - **자격 증명 공급자**: `Google`, `Sign in with Apple` 체크
+   - **콜백 URL**: 앱의 로그인 완료 후 리다이렉트 URL
+     ```
+     http://localhost:3000/auth/callback  (개발용)
+     https://yourdomain.com/auth/callback (프로덕션)
+     ```
+   - **로그아웃 URL**:
+     ```
+     http://localhost:3000  (개발용)
+     https://yourdomain.com (프로덕션)
+     ```
+   - **OAuth 2.0 권한 부여 유형**: `Authorization code grant` 선택 (권장)
+   - **OpenID Connect 범위**: `openid`, `email`, `profile` 선택
+6. **변경 사항 저장**
+
+### 메모해둘 값
+- **App Client ID**
+- **App Client Secret** (기밀 클라이언트인 경우)
+
+---
+
+## STEP 5. 테스트
+
+### 방법 1: Hosted UI로 테스트
+
+브라우저에서 아래 URL 접속:
+
+```
+https://<도메인>/login?response_type=code&client_id=<App Client ID>&redirect_uri=<콜백URL>&scope=openid+email+profile
+```
+
+예시:
+```
+https://myapp.auth.ap-northeast-2.amazoncognito.com/login?response_type=code&client_id=abc123def456&redirect_uri=http://localhost:3000/auth/callback&scope=openid+email+profile
+```
+
+→ Google/Apple 로그인 버튼이 표시되면 성공
+
+### 방법 2: 직접 소셜 IdP로 리다이렉트
+
+```
+https://<도메인>/oauth2/authorize?identity_provider=Google&response_type=code&client_id=<App Client ID>&redirect_uri=<콜백URL>&scope=openid+email+profile
+```
+
+`identity_provider` 값:
+- Google: `Google`
+- Apple: `SignInWithApple`
+
+### 로그인 성공 후 흐름
+
+```
+1. 사용자가 Google/Apple에서 인증 완료
+2. Cognito의 /oauth2/idpresponse로 리다이렉트
+3. Cognito가 Authorization Code를 생성
+4. 앱의 콜백 URL로 리다이렉트 (?code=XXXX)
+5. 앱에서 code를 /oauth2/token 엔드포인트로 교환
+6. ID Token, Access Token, Refresh Token 수령
+```
+
+### 토큰 교환 예시 (서버사이드)
+
+```bash
+curl -X POST https://<도메인>/oauth2/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=authorization_code" \
+  -d "code=<인증코드>" \
+  -d "client_id=<App Client ID>" \
+  -d "redirect_uri=<콜백URL>"
+```
+
+---
+
+## 주요 체크리스트
+
+| 항목 | 확인 |
+|------|------|
+| Cognito 도메인 설정 완료 | ☐ |
+| Google OAuth 동의 화면에 `amazoncognito.com` 추가 | ☐ |
+| Google 리다이렉트 URI에 `/oauth2/idpresponse` 설정 | ☐ |
+| Apple Services ID의 Return URL에 `/oauth2/idpresponse` 설정 | ☐ |
+| Apple .p8 키 파일 안전하게 보관 | ☐ |
+| Cognito에 Google/Apple IdP 등록 완료 | ☐ |
+| App Client에서 Google/Apple을 Identity Provider로 활성화 | ☐ |
+| 콜백 URL이 App Client 설정과 일치 | ☐ |
+| OAuth 범위에 `openid`, `email`, `profile` 포함 | ☐ |
+| 속성 매핑 설정 완료 | ☐ |
+
+---
+
+## 자주 하는 실수 & 트러블슈팅
+
+### `invalid_client` 에러
+- App Client에 보안 암호(Secret)가 있는데, 토큰 요청 시 Secret을 포함하지 않은 경우
+- SPA라면 App Client 생성 시 보안 암호 생성을 **해제**하세요
+
+### `invalid redirect_url` (Apple)
+- Cognito에 Apple IdP 설정 시 **Services ID**를 입력해야 하는데 **App ID**를 입력한 경우
+- Services ID (예: `com.mycompany.myapp.signin`)와 App ID (번들 ID)를 혼동하지 마세요
+
+### Google 로그인 후 사용자 정보가 안 들어옴
+- Google OAuth 승인 범위에 `email`과 `profile`을 추가했는지 확인
+- Cognito 속성 매핑이 제대로 되어있는지 확인
+
+### Apple 재로그인 시 name이 null
+- 정상 동작입니다. Apple은 **첫 번째 인증 시에만** name을 전달합니다
+- User Pool에서 `name`을 필수 속성으로 설정하지 마세요
+
+### Hosted UI에 소셜 로그인 버튼이 안 보임
+- App Client의 **호스팅 UI 설정**에서 해당 IdP가 활성화되어 있는지 확인
+- IdP 등록 후 App Client에서 별도로 **활성화**해야 합니다
+
+---
+
+## 참고 자료
+
+- [AWS 공식 문서: 소셜 로그인 추가](https://docs.aws.amazon.com/cognito/latest/developerguide/tutorial-create-user-pool-social-idp.html)
+- [AWS 블로그: Sign in with Apple 설정](https://aws.amazon.com/blogs/security/how-to-set-up-sign-in-with-apple-for-amazon-cognito/)
+- [AWS 블로그: OAuth 2.0 in Cognito](https://aws.amazon.com/blogs/security/how-to-use-oauth-2-0-in-amazon-cognito-learn-about-the-different-oauth-2-0-grants/)
+- [Google OAuth 설정: AWS re:Post](https://repost.aws/knowledge-center/cognito-google-social-identity-provider)
