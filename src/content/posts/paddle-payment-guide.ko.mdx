@@ -1,0 +1,390 @@
+export const metadata = {
+  title: "Paddle 결제 완벽 가이드: 글로벌 SaaS 결제를 가장 쉽게 구현하는 법",
+  excerpt: "한국 사업자도 해외 법인 없이 글로벌 결제를 받을 수 있는 Paddle의 모든 것. MoR 개념부터 실제 코드 통합까지.",
+  category: "Business",
+  date: "2025-02-20",
+  readTime: "12 min",
+  lang: "ko",
+  keywords: "Paddle, 결제 게이트웨이, SaaS, 글로벌 결제, MoR, 구독 결제, 디지털 제품, 카카오페이",
+};
+
+# Paddle 결제 완벽 가이드: 글로벌 SaaS 결제를 가장 쉽게 구현하는 법
+
+SaaS 제품을 만들었는데, 해외 고객에게 어떻게 결제를 받아야 할지 막막한 적 있으신가요? Stripe은 한국 사업자 지원이 제한적이고, 국내 PG는 해외 결제가 복잡합니다. 이 글에서는 **한국 사업자도 해외 법인 없이** 글로벌 결제를 구현할 수 있는 **Paddle**에 대해 다룹니다.
+
+---
+
+## Paddle이란?
+
+Paddle은 단순한 결제 게이트웨이가 아닙니다. **Merchant of Record(MoR)** 모델을 채택한 올인원 결제 플랫폼입니다.
+
+### MoR이 뭔가요?
+
+일반적인 PG사(토스페이먼츠, 아임포트 등)는 결제를 **중개**만 합니다. 세금 신고, 환불 처리, 세금계산서 발행 등은 모두 판매자인 **여러분의 몫**입니다.
+
+반면 MoR 모델에서는 **Paddle이 법적 판매자**가 됩니다.
+
+```
+일반 PG:   고객 → [PG 중개] → 판매자(여러분) → 세금 신고, 환불, 인보이스 직접 처리
+Paddle:    고객 → [Paddle이 판매] → 판매자(여러분)에게 정산 → 세금/환불/인보이스 Paddle이 처리
+```
+
+이게 왜 중요하냐면, 100개국 이상의 VAT/부가세 계산과 징수를 Paddle이 자동으로 처리합니다. EU의 디지털 서비스 VAT, 미국 주별 Sales Tax 등을 직접 관리할 필요가 없다는 의미입니다.
+
+---
+
+## 핵심 기능
+
+### 1. 글로벌 결제 지원
+
+**200개국 이상**, **30개 이상의 통화**를 지원합니다.
+
+| 결제 수단 | 지원 범위 |
+|-----------|----------|
+| 카드 | Visa, Mastercard, AMEX 등 |
+| 디지털 월렛 | Apple Pay, Google Pay, PayPal |
+| 한국 로컬 | 카카오페이, 네이버페이, 삼성페이, 국내 22개 카드사 |
+
+한국 고객에게는 카카오페이로, 해외 고객에게는 PayPal이나 카드로 결제받을 수 있습니다. **하나의 통합 체크아웃**으로요.
+
+### 2. 구독 및 빌링 관리
+
+SaaS 비즈니스의 핵심인 구독 결제를 강력하게 지원합니다.
+
+- **무제한 요금제** — 월간, 연간, 사용량 기반 모두 가능
+- **업/다운그레이드** — 일할 계산(proration) 자동 처리
+- **자동 갱신** — 결제 실패 시 지능형 재시도(dunning)
+- **고객 포털** — 구독자가 직접 플랜 변경, 결제 수단 관리 가능
+
+### 3. 자동 현지화
+
+고객의 IP 기반으로 **통화, 세금, 언어**가 자동으로 설정됩니다. 미국에서 접속하면 USD로, 일본에서 접속하면 JPY로 체크아웃이 표시됩니다.
+
+### 4. 세금/법률 완전 위임
+
+- 100개국 이상의 VAT/Sales Tax 자동 계산 및 징수
+- 영수증, 인보이스 자동 발행
+- 환불 및 차지백 처리 대행
+
+---
+
+## 가격 정책
+
+Paddle의 수수료는 **거래당 5% + $0.50**입니다.
+
+국내 PG(2.5~3.5%)보다 높아 보이지만, 숨겨진 비용을 고려하면 다른 이야기입니다.
+
+```
+직접 글로벌 결제 구축 비용:
+├── 결제 PG 수수료:           2.5~3.5%
+├── 세무사/회계사 비용:        월 50~200만원
+├── 해외 법인 설립/유지:       연 500만원~
+├── 각국 VAT 신고 대행:        건당 30~100만원
+├── 환불/차지백 대응 인력:     인건비
+└── 합계: 생각보다 훨씬 비쌈
+
+Paddle 사용 시:
+├── 수수료:                   5% + $0.50
+└── 끝. 나머지는 Paddle이 처리.
+```
+
+**초기 스타트업이나 1인 개발자에게는 Paddle이 압도적으로 유리합니다.**
+
+---
+
+## 셋업 프로세스
+
+### Step 1: 가입 및 승인
+
+[paddle.com](https://paddle.com)에서 가입합니다. 승인에 필요한 항목은 다음과 같습니다.
+
+- 사업자등록증 (한국 사업자 가능)
+- 웹사이트 URL (실제 서비스가 보여야 함)
+- 이용약관 (Terms & Conditions)
+- 환불 정책 (Refund Policy)
+
+승인까지 보통 **1~2주** 소요됩니다. 승인 후 Sandbox(테스트)와 Live(운영) 환경이 분리됩니다.
+
+> 💡 한국 사업자의 승인 사례가 많으니, 이용약관과 환불 정책을 영문으로 잘 준비해두면 큰 문제 없습니다.
+
+### Step 2: 대시보드 설정
+
+1. **상품(Product) 생성** — 판매할 SaaS 상품 정보 등록
+2. **가격(Price) 설정** — 월간/연간 요금, 통화별 가격
+3. **웹훅(Webhook) URL 등록** — 결제 이벤트를 받을 엔드포인트
+4. **API 키 발급** — Client-side Token과 Server-side API Key
+
+### Step 3: 코드 통합
+
+전체적인 통합 흐름은 다음과 같습니다.
+
+```
+[프론트엔드]                    [백엔드]                      [Paddle]
+     │                            │                              │
+     │── 결제 요청 ──────────────→│                              │
+     │                            │── Transaction 생성 ─────────→│
+     │                            │←─ transactionId 반환 ────────│
+     │←─ transactionId 전달 ──────│                              │
+     │                            │                              │
+     │── Checkout.open() ────────────────────────────────────────→│
+     │←─ 결제 UI 표시 ───────────────────────────────────────────│
+     │                            │                              │
+     │   [고객 결제 완료]          │←─ Webhook: 결제 성공 ────────│
+     │                            │── DB 업데이트, 접근 권한 부여  │
+     │←─ 성공 화면 표시 ──────────│                              │
+```
+
+---
+
+## 코드 통합
+
+### 프론트엔드: Paddle.js 초기화
+
+Paddle.js를 로드하고 초기화하는 코드입니다.
+
+```tsx
+"use client";
+
+import { useEffect } from "react";
+
+const PADDLE_CLIENT_TOKEN = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!;
+
+const usePaddleInit = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    script.async = true;
+    script.onload = () => {
+      window.Paddle.Environment.set("sandbox");
+      window.Paddle.Initialize({
+        token: PADDLE_CLIENT_TOKEN,
+        eventCallback: (event) => {
+          if (event.name === "checkout.completed") {
+            handleCheckoutComplete(event.data.transaction_id);
+          }
+        },
+      });
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+};
+
+const handleCheckoutComplete = async (transactionId: string) => {
+  await fetch("/api/paddle/success", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ transactionId }),
+  });
+};
+
+export default usePaddleInit;
+```
+
+### 체크아웃 열기
+
+Transaction ID를 받아 체크아웃을 여는 컴포넌트입니다.
+
+```tsx
+interface CheckoutButtonProps {
+  priceId: string;
+  userEmail: string;
+}
+
+const CheckoutButton = ({ priceId, userEmail }: CheckoutButtonProps) => {
+  const handleClick = async () => {
+    const response = await fetch("/api/paddle/create-transaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId, email: userEmail }),
+    });
+    const { transactionId } = await response.json();
+
+    window.Paddle.Checkout.open({
+      transactionId,
+      customer: { email: userEmail },
+    });
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      aria-label="구독 결제하기"
+      tabIndex={0}
+      className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white
+                 transition-colors hover:bg-blue-700"
+    >
+      구독하기
+    </button>
+  );
+};
+
+export default CheckoutButton;
+```
+
+### 백엔드: Transaction 생성 (Next.js API Route)
+
+```ts
+import { Paddle, Environment } from "@paddle/paddle-node-sdk";
+import { NextRequest, NextResponse } from "next/server";
+
+const paddle = new Paddle(process.env.PADDLE_API_KEY!, {
+  environment: Environment.sandbox,
+});
+
+export const POST = async (request: NextRequest) => {
+  const { priceId, email } = await request.json();
+
+  const transaction = await paddle.transactions.create({
+    items: [{ priceId, quantity: 1 }],
+    customerEmail: email,
+    collectionMode: "automatic",
+  });
+
+  return NextResponse.json({ transactionId: transaction.id });
+};
+```
+
+### 웹훅 처리
+
+결제 성공, 구독 활성화 등의 이벤트를 처리하는 웹훅입니다.
+
+```ts
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+
+const WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET!;
+
+const verifySignature = (rawBody: string, signature: string): boolean => {
+  const hmac = crypto.createHmac("sha256", WEBHOOK_SECRET);
+  const digest = hmac.update(rawBody).digest("hex");
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(digest)
+  );
+};
+
+export const POST = async (request: NextRequest) => {
+  const rawBody = await request.text();
+  const signature = request.headers.get("paddle-signature") ?? "";
+
+  if (!verifySignature(rawBody, signature)) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
+  const event = JSON.parse(rawBody);
+
+  switch (event.event_type) {
+    case "subscription.activated":
+      await activateSubscription(event.data);
+      break;
+    case "subscription.canceled":
+      await cancelSubscription(event.data);
+      break;
+    case "transaction.completed":
+      await completeTransaction(event.data);
+      break;
+  }
+
+  return NextResponse.json({ received: true });
+};
+```
+
+### 환경 변수 설정
+
+`.env.local` 파일에 다음 값을 추가합니다.
+
+```bash
+PADDLE_API_KEY=your_server_side_api_key
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your_client_side_token
+PADDLE_WEBHOOK_SECRET=your_webhook_secret_key
+```
+
+---
+
+## 실전 활용 시나리오
+
+### SaaS 구독 서비스
+
+가장 일반적인 활용 사례입니다. 월간/연간 플랜을 설정하고, 업/다운그레이드를 자동으로 처리할 수 있습니다.
+
+```ts
+const PRICING_PLANS = {
+  starter: {
+    monthly: "pri_starter_monthly_xxx",
+    yearly: "pri_starter_yearly_xxx",
+    features: ["기본 기능", "이메일 지원", "5GB 스토리지"],
+  },
+  pro: {
+    monthly: "pri_pro_monthly_xxx",
+    yearly: "pri_pro_yearly_xxx",
+    features: ["모든 기능", "우선 지원", "100GB 스토리지", "API 접근"],
+  },
+  enterprise: {
+    monthly: "pri_enterprise_monthly_xxx",
+    yearly: "pri_enterprise_yearly_xxx",
+    features: ["무제한", "전담 매니저", "SLA 보장", "커스텀 연동"],
+  },
+} as const;
+```
+
+### 디지털 제품 판매
+
+소프트웨어 라이선스, 템플릿, 온라인 강의 등 일회성 디지털 제품 판매에도 적합합니다.
+
+### 한국 + 글로벌 하이브리드
+
+한국 고객에게는 **카카오페이, 네이버페이**로, 해외 고객에게는 **카드, PayPal**로 자연스럽게 결제를 유도할 수 있습니다. Paddle이 고객의 IP 기반으로 최적의 결제 수단을 자동 노출합니다.
+
+---
+
+## 장점과 단점
+
+### 장점
+
+- **세금/법률 완전 위임** — 초기 스타트업에게 가장 큰 장점. 100개국 VAT 걱정 없음
+- **국내외 결제 통합** — 카카오페이부터 PayPal까지 하나의 시스템으로 관리
+- **구독 기능 내장** — 업/다운그레이드, 일할 계산, 재시도 로직을 직접 구현할 필요 없음
+- **빠른 통합** — Paddle.js 몇 줄과 API 엔드포인트 하나로 결제 시작 가능
+- **한국 사업자 지원** — 해외 법인 없이도 글로벌 결제 수취 가능
+
+### 단점
+
+- **높은 수수료** — 5% + $0.50은 거래량이 많아지면 부담. 매출 규모가 커지면 Stripe 전환 검토
+- **승인 심사** — 이용약관, 환불 정책이 꼼꼼하지 않으면 승인 거절 가능
+- **영문 문서** — Paddle Billing 관련 공식 문서가 영어로만 제공
+- **제한된 커스텀** — 체크아웃 UI 커스터마이징에 한계가 있음
+
+---
+
+## Paddle vs Stripe vs 국내 PG 비교
+
+| 항목 | Paddle | Stripe | 국내 PG |
+|------|--------|--------|---------|
+| 한국 사업자 | ✅ 가능 | ⚠️ 제한적 | ✅ 가능 |
+| 해외 결제 | ✅ 200개국 | ✅ 195개국 | ❌ 제한적 |
+| MoR (세금 대행) | ✅ | ❌ | ❌ |
+| 구독 관리 | ✅ 내장 | ✅ Billing | ⚠️ 별도 구현 |
+| 수수료 | 5% + $0.50 | 2.9% + $0.30 | 2.5~3.5% |
+| 카카오/네이버페이 | ✅ | ❌ | ✅ |
+
+**결론**: 글로벌 SaaS를 운영하는 한국 사업자라면 Paddle이 가장 현실적인 선택입니다. 국내 전용 서비스라면 토스페이먼츠나 포트원이, 대규모 글로벌 서비스라면 Stripe이 적합합니다.
+
+---
+
+## 마치며
+
+Paddle은 "결제"라는 복잡한 문제를 **비즈니스가 해결해야 할 과제가 아닌, 외주 가능한 인프라**로 바꿔줍니다.
+
+특히 1인 개발자나 소규모 팀이 글로벌 시장에 진출할 때, 세금·법률·환불 문제로 소모되는 시간과 비용을 생각하면 5%의 수수료는 충분히 합리적인 투자입니다.
+
+결제 시스템에 시간을 쓰는 대신, **제품 자체에 집중하세요.** 그것이 Paddle을 선택하는 가장 큰 이유입니다.
+
+### 참고 자료
+
+- [Paddle 공식 개발자 문서](https://developer.paddle.com/)
+- [Paddle Node.js SDK](https://github.com/PaddleHQ/paddle-node-sdk)
+- [한국어 Paddle 가이드](https://designerdk.tistory.com/69)
