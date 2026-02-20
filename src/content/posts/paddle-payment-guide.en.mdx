@@ -1,0 +1,390 @@
+export const metadata = {
+  title: "Complete Paddle Payment Guide: The Easiest Way to Implement Global SaaS Payments",
+  excerpt: "Everything about Paddle that lets Korean businesses accept global payments without an overseas entity. From MoR concept to actual code integration.",
+  category: "Business",
+  date: "2025-02-20",
+  readTime: "12 min",
+  lang: "en",
+  keywords: "Paddle, payment gateway, SaaS, global payments, MoR, subscription billing, digital products, KakaoPay",
+};
+
+# Complete Paddle Payment Guide: The Easiest Way to Implement Global SaaS Payments
+
+Have you ever built a SaaS product but felt overwhelmed about how to accept payments from international customers? Stripe has limited support for Korean businesses, and domestic payment gateways make cross-border payments complicated. In this post, we'll explore **Paddle** — a solution that lets **Korean businesses accept global payments without needing an overseas entity**.
+
+---
+
+## What is Paddle?
+
+Paddle isn't just another payment gateway. It's an all-in-one payment platform built on the **Merchant of Record (MoR)** model.
+
+### What is MoR?
+
+Traditional payment gateways (like Toss Payments or I'mport) only **mediate** transactions. Tax filing, refunds, and invoice issuance are all the **seller's responsibility**.
+
+With the MoR model, **Paddle becomes the legal seller**.
+
+```
+Traditional PG:  Customer → [PG mediates] → Seller (you) → Handle taxes, refunds, invoices yourself
+Paddle:          Customer → [Paddle sells] → Settlement to you → Paddle handles taxes/refunds/invoices
+```
+
+This matters because Paddle automatically calculates and collects VAT/sales tax for **100+ countries**. You don't need to manage EU digital service VAT or US state-by-state sales tax yourself.
+
+---
+
+## Key Features
+
+### 1. Global Payment Support
+
+Supports **200+ countries** and **30+ currencies**.
+
+| Payment Method | Coverage |
+|----------------|----------|
+| Cards | Visa, Mastercard, AMEX, etc. |
+| Digital Wallets | Apple Pay, Google Pay, PayPal |
+| Korean Local | KakaoPay, Naver Pay, Samsung Pay, 22 domestic card issuers |
+
+Accept payments via KakaoPay for Korean customers and PayPal or cards for international customers — all through **one unified checkout**.
+
+### 2. Subscription & Billing Management
+
+Powerful subscription payment features essential for SaaS businesses.
+
+- **Unlimited plans** — Monthly, yearly, and usage-based options
+- **Up/Downgrades** — Automatic proration handling
+- **Auto-renewals** — Intelligent retry logic for failed payments (dunning)
+- **Customer Portal** — Subscribers can change plans and manage payment methods
+
+### 3. Automatic Localization
+
+**Currency, tax, and language** are automatically set based on customer IP. USD for US visitors, JPY for Japan, and so on.
+
+### 4. Complete Tax & Legal Delegation
+
+- Automatic VAT/Sales Tax calculation and collection for 100+ countries
+- Automatic receipt and invoice issuance
+- Refund and chargeback handling on your behalf
+
+---
+
+## Pricing
+
+Paddle's fee is **5% + $0.50 per transaction**.
+
+While higher than domestic PG rates (2.5-3.5%), the hidden costs tell a different story.
+
+```
+Building global payments yourself:
+├── Payment gateway fees:        2.5-3.5%
+├── Accountant/Tax advisor:      $400-1500/month
+├── Overseas entity setup/maint: $3500+/year
+├── Country-by-country VAT filing: $200-700 per country
+├── Refund/chargeback staff:     Personnel costs
+└── Total: Much more expensive than it seems
+
+With Paddle:
+├── Fees:                        5% + $0.50
+└── Done. Paddle handles the rest.
+```
+
+**For early-stage startups or solo developers, Paddle is overwhelmingly advantageous.**
+
+---
+
+## Setup Process
+
+### Step 1: Sign Up & Approval
+
+Sign up at [paddle.com](https://paddle.com). Required documents for approval:
+
+- Business registration certificate (Korean businesses accepted)
+- Website URL (must show actual service)
+- Terms & Conditions
+- Refund Policy
+
+Approval typically takes **1-2 weeks**. After approval, Sandbox (test) and Live (production) environments are separated.
+
+> 💡 Many Korean businesses have been approved. Just prepare your T&C and refund policy in English, and you should be fine.
+
+### Step 2: Dashboard Setup
+
+1. **Create Products** — Register your SaaS product information
+2. **Set Prices** — Monthly/yearly fees, multi-currency pricing
+3. **Register Webhook URL** — Endpoint to receive payment events
+4. **Get API Keys** — Client-side Token and Server-side API Key
+
+### Step 3: Code Integration
+
+The overall integration flow looks like this:
+
+```
+[Frontend]                    [Backend]                      [Paddle]
+     │                            │                              │
+     │── Payment Request ─────────→│                              │
+     │                            │── Create Transaction ───────→│
+     │                            │←─ Return transactionId ─────│
+     │←─ Pass transactionId ──────│                              │
+     │                            │                              │
+     │── Checkout.open() ────────────────────────────────────────→│
+     │←─ Display Payment UI ─────────────────────────────────────│
+     │                            │                              │
+     │   [Customer completes]      │←─ Webhook: Payment Success ─│
+     │                            │── Update DB, Grant Access    │
+     │←─ Show Success Screen ─────│                              │
+```
+
+---
+
+## Code Integration
+
+### Frontend: Paddle.js Initialization
+
+Code to load and initialize Paddle.js:
+
+```tsx
+"use client";
+
+import { useEffect } from "react";
+
+const PADDLE_CLIENT_TOKEN = process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!;
+
+const usePaddleInit = () => {
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.paddle.com/paddle/v2/paddle.js";
+    script.async = true;
+    script.onload = () => {
+      window.Paddle.Environment.set("sandbox");
+      window.Paddle.Initialize({
+        token: PADDLE_CLIENT_TOKEN,
+        eventCallback: (event) => {
+          if (event.name === "checkout.completed") {
+            handleCheckoutComplete(event.data.transaction_id);
+          }
+        },
+      });
+    };
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+};
+
+const handleCheckoutComplete = async (transactionId: string) => {
+  await fetch("/api/paddle/success", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ transactionId }),
+  });
+};
+
+export default usePaddleInit;
+```
+
+### Opening Checkout
+
+Component that receives a Transaction ID and opens the checkout:
+
+```tsx
+interface CheckoutButtonProps {
+  priceId: string;
+  userEmail: string;
+}
+
+const CheckoutButton = ({ priceId, userEmail }: CheckoutButtonProps) => {
+  const handleClick = async () => {
+    const response = await fetch("/api/paddle/create-transaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId, email: userEmail }),
+    });
+    const { transactionId } = await response.json();
+
+    window.Paddle.Checkout.open({
+      transactionId,
+      customer: { email: userEmail },
+    });
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      aria-label="Subscribe and pay"
+      tabIndex={0}
+      className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white
+                 transition-colors hover:bg-blue-700"
+    >
+      Subscribe
+    </button>
+  );
+};
+
+export default CheckoutButton;
+```
+
+### Backend: Creating Transaction (Next.js API Route)
+
+```ts
+import { Paddle, Environment } from "@paddle/paddle-node-sdk";
+import { NextRequest, NextResponse } from "next/server";
+
+const paddle = new Paddle(process.env.PADDLE_API_KEY!, {
+  environment: Environment.sandbox,
+});
+
+export const POST = async (request: NextRequest) => {
+  const { priceId, email } = await request.json();
+
+  const transaction = await paddle.transactions.create({
+    items: [{ priceId, quantity: 1 }],
+    customerEmail: email,
+    collectionMode: "automatic",
+  });
+
+  return NextResponse.json({ transactionId: transaction.id });
+};
+```
+
+### Webhook Handling
+
+Webhook to handle payment success, subscription activation, etc.
+
+```ts
+import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+
+const WEBHOOK_SECRET = process.env.PADDLE_WEBHOOK_SECRET!;
+
+const verifySignature = (rawBody: string, signature: string): boolean => {
+  const hmac = crypto.createHmac("sha256", WEBHOOK_SECRET);
+  const digest = hmac.update(rawBody).digest("hex");
+  return crypto.timingSafeEqual(
+    Buffer.from(signature),
+    Buffer.from(digest)
+  );
+};
+
+export const POST = async (request: NextRequest) => {
+  const rawBody = await request.text();
+  const signature = request.headers.get("paddle-signature") ?? "";
+
+  if (!verifySignature(rawBody, signature)) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
+  const event = JSON.parse(rawBody);
+
+  switch (event.event_type) {
+    case "subscription.activated":
+      await activateSubscription(event.data);
+      break;
+    case "subscription.canceled":
+      await cancelSubscription(event.data);
+      break;
+    case "transaction.completed":
+      await completeTransaction(event.data);
+      break;
+  }
+
+  return NextResponse.json({ received: true });
+};
+```
+
+### Environment Variables
+
+Add these to your `.env.local` file:
+
+```bash
+PADDLE_API_KEY=your_server_side_api_key
+NEXT_PUBLIC_PADDLE_CLIENT_TOKEN=your_client_side_token
+PADDLE_WEBHOOK_SECRET=your_webhook_secret_key
+```
+
+---
+
+## Real-World Use Cases
+
+### SaaS Subscription Service
+
+The most common use case. Set up monthly/yearly plans with automatic up/downgrade handling.
+
+```ts
+const PRICING_PLANS = {
+  starter: {
+    monthly: "pri_starter_monthly_xxx",
+    yearly: "pri_starter_yearly_xxx",
+    features: ["Basic features", "Email support", "5GB storage"],
+  },
+  pro: {
+    monthly: "pri_pro_monthly_xxx",
+    yearly: "pri_pro_yearly_xxx",
+    features: ["All features", "Priority support", "100GB storage", "API access"],
+  },
+  enterprise: {
+    monthly: "pri_enterprise_monthly_xxx",
+    yearly: "pri_enterprise_yearly_xxx",
+    features: ["Unlimited", "Dedicated manager", "SLA guarantee", "Custom integration"],
+  },
+} as const;
+```
+
+### Digital Product Sales
+
+Also suitable for one-time digital products like software licenses, templates, and online courses.
+
+### Korea + Global Hybrid
+
+Naturally guide Korean customers to **KakaoPay, Naver Pay** and international customers to **cards, PayPal**. Paddle automatically exposes the optimal payment method based on customer IP.
+
+---
+
+## Pros and Cons
+
+### Pros
+
+- **Complete tax/legal delegation** — Biggest advantage for early startups. No worrying about 100-country VAT
+- **Unified domestic/international payments** — Manage everything from KakaoPay to PayPal in one system
+- **Built-in subscription features** — No need to implement up/downgrades, proration, or retry logic yourself
+- **Quick integration** — Start accepting payments with a few lines of Paddle.js and one API endpoint
+- **Korean business support** — Accept global payments without an overseas entity
+
+### Cons
+
+- **Higher fees** — 5% + $0.50 can become burdensome as volume grows. Consider migrating to Stripe at scale
+- **Approval process** — T&C and refund policy must be thorough or approval may be denied
+- **English-only docs** — Official Paddle Billing documentation is English only
+- **Limited customization** — Checkout UI customization has limitations
+
+---
+
+## Paddle vs Stripe vs Domestic PG Comparison
+
+| Feature | Paddle | Stripe | Domestic PG |
+|---------|--------|--------|-------------|
+| Korean Businesses | ✅ Available | ⚠️ Limited | ✅ Available |
+| Global Payments | ✅ 200 countries | ✅ 195 countries | ❌ Limited |
+| MoR (Tax Delegation) | ✅ | ❌ | ❌ |
+| Subscription Management | ✅ Built-in | ✅ Billing | ⚠️ Build yourself |
+| Fees | 5% + $0.50 | 2.9% + $0.30 | 2.5-3.5% |
+| Kakao/Naver Pay | ✅ | ❌ | ✅ |
+
+**Conclusion**: For Korean businesses operating global SaaS, Paddle is the most practical choice. For Korea-only services, Toss Payments or PortOne is suitable. For large-scale global services, Stripe may be better.
+
+---
+
+## Wrapping Up
+
+Paddle transforms "payments" from a **complex problem your business must solve** into **outsourcable infrastructure**.
+
+Especially when solo developers or small teams enter global markets, the time and cost consumed by tax/legal/refund issues makes the 5% fee a reasonable investment.
+
+Instead of spending time on payment systems, **focus on your product**. That's the biggest reason to choose Paddle.
+
+### References
+
+- [Paddle Official Developer Docs](https://developer.paddle.com/)
+- [Paddle Node.js SDK](https://github.com/PaddleHQ/paddle-node-sdk)
+- [Korean Paddle Guide](https://designerdk.tistory.com/69)
