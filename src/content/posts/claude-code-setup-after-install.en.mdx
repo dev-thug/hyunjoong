@@ -1,0 +1,476 @@
+export const metadata = {
+  title: "Essential Setup After Installing Claude Code: MCP, Oh My Claude, and Memory",
+  excerpt: "You installed Claude Code — now what? From memory configuration to must-have MCPs and Oh My Claude, here's everything you need to set up right after installation.",
+  category: "Engineering",
+  date: "2026-02-21",
+  readTime: "15 min",
+  lang: "en",
+  keywords: "Claude Code, MCP, Oh My Claude, Memory, CLAUDE.md, Sequential Thinking, Developer Tools",
+  hidden: false,
+};
+
+# Essential Setup After Installing Claude Code
+
+After installing Claude Code and running `claude`, it works out of the box. But the gap between using it raw versus properly configured can mean a **5x to 50x difference in productivity**.
+
+This guide covers the essential setup you should complete immediately after installation, in order: **Memory → MCP → Oh My Claude → Automation**. Set it up once, and it becomes leverage for every project.
+
+---
+
+## 1. Building Your Memory System: CLAUDE.md
+
+The very first thing to do is **establish a memory hierarchy**. Even the best model can't write accurate code without understanding your project's context.
+
+### Understanding the Memory Hierarchy
+
+Claude Code's memory operates in 5 layers. Broader scopes have lower priority; more specific ones take precedence.
+
+| Location | Scope | Shared With |
+|----------|-------|-------------|
+| `~/.claude/CLAUDE.md` | All projects | Only you |
+| `./CLAUDE.md` | Entire project | Team (Git) |
+| `./.claude/rules/*.md` | Modular topic rules | Team (Git) |
+| `./CLAUDE.local.md` | Personal project settings | Only you (gitignored) |
+| `~/.claude/projects/.../memory/` | Auto-learned memory | Only you |
+
+### Global CLAUDE.md Setup
+
+Start with global memory — your personal coding style that applies everywhere.
+
+```bash
+mkdir -p ~/.claude && touch ~/.claude/CLAUDE.md
+```
+
+```markdown
+# Global Preferences
+- Respond in English
+- TypeScript strict mode always
+- Use const arrow functions
+- Commit messages in Conventional Commits format
+- camelCase for variables and functions
+- Early return pattern preferred
+```
+
+### Project CLAUDE.md
+
+Run `/init` in your project directory for auto-generation, then customize it with your actual project details.
+
+```markdown
+# CLAUDE.md
+## Project Overview
+- Next.js 16 App Router portfolio + tech blog
+- TypeScript strict, Tailwind CSS v4 (dark theme only)
+- MDX-based content system
+
+## Key Commands
+- npm run dev: Development server
+- npm run build: Production build
+- npm run lint: ESLint check
+
+## Architecture Principles
+- @/* path alias (./src/*)
+- Server Components first, minimize Client Components
+- MDX content managed in content/ folder
+```
+
+### Enable Auto Memory
+
+Claude automatically saves learned patterns, debugging solutions, and preferences during sessions. The first 200 lines are auto-loaded.
+
+```bash
+export CLAUDE_CODE_DISABLE_AUTO_MEMORY=0
+```
+
+Add this to your shell config (`~/.zshrc`, etc.) for persistent activation.
+
+---
+
+## 2. Essential MCP Installation
+
+MCP (Model Context Protocol) is Claude Code's plugin system that extends its capabilities. The right MCP combination directly determines your productivity.
+
+### ① Memory MCP — Persistent Cross-Session Knowledge
+
+Claude Code's biggest limitation is losing context when sessions end. Memory MCP provides persistent memory through a local knowledge graph.
+
+```bash
+claude mcp add memory \
+  -e MEMORY_FILE_PATH=~/.claude/memory.json \
+  -- npx -y @modelcontextprotocol/server-memory
+```
+
+After installation, tell Claude "This project uses Next.js 16 with Tailwind v4. Remember this." and it saves as entities in the knowledge graph, accessible in future sessions.
+
+**Tools provided by Memory MCP:**
+
+- `create_entities` — Create entities for projects, technologies, people
+- `create_relations` — Define relationships between entities
+- `add_observations` — Add information to existing entities
+- `search_nodes` — Search the knowledge graph
+- `read_graph` — View the entire graph
+
+### ② Sequential Thinking — Enforcing Structured Reasoning
+
+Prevents Claude from jumping to conclusions during complex architecture design or debugging. Externalizes the thinking process step by step for improved accuracy.
+
+```bash
+claude mcp add sequential-thinking \
+  -- npx -y @modelcontextprotocol/server-sequential-thinking
+```
+
+Add "Use Sequential Thinking to analyze this" to your prompts to activate step-by-step reasoning.
+
+### ③ Context7 — Real-Time Documentation
+
+Claude's training data has knowledge cutoffs. Context7 fetches the latest official documentation in real time to prevent hallucinations. With 46,000+ GitHub stars, it's well-proven.
+
+```bash
+claude mcp add context7 -- npx -y @upstash/context7-mcp
+```
+
+Add "use context7" to your prompts for automatic documentation retrieval. Supports 50+ frameworks including Next.js, React, and Tailwind.
+
+### ④ GitHub MCP — Git Workflow Integration
+
+Handle PR creation, issue management, and code reviews entirely from the terminal.
+
+```bash
+claude mcp add github \
+  -e GITHUB_PERSONAL_ACCESS_TOKEN=<your_token> \
+  -- npx -y @modelcontextprotocol/server-github
+```
+
+### ⑤ Fetch MCP — Web Content Access
+
+For when you need API documentation, web page analysis, or external resource references.
+
+```bash
+claude mcp add fetch -- npx -y @modelcontextprotocol/server-fetch
+```
+
+### Verify Installation
+
+After installing all MCPs, confirm they're properly registered.
+
+```bash
+claude mcp list
+```
+
+---
+
+## 3. Oh My Claude (OMC) — Multi-Agent Orchestration
+
+Oh My Claude (oh-my-claudecode) transforms Claude Code into a **multi-agent orchestration system**. Built by developer Yeachan Heo, it's based on the philosophy of "don't write code — conduct."
+
+### Installation
+
+```bash
+# Run inside Claude Code
+/plugin marketplace add https://github.com/Yeachan-Heo/oh-my-claudecode
+/plugin install oh-my-claudecode
+/oh-my-claudecode:omc-setup
+```
+
+### Core Concept: The Conductor Philosophy
+
+OMC's golden rule: **never modify code directly**. Instead, delegate to 28 specialized agents (architects, executors, verifiers, etc.).
+
+| Role | Description |
+|------|-------------|
+| Architect | Overall design and structural analysis |
+| Executor | Actual code writing and modification |
+| Verifier | Result validation |
+| Test Engineer | Test code creation and execution |
+| Debugger | Error analysis and resolution |
+
+### Magic Keywords
+
+OMC operates through natural language magic keywords. No separate command syntax to memorize.
+
+**autopilot** — From idea to finished code autonomously
+
+```
+autopilot build a REST API for user management
+```
+
+Automatically progresses through planning → design → implementation → testing → verification.
+
+**ralph** — "The boulder never stops" persistence mode
+
+```
+ralph refactor the entire authentication module
+```
+
+Keeps working until the Architect confirms completion.
+
+**ulw (Ultrawork)** — Maximum parallel execution
+
+```
+ulw fix all TypeScript errors in the project
+```
+
+5+ agents work simultaneously in parallel.
+
+**team** — Native team mode
+
+```
+team 5:executor refactor backend services
+```
+
+A specified number of agents collaborate through a pipeline (plan → prd → exec → verify → fix).
+
+### Smart Model Routing
+
+OMC automatically selects models based on task complexity, reducing costs by 30–50%.
+
+| Complexity | Model | Use Case |
+|------------|-------|----------|
+| Simple | Haiku | Formatting, doc lookups |
+| Standard | Sonnet | Implementation, tests, refactoring |
+| Complex | Opus | Architecture design, complex debugging |
+
+### Memory and State Management
+
+OMC includes its own memory system.
+
+- `.omc/notepad.md` — Notes that survive context pruning
+- `.omc/project-memory.json` — Project tech stack and conventions
+- `.omc/plans/` — Planning documents
+- `.omc/logs/` — Execution logs
+
+---
+
+## 4. Hooks: Automated Quality Gates
+
+Hooks are commands that automatically execute at specific points in Claude's workflow lifecycle. Unlike CLAUDE.md guidelines (which Claude might ignore), hooks are deterministic — they always run.
+
+### Configuration Location
+
+```
+~/.claude/settings.json      # Global (all projects)
+.claude/settings.json         # Per-project
+```
+
+### Auto-Format on File Save
+
+Prettier runs automatically every time Claude modifies a file.
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npx prettier --write \"$(jq -r '.tool_input.file_path')\"",
+            "blocking": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Block Dangerous Commands
+
+Prevent destructive commands like `rm -rf` from executing.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'rm -rf' && exit 1 || exit 0",
+            "blocking": true
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Key Hook Events
+
+| Event | Trigger Point |
+|-------|--------------|
+| `SessionStart` | Session begins |
+| `PreToolUse` | Before tool execution |
+| `PostToolUse` | After tool execution |
+| `Stop` | Task completion |
+| `TaskCompleted` | Task finishes |
+
+---
+
+## 5. Permission Settings: bypassPermissions
+
+By default, Claude Code asks for approval on every sensitive action — file edits, command execution, etc. This constant interruption kills flow. In personal development environments, bypassing permission prompts has a significant impact on productivity.
+
+### CLI Flag
+
+The simplest approach is adding a flag at launch.
+
+```bash
+claude --dangerously-skip-permissions
+```
+
+### Enable as Permanent Default
+
+To avoid typing the flag every time, add it directly to your settings file.
+
+```json
+// ~/.claude/settings.json
+{
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "allow": ["*"],
+    "deny": [],
+    "ask": []
+  }
+}
+```
+
+This can be applied to either `~/.claude/settings.json` (global) or `.claude/settings.json` (per-project).
+
+### Shell Alias for Convenience
+
+If you'd rather not modify config files, a shell alias works just as well.
+
+```bash
+# Add to ~/.zshrc or ~/.bashrc
+alias clauded="claude --dangerously-skip-permissions"
+```
+
+Now just type `clauded` to start without any permission prompts.
+
+### Safer Alternative: Granular Permission Control
+
+If opening all permissions feels risky, use specific `allow` and `deny` lists instead.
+
+```json
+// ~/.claude/settings.json
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Write",
+      "Edit",
+      "Bash(npm run *)",
+      "Bash(git *)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ]
+  }
+}
+```
+
+This auto-approves file read/write and npm/git commands while blocking dangerous operations like `rm -rf` and `sudo`. Much safer than a blanket bypass, without interrupting your workflow.
+
+> **Warning**: `bypassPermissions` disables all safety guardrails. Only use it in Docker containers, VMs, or development-only environments with no sensitive data. Never use it on production servers or machines with important data.
+
+---
+
+## 6. Custom Slash Commands
+
+If you find yourself repeating tasks, turn them into custom commands.
+
+### Setup
+
+```bash
+mkdir -p .claude/commands
+```
+
+Create markdown files inside `.claude/commands/` and they instantly become slash commands.
+
+### Code Review Command Example
+
+`.claude/commands/review.md`:
+
+```markdown
+---
+description: Review changed code
+allowed-tools: Bash, Read
+---
+
+Check changed files with git diff and review for:
+1. Potential bugs
+2. Type safety
+3. Performance issues
+4. Security vulnerabilities
+
+Apply any additional instructions from $ARGUMENTS.
+```
+
+Use as `/review` or `/review focus on authentication logic`.
+
+---
+
+## 7. Essential Commands for Power Users
+
+Commands that significantly boost efficiency when used daily.
+
+### Session Management
+
+| Command | Description |
+|---------|-------------|
+| `/clear` | Reset conversation (essential when starting new tasks) |
+| `/compact` | Compress conversation summary (save tokens) |
+| `/cost` | Check token usage |
+| `/context` | Visualize context utilization |
+| `/resume` | Resume previous session |
+
+### Execution Modes
+
+| Command | Description |
+|---------|-------------|
+| `claude -c` | Continue last conversation |
+| `claude -r` | Resume specific session |
+| `plan` mode | Read-only analysis mode |
+| `acceptEdits` mode | Auto-approve file modifications |
+
+### Efficiency Tips
+
+| Tip | Description |
+|-----|-------------|
+| `/rename` → `/clear` | Name session before clearing (searchable later) |
+| `/compact remember schema` | Compress with specific context preserved |
+| `/model` | Switch models per task (Haiku → Opus) |
+| `@filename` | Pin specific file as context |
+| `@folder/` | Pin entire directory as context |
+
+---
+
+## Final Setup Checklist
+
+Follow this order right after installation.
+
+```
+✅ 1. Write global CLAUDE.md (~/.claude/CLAUDE.md)
+✅ 2. Write project CLAUDE.md (/init then customize)
+✅ 3. Install Memory MCP (cross-session persistence)
+✅ 4. Install Sequential Thinking MCP (structured reasoning)
+✅ 5. Install Context7 MCP (real-time documentation)
+✅ 6. Install GitHub MCP (Git workflow integration)
+✅ 7. Install Fetch MCP (web resource access)
+✅ 8. Install Oh My Claude (multi-agent orchestration)
+✅ 9. Configure Hooks (auto-formatting, security rules)
+✅ 10. Set permissions (bypassPermissions or granular allow/deny)
+✅ 11. Create custom commands (automate repetitive tasks)
+```
+
+---
+
+## Conclusion
+
+A tool's power isn't determined by the tool itself — it's determined by **the depth of your setup**. Claude Code doesn't end at installation. When you build a memory hierarchy, extend capabilities with MCPs, automate quality with Hooks, and set up multi-agent orchestration with OMC, that's when it becomes true leverage.
+
+The time you invest in setup today returns as hundreds of hours of productivity tomorrow. Start now.
