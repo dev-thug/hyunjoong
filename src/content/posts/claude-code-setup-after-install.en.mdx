@@ -3,7 +3,7 @@ export const metadata = {
   excerpt: "You installed Claude Code — now what? From memory configuration to must-have MCPs and Oh My Claude, here's everything you need to set up right after installation.",
   category: "Engineering",
   date: "2026-02-21",
-  readTime: "15 min",
+  readTime: "20 min",
   lang: "en",
   keywords: "Claude Code, MCP, Oh My Claude, Memory, CLAUDE.md, Sequential Thinking, Developer Tools",
   hidden: false,
@@ -158,7 +158,64 @@ claude mcp list
 
 ---
 
-## 3. Oh My Claude (OMC) — Multi-Agent Orchestration
+## 3. Claude-Mem — Persistent Memory System
+
+The plugin that completely solves Claude Code's biggest weakness: **losing all context when a session ends**. While the Memory MCP installed earlier is a knowledge graph for manual entity storage, Claude-Mem is a persistent memory system that **automatically captures work → AI summarizes → stores in SQLite → auto-injects into the next session**. With 29,000+ GitHub stars, it's one of the most widely adopted Claude Code plugins.
+
+### Installation
+
+```bash
+# Run inside Claude Code
+/plugin marketplace add thedotmack/claude-mem
+/plugin install claude-mem
+```
+
+Restart Claude Code after installation, and context from previous sessions will automatically appear in new sessions.
+
+### How It Works
+
+Claude-Mem operates through 5 lifecycle hooks (`SessionStart`, `UserPromptSubmit`, `PostToolUse`, `Stop`, `SessionEnd`). No need to explicitly say "remember this."
+
+```
+Work performed → Tool usage captured → AI semantic summary → SQLite + Chroma storage
+                                                                    ↓
+Next session starts → Relevant context auto-retrieved → Injected into prompt
+```
+
+### Key Features
+
+- **Auto Capture** — Automatically records all tool usage and work results
+- **Semantic Search** — Query past work history with natural language
+- **Progressive Disclosure** — 3-stage retrieval (index → timeline → detail) for token efficiency
+- **Web Viewer** — Real-time memory stream visualization at `http://localhost:37777`
+- **Privacy Control** — Exclude sensitive content from storage with `<private>` tags
+
+### MCP Search Tools
+
+Claude-Mem provides 5 MCP tools supporting a 3-stage workflow that saves tokens.
+
+```
+Stage 1: search → Compact index lookup (~50-100 tokens/result)
+Stage 2: timeline → Chronological context check
+Stage 3: get_observations → Fetch details for filtered IDs only (~500-1,000 tokens/result)
+```
+
+This approach achieves **~10x token savings** compared to fetching everything at once.
+
+### Memory MCP vs Claude-Mem
+
+| | Memory MCP | Claude-Mem |
+|---|------------|------------|
+| Approach | Manual save (explicit request) | Auto capture (background) |
+| Storage | JSONL knowledge graph | SQLite + Chroma vector DB |
+| Search | Entity/relation based | Semantic + keyword hybrid |
+| Use case | Core facts/relationships | Full work history preservation |
+
+The two tools are complementary. Record key architectural decisions with Memory MCP, and auto-preserve everyday work context with Claude-Mem — this combination is the most effective.
+
+---
+
+## 4. Oh My Claude (OMC) — Multi-Agent Orchestration
 
 Oh My Claude (oh-my-claudecode) transforms Claude Code into a **multi-agent orchestration system**. Built by developer Yeachan Heo, it's based on the philosophy of "don't write code — conduct."
 
@@ -240,7 +297,7 @@ OMC includes its own memory system.
 
 ---
 
-## 4. Hooks: Automated Quality Gates
+## 5. Hooks: Automated Quality Gates
 
 Hooks are commands that automatically execute at specific points in Claude's workflow lifecycle. Unlike CLAUDE.md guidelines (which Claude might ignore), hooks are deterministic — they always run.
 
@@ -309,7 +366,7 @@ Prevent destructive commands like `rm -rf` from executing.
 
 ---
 
-## 5. Permission Settings: bypassPermissions
+## 6. Permission Settings: bypassPermissions
 
 By default, Claude Code asks for approval on every sensitive action — file edits, command execution, etc. This constant interruption kills flow. In personal development environments, bypassing permission prompts has a significant impact on productivity.
 
@@ -379,7 +436,7 @@ This auto-approves file read/write and npm/git commands while blocking dangerous
 
 ---
 
-## 6. Custom Slash Commands
+## 7. Custom Slash Commands
 
 If you find yourself repeating tasks, turn them into custom commands.
 
@@ -414,7 +471,7 @@ Use as `/review` or `/review focus on authentication logic`.
 
 ---
 
-## 7. Essential Commands for Power Users
+## 8. Essential Commands for Power Users
 
 Commands that significantly boost efficiency when used daily.
 
@@ -461,10 +518,11 @@ Follow this order right after installation.
 ✅ 5. Install Context7 MCP (real-time documentation)
 ✅ 6. Install GitHub MCP (Git workflow integration)
 ✅ 7. Install Fetch MCP (web resource access)
-✅ 8. Install Oh My Claude (multi-agent orchestration)
-✅ 9. Configure Hooks (auto-formatting, security rules)
-✅ 10. Set permissions (bypassPermissions or granular allow/deny)
-✅ 11. Create custom commands (automate repetitive tasks)
+✅ 8. Install Claude-Mem (automatic persistent memory)
+✅ 9. Install Oh My Claude (multi-agent orchestration)
+✅ 10. Configure Hooks (auto-formatting, security rules)
+✅ 11. Set permissions (bypassPermissions or granular allow/deny)
+✅ 12. Create custom commands (automate repetitive tasks)
 ```
 
 ---
