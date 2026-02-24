@@ -1,0 +1,245 @@
+export const metadata = {
+  title: "OpenClaw, AI API 비용 0원으로 무제한 돌리기: agent-cli-to-api + Cursor CLI 실전 세팅",
+  excerpt: "OpenClaw를 커스텀 프로바이더로 연결해 AI API 비용 없이 고성능/안정적인 개인 봇을 운영하는 방법. agent-cli-to-api와 Cursor CLI 연동, 설치부터 트러블슈팅까지 한 번에 정리합니다.",
+  category: "Engineering",
+  date: "2026-02-24",
+  readTime: "11 min",
+  lang: "ko",
+  keywords: [
+    "OpenClaw",
+    "AI API 무료",
+    "agent-cli-to-api",
+    "Cursor CLI",
+    "Custom Provider",
+    "Telegram AI Bot",
+    "Self-hosted AI Agent",
+    "오픈클로 설정"
+  ],
+  hidden: false,
+};
+
+# OpenClaw, AI API 비용 0원으로 무제한 돌리기: agent-cli-to-api + Cursor CLI 실전 세팅
+
+매달 API 요금제에 묶여서 에이전트 자동화를 포기하고 있다면, 이 글이 가장 빠른 탈출 루트다.  
+핵심은 간단하다. **OpenClaw의 모델 프로바이더를 `agent-cli-to-api`로 교체**하고, 내부적으로 **Cursor CLI를 커스텀 프로바이더처럼 연결**하면 된다.
+
+결과적으로:
+
+- OpenClaw는 기존처럼 메신저(텔레그램/슬랙 등)에서 명령을 받는다
+- 모델 호출은 커스텀 로컬 경로를 탄다
+- 외부 AI API 키 과금 없이도 **사실상 무제한에 가까운 운영**이 가능해진다
+
+---
+
+## 이 조합이 왜 강력한가
+
+일반적인 구조는 OpenClaw → OpenAI/Anthropic API 형태다.  
+이번 구조는 아래처럼 바뀐다.
+
+`OpenClaw → Custom Provider(agent-cli-to-api) → Cursor CLI 모델 호출`
+
+이렇게 바꾸면 장점이 크다.
+
+1. **비용 구조 최적화**: 고정 API 과금 의존도를 크게 낮출 수 있다.
+2. **운영 안정성**: 로컬/자체 환경 기반이라 제어권이 높다.
+3. **확장성**: OpenClaw 스킬/서브에이전트와 그대로 결합 가능하다.
+4. **성능 체감**: 코드 작업 중심 워크로드에서 빠르고 실용적인 응답이 나온다.
+
+---
+
+## 준비물
+
+- macOS 또는 Linux 서버(상시 실행 권장)
+- Node.js 20+
+- OpenClaw 설치 환경
+- Cursor CLI 사용 가능한 환경
+- Git
+
+```bash
+# 버전 확인
+node -v
+npm -v
+git --version
+```
+
+---
+
+## 1) 프로젝트 클론
+
+먼저 브리지 서버 역할의 저장소를 클론한다.
+
+```bash
+git clone https://github.com/dev-thug/agent-cli-to-api.git
+cd agent-cli-to-api
+```
+
+---
+
+## 2) 의존성 설치 및 서버 실행
+
+```bash
+npm install
+npm run build
+npm run start
+```
+
+로컬에서 API 브리지가 뜨면 기본적으로 아래와 비슷한 엔드포인트를 제공한다.
+
+- `http://127.0.0.1:11434/v1/chat/completions`
+- OpenAI 호환 형태의 요청/응답 포맷
+
+> 포트는 프로젝트 설정에 따라 다를 수 있다. `README` 또는 환경변수 파일을 우선 확인하자.
+
+---
+
+## 3) OpenClaw 모델을 커스텀 프로바이더로 연결
+
+OpenClaw 모델 설정에서 외부 SaaS API 대신, 방금 띄운 로컬 브리지 엔드포인트를 지정한다.
+
+```bash
+openclaw configure --section models
+```
+
+설정 포인트는 다음 3개다.
+
+- **provider/base URL**: `http://127.0.0.1:11434/v1`
+- **model name**: 브리지에서 노출하는 모델 ID(예: `auto` 또는 프로젝트 문서 기준 값)
+- **api key**: 필요 시 더미값 또는 로컬 토큰
+
+이 시점부터 OpenClaw는 네가 지정한 커스텀 경로를 통해 모델 응답을 받는다.
+
+---
+
+## 4) Cursor CLI 연동 확인 (핵심)
+
+이 구조의 핵심은 `agent-cli-to-api`가 **Cursor CLI를 AI 백엔드처럼 호출**한다는 점이다.  
+즉, OpenClaw 입장에서는 “일반 API”처럼 보이지만, 실제 계산은 Cursor CLI 경로에서 처리된다.
+
+검증 순서:
+
+1. 브리지 서버 단독 호출 테스트
+2. OpenClaw에서 동일 프롬프트 호출
+3. 두 결과가 정상 매핑되는지 확인
+
+가능하면 간단한 테스트 프롬프트부터 시작해라.
+
+- "현재 디렉토리 파일 구조 요약"
+- "이 에러 로그 원인 3개 제시"
+- "커밋 메시지 초안 작성"
+
+---
+
+## 5) 텔레그램까지 연결해서 실사용하기
+
+```bash
+openclaw configure --section channels
+openclaw gateway start
+```
+
+이제 텔레그램에서 바로:
+
+- 코드 리팩토링 요청
+- 로그 분석
+- 배포 체크리스트 생성
+- 블로그 초안 작성
+
+같은 작업을 OpenClaw에 던지면, 백그라운드에서 커스텀 프로바이더 경로로 처리된다.
+
+---
+
+## 추천 운영 구조 (안정성)
+
+실제로 오래 돌릴 때는 아래를 권장한다.
+
+- **브리지 서버 프로세스 매니저 사용**: `pm2` 또는 systemd
+- **헬스체크 엔드포인트 모니터링**
+- **로그 분리**: OpenClaw 로그 / 브리지 로그 / 채널 로그
+- **재시작 정책**: 장애 시 자동 복구
+
+```bash
+# 예시: pm2로 브리지 상시 실행
+npm i -g pm2
+pm2 start "npm run start" --name agent-cli-to-api
+pm2 save
+```
+
+---
+
+## 자주 막히는 포인트 (트러블슈팅)
+
+### 1. OpenClaw는 켜졌는데 응답이 없을 때
+- 브리지 서버 포트가 실제로 열려 있는지 확인
+- OpenClaw model base URL 오타 확인
+- 방화벽/로컬 바인딩(`127.0.0.1` vs `0.0.0.0`) 확인
+
+### 2. 응답 속도가 느릴 때
+- 모델 파라미터(temperature/max tokens) 보수적으로 설정
+- 동시에 돌아가는 서브에이전트 개수 제한
+- 장문 프롬프트는 요약 후 전달
+
+### 3. 출력 포맷이 깨질 때
+- OpenAI 호환 응답 스키마 매핑 확인
+- 스트리밍 on/off 설정 일치 여부 확인
+
+---
+
+## SEO 관점 핵심 키워드 전략
+
+이 주제는 검색 의도가 뚜렷해서 롱테일 키워드가 잘 먹힌다.
+
+- `OpenClaw 무료`
+- `AI API 비용 없이 에이전트`
+- `agent-cli-to-api 설정`
+- `Cursor CLI custom provider`
+- `OpenClaw self-hosted bot`
+
+글 제목/서론/소제목/FAQ에 이 키워드를 자연스럽게 배치하면 검색 유입이 안정적으로 늘어난다.
+
+---
+
+## 클릭률 올리는 A/B 제목 + 썸네일 문구
+
+아래 조합으로 썸네일/제목 테스트를 돌리면 클릭률 개선에 유리하다.
+
+### A안 (직설형)
+- 제목: **OpenClaw AI API 비용 0원? Cursor CLI 연동으로 사실상 무제한 운영하는 법**
+- 썸네일 메인 문구: **AI API 비용 0원**
+- 썸네일 서브 문구: **OpenClaw + Cursor CLI 실전 세팅**
+
+### B안 (성과 강조형)
+- 제목: **OpenClaw 무료 세팅 끝판왕: agent-cli-to-api로 고성능 봇 무제한 돌리기**
+- 썸네일 메인 문구: **고성능 봇 무제한**
+- 썸네일 서브 문구: **커스텀 프로바이더 운영법**
+
+### C안 (문제 해결형)
+- 제목: **매달 API 요금 아깝다면? OpenClaw를 무료 AI API 구조로 바꾸는 방법**
+- 썸네일 메인 문구: **API 요금 탈출**
+- 썸네일 서브 문구: **agent-cli-to-api + OpenClaw**
+
+---
+
+## FAQ
+
+### Q1) 진짜 완전 무료인가?
+환경에 따라 다르다. 다만 **외부 API 과금 의존도를 크게 줄이고**, 로컬/자체 경로로 운영비를 낮추는 데 매우 효과적이다.
+
+### Q2) 초보도 따라 할 수 있나?
+가능하다. 이 글 순서대로 하면 **클론 → 실행 → OpenClaw 모델 연결 → 채널 연결**까지 한 번에 끝난다.
+
+### Q3) 운영 안정성은 어떤가?
+프로세스 매니저, 헬스체크, 로그 분리만 해도 실제 운영 안정성은 크게 올라간다.
+
+---
+
+## 마무리
+
+**OpenClaw + agent-cli-to-api + Cursor CLI** 조합은 “AI 자동화를 계속 돌리고 싶은데 API 비용이 부담되는” 개발자에게 가장 현실적인 구조다.  
+한 번만 세팅해두면, 이후에는 메신저에서 명령만 던져도 꽤 강력한 개인 에이전트 워크플로우를 유지할 수 있다.
+
+원하면 다음 글에서:
+
+- Docker 기반 배포 템플릿
+- PM2/systemd 실전 설정 파일
+- 장애 대응 체크리스트
+
+까지 이어서 정리해보겠다.
