@@ -5,6 +5,7 @@ interface PaginationProps {
   basePath: string;
   currentPage: number;
   totalPages: number;
+  query?: string;
   ariaLabel: string;
   firstLabel: string;
   lastLabel: string;
@@ -30,16 +31,20 @@ const normalizeBasePath = (basePath: string) => {
   return basePath.replace(/\/+$/, "");
 };
 
-const getPageHref = (basePath: string, page: number) => {
-  if (page <= 1) {
-    return basePath;
+const getPageHref = (basePath: string, page: number, query?: string) => {
+  const normalizedQuery = query?.trim();
+  let pagePath = basePath;
+
+  if (page > 1) {
+    pagePath = basePath === "/" ? `/page/${page}` : `${basePath}/page/${page}`;
   }
 
-  if (basePath === "/") {
-    return `/page/${page}`;
+  if (!normalizedQuery) {
+    return pagePath;
   }
 
-  return `${basePath}/page/${page}`;
+  const queryParams = new URLSearchParams({ q: normalizedQuery });
+  return `${pagePath}?${queryParams.toString()}`;
 };
 
 const PAGE_PLACEHOLDER = "{page}";
@@ -82,6 +87,7 @@ const Pagination = ({
   basePath,
   currentPage,
   totalPages,
+  query,
   ariaLabel,
   firstLabel,
   lastLabel,
@@ -104,10 +110,10 @@ const Pagination = ({
   const hasNext = safeCurrentPage < safeTotalPages;
   const hasFirst = safeCurrentPage > 1;
   const hasLast = safeCurrentPage < safeTotalPages;
-  const firstHref = getPageHref(safeBasePath, 1);
-  const lastHref = getPageHref(safeBasePath, safeTotalPages);
-  const previousHref = getPageHref(safeBasePath, safeCurrentPage - 1);
-  const nextHref = getPageHref(safeBasePath, safeCurrentPage + 1);
+  const firstHref = getPageHref(safeBasePath, 1, query);
+  const lastHref = getPageHref(safeBasePath, safeTotalPages, query);
+  const previousHref = getPageHref(safeBasePath, safeCurrentPage - 1, query);
+  const nextHref = getPageHref(safeBasePath, safeCurrentPage + 1, query);
 
   const baseButtonClassName =
     "inline-flex min-w-9 h-9 items-center justify-center rounded-md border text-sm transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-white/20";
@@ -183,7 +189,7 @@ const Pagination = ({
           }
 
           const isCurrent = item === safeCurrentPage;
-          const href = getPageHref(safeBasePath, item);
+          const href = getPageHref(safeBasePath, item, query);
 
           return (
             <li key={item}>

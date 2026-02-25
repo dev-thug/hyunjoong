@@ -48,6 +48,12 @@
     "go_to_page": "Go to page",
     "first": "First",
     "last": "Last",
+    "search_aria": "Search blog posts",
+    "search_placeholder": "Search by title, excerpt, or keywords",
+    "search_button": "Search",
+    "clear_search": "Clear",
+    "results_count": "{count} results",
+    "no_search_results": "No search results found. Try a different keyword.",
     "not_available_title": "Post not available in English",
     "not_available_description": "This post is only available in {lang}. You can read it in that language below.",
     "read_in_language": "Read in {lang}"

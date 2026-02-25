@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Pagination from "@/components/Pagination";
-import BlogPostCardList from "@/components/BlogPostCardList";
+import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import { i18n, type Locale } from "@/i18n-config";
-import { BLOG_POSTS_PAGE_SIZE, getPostsPage } from "@/lib/posts";
+import { BLOG_POSTS_PAGE_SIZE, getAllPosts, paginatePosts } from "@/lib/posts";
 
 const PAGE_PARAM_PATTERN = /^[1-9]\d*$/;
 
@@ -26,16 +25,46 @@ const parsePageParam = (pageParam: string): number | null => {
   return parsedPage;
 };
 
+const parseSearchQuery = (
+  value: string | string[] | undefined
+): string | undefined => {
+  if (Array.isArray(value)) {
+    return parseSearchQuery(value[0]);
+  }
+
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+};
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string; page: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }): Promise<Metadata> {
   const { lang, page } = (await params) as { lang: Locale; page: string };
+  const { q } = await searchParams;
+  const query = parseSearchQuery(q);
   const dict = await getDictionary(lang);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
   const parsedPage = parsePageParam(page);
+
+  if (query) {
+    return {
+      title: dict.blog.page_title,
+      description: dict.blog.page_description,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
   if (parsedPage === null || parsedPage < 2) {
     return {
       title: dict.blog.page_title,
@@ -47,8 +76,9 @@ export async function generateMetadata({
     };
   }
 
-  const { currentPage } = await getPostsPage(lang, parsedPage, BLOG_POSTS_PAGE_SIZE);
-  if (currentPage !== parsedPage) {
+  const posts = await getAllPosts(lang);
+  const { totalPages } = paginatePosts(posts, parsedPage, BLOG_POSTS_PAGE_SIZE);
+  if (parsedPage > totalPages) {
     return {
       title: dict.blog.page_title,
       description: dict.blog.page_description,
@@ -80,7 +110,8 @@ export const generateStaticParams = async (): Promise<
 > => {
   const pagedRoutes = await Promise.all(
     i18n.locales.map(async (lang) => {
-      const { totalPages } = await getPostsPage(lang, 1, BLOG_POSTS_PAGE_SIZE);
+      const posts = await getAllPosts(lang);
+      const { totalPages } = paginatePosts(posts, 1, BLOG_POSTS_PAGE_SIZE);
       const pages: { lang: string; page: string }[] = [];
 
       for (let page = 2; page <= totalPages; page += 1) {
@@ -96,23 +127,23 @@ export const generateStaticParams = async (): Promise<
 
 export default async function BlogPageByPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string; page: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }) {
   const { lang, page } = (await params) as { lang: Locale; page: string };
+  const { q } = await searchParams;
+  const query = parseSearchQuery(q);
   const parsedPage = parsePageParam(page);
   if (parsedPage === null || parsedPage < 2) {
     notFound();
   }
 
   const dict = await getDictionary(lang);
-  const { items: posts, currentPage, totalPages } = await getPostsPage(
-    lang,
-    parsedPage,
-    BLOG_POSTS_PAGE_SIZE
-  );
-
-  if (parsedPage !== currentPage) {
+  const posts = await getAllPosts(lang);
+  const { totalPages } = paginatePosts(posts, parsedPage, BLOG_POSTS_PAGE_SIZE);
+  if (parsedPage > totalPages) {
     notFound();
   }
 
@@ -125,26 +156,28 @@ export default async function BlogPageByPage({
         <p className="text-gray-400 mt-4 text-lg">{dict.blog.page_description}</p>
       </div>
 
-      <BlogPostCardList
+      <BlogSearchClient
         posts={posts}
         lang={lang}
-        readPostAriaTemplate={dict.blog.read_post_aria}
-        readMoreLabel={dict.blog.read_more}
-      />
-
-      <Pagination
-        basePath={`/${lang}/blog`}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        ariaLabel={dict.blog.pagination}
-        firstLabel={dict.blog.first}
-        lastLabel={dict.blog.last}
-        prevLabel={dict.blog.prev_page}
-        nextLabel={dict.blog.next_page}
-        pageLabel={dict.blog.page}
-        goToPageLabel={dict.blog.go_to_page}
-        currentPageLabel={dict.blog.current_page}
-        className="mt-10 flex justify-center"
+        initialQuery={query}
+        initialPage={parsedPage}
+        labels={{
+          searchAria: dict.blog.search_aria,
+          searchPlaceholder: dict.blog.search_placeholder,
+          clearSearch: dict.blog.clear_search,
+          resultsCount: dict.blog.results_count,
+          noResults: dict.blog.no_search_results,
+          readPostAria: dict.blog.read_post_aria,
+          readMore: dict.blog.read_more,
+          pagination: dict.blog.pagination,
+          first: dict.blog.first,
+          last: dict.blog.last,
+          prevPage: dict.blog.prev_page,
+          nextPage: dict.blog.next_page,
+          page: dict.blog.page,
+          goToPage: dict.blog.go_to_page,
+          currentPage: dict.blog.current_page,
+        }}
       />
     </div>
   );

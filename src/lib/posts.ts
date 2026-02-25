@@ -198,13 +198,56 @@ export const paginatePosts = (
   };
 };
 
+const normalizeSearchQuery = (searchQuery?: string): string =>
+  (searchQuery ?? "").trim().toLowerCase();
+
+const isPostMatchingSearchQuery = (
+  post: PostMetadata,
+  normalizedSearchQuery: string
+): boolean => {
+  if (!normalizedSearchQuery) {
+    return true;
+  }
+
+  const searchableFields = [
+    post.title,
+    post.excerpt,
+    post.category,
+    post.keywords?.join(" "),
+  ];
+  const normalizedSearchableText = searchableFields
+    .filter((value): value is string => Boolean(value))
+    .join(" ")
+    .toLowerCase();
+
+  return normalizedSearchableText.includes(normalizedSearchQuery);
+};
+
+export const filterPostsBySearchQuery = (
+  posts: PostMetadata[],
+  searchQuery?: string
+): PostMetadata[] => {
+  const normalizedSearchQuery = normalizeSearchQuery(searchQuery);
+
+  if (!normalizedSearchQuery) {
+    return posts;
+  }
+
+  return posts.filter((post) =>
+    isPostMatchingSearchQuery(post, normalizedSearchQuery)
+  );
+};
+
 export const getPostsPage = async (
   lang: string,
   page: number,
-  pageSize: number = BLOG_POSTS_PAGE_SIZE
+  pageSize: number = BLOG_POSTS_PAGE_SIZE,
+  searchQuery?: string
 ): Promise<PaginatedPostsResult> => {
   const posts = await getAllPosts(lang);
-  return paginatePosts(posts, page, pageSize);
+  const filteredPosts = filterPostsBySearchQuery(posts, searchQuery);
+
+  return paginatePosts(filteredPosts, page, pageSize);
 };
 
 /**
