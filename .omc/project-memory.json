@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastScanned": 1770358397311,
+  "lastScanned": 1771680938549,
   "projectRoot": "/Users/hyunjoong/hyunjoong",
   "techStack": {
     "languages": [
@@ -68,7 +68,7 @@
       "src"
     ],
     "gitBranches": {
-      "defaultBranch": "main",
+      "defaultBranch": "develop",
       "branchingStrategy": null
     }
   },
@@ -77,22 +77,24 @@
     "docs": {
       "path": "docs",
       "purpose": "Documentation",
-      "fileCount": 0,
-      "lastAccessed": 1770358397295,
-      "keyFiles": []
+      "fileCount": 1,
+      "lastAccessed": 1771680938535,
+      "keyFiles": [
+        "GISCUS_SETUP.md"
+      ]
     },
     "public": {
       "path": "public",
       "purpose": "Public files",
-      "fileCount": 1,
-      "lastAccessed": 1770358397295,
+      "fileCount": 0,
+      "lastAccessed": 1771680938540,
       "keyFiles": []
     },
     "src": {
       "path": "src",
       "purpose": "Source code",
       "fileCount": 4,
-      "lastAccessed": 1770358397295,
+      "lastAccessed": 1771680938541,
       "keyFiles": [
         "get-dictionary.ts",
         "i18n-config.ts",
@@ -104,7 +106,7 @@
       "path": "src/app",
       "purpose": "Application code",
       "fileCount": 4,
-      "lastAccessed": 1770358397301,
+      "lastAccessed": 1771680938542,
       "keyFiles": [
         "favicon.ico",
         "globals.css",
@@ -115,7 +117,7 @@
       "path": "src/components",
       "purpose": "UI components",
       "fileCount": 4,
-      "lastAccessed": 1770358397301,
+      "lastAccessed": 1771680938542,
       "keyFiles": [
         "BlogList.tsx",
         "LiquidBackground.tsx",
@@ -126,7 +128,7 @@
       "path": "src/lib",
       "purpose": "Library code",
       "fileCount": 2,
-      "lastAccessed": 1770358397301,
+      "lastAccessed": 1771680938542,
       "keyFiles": [
         "posts.ts",
         "projects.ts"
