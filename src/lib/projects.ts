@@ -7,6 +7,33 @@ import type { Project } from "@/types";
  * 프로젝트 디렉토리 경로
  */
 const PROJECTS_DIRECTORY = path.join(process.cwd(), "src/content/projects");
+const PROJECT_SLUG_REGEX = /^[a-z0-9-]+$/;
+const PROJECT_LANG_REGEX = /^(ko|en)$/;
+
+interface ParsedProjectMetadata {
+  id?: string | null;
+  title?: string | null;
+  adCopy?: string | null;
+  description?: string | null;
+  highlight?: string | null;
+  serviceUrl?: string | null;
+  image?: string | null;
+  lang?: string | null;
+  tags?: string[];
+  metrics?: Array<{ label: string; value: string }>;
+}
+
+const REQUIRED_PROJECT_FIELDS = [
+  "id",
+  "title",
+  "adCopy",
+  "description",
+  "highlight",
+  "image",
+  "lang",
+] as const;
+
+type RequiredProjectField = (typeof REQUIRED_PROJECT_FIELDS)[number];
 
 /**
  * 파일명에서 슬러그와 언어 정보를 추출
@@ -45,7 +72,9 @@ export const getProjectIdentifiers = cache(
  * MDX 파일에서 export된 metadata 추출
  * lib/posts.ts의 구현을 참고하여 프로젝트 필드에 맞게 확장
  */
-const parseMetadataFromContent = (content: string): any | null => {
+const parseMetadataFromContent = (
+  content: string
+): ParsedProjectMetadata | null => {
   const metadataMatch = content.match(
     /export\s+const\s+metadata\s*=\s*\{([\s\S]*?)\};/
   );
@@ -60,17 +89,17 @@ const parseMetadataFromContent = (content: string): any | null => {
   // 필요한 필드별로 정규식을 적용합니다.
   // 여기서는 metrics와 tags 같은 배열/객체 구조를 위해 조금 더 정교한 추출이 필요할 수 있습니다.
 
-  const getValue = (key: string) => {
+  const getValue = (key: string): string | undefined => {
     const regex = new RegExp(`${key}:\\s*["']([^"']+)["']`);
     const match = metadataBlock.match(regex);
-    return match ? match[1] : null;
+    return match ? match[1] : undefined;
   };
 
   /**
    * 멀티라인 문자열 값 추출 (escaped quotes 포함)
    * description, adCopy 등의 긴 텍스트 필드에 사용
    */
-  const getLongString = (key: string) => {
+  const getLongString = (key: string): string | undefined => {
     // key: "value" 또는 key: 'value' 패턴 매칭
     // 문자열 내부의 escaped quotes (\", \') 처리
     const doubleQuoteRegex = new RegExp(`${key}:\\s*"((?:[^"\\\\]|\\\\.)*)"`);
@@ -88,21 +117,38 @@ const parseMetadataFromContent = (content: string): any | null => {
       return singleMatch[1].replace(/\\'/g, "'").replace(/\\\\/g, "\\");
     }
 
-    return null;
+    return undefined;
   };
 
-  const getArray = (key: string) => {
+  const parseQuotedStringList = (raw: string): string[] => {
+    const values: string[] = [];
+    const tokenRegex = /"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'/g;
+    let match: RegExpExecArray | null = tokenRegex.exec(raw);
+
+    while (match !== null) {
+      const value = (match[1] ?? match[2] ?? "")
+        .replace(/\\"/g, '"')
+        .replace(/\\'/g, "'")
+        .replace(/\\\\/g, "\\")
+        .trim();
+      if (value.length > 0) {
+        values.push(value);
+      }
+      match = tokenRegex.exec(raw);
+    }
+
+    return values;
+  };
+
+  const getArray = (key: string): string[] => {
     const regex = new RegExp(`${key}:\\s*\\[([\\s\\S]*?)\\]`);
     const match = metadataBlock.match(regex);
     if (!match) return [];
-    return match[1]
-      .split(",")
-      .map((s) => s.trim().replace(/["']/g, ""))
-      .filter(Boolean);
+    return parseQuotedStringList(match[1]);
   };
 
   // metrics는 객체 배열이므로 별도 처리
-  const getMetrics = () => {
+  const getMetrics = (): Array<{ label: string; value: string }> => {
     const regex = /metrics:\s*\[([\s\S]*?)\]/;
     const match = metadataBlock.match(regex);
     if (!match) return [];
@@ -129,7 +175,17 @@ const parseMetadataFromContent = (content: string): any | null => {
     lang: getValue("lang"),
     tags: getArray("tags"),
     metrics: getMetrics(),
-  };
+  } satisfies ParsedProjectMetadata;
+};
+
+const hasRequiredProjectFields = (
+  metadata: ParsedProjectMetadata
+): metadata is ParsedProjectMetadata &
+  Record<RequiredProjectField, string> => {
+  return REQUIRED_PROJECT_FIELDS.every((field) => {
+    const value = metadata[field];
+    return typeof value === "string" && value.trim().length > 0;
+  });
 };
 
 /**
@@ -137,21 +193,44 @@ const parseMetadataFromContent = (content: string): any | null => {
  */
 export const getProjectBySlug = cache(
   async (slug: string, lang: string): Promise<Project | null> => {
+    if (!PROJECT_SLUG_REGEX.test(slug) || !PROJECT_LANG_REGEX.test(lang)) {
+      return null;
+    }
+
     const mdxPath = path.join(PROJECTS_DIRECTORY, `${slug}.${lang}.mdx`);
+    const mdPath = path.join(PROJECTS_DIRECTORY, `${slug}.${lang}.md`);
 
     try {
-      const fileContents = await fs.readFile(mdxPath, "utf8");
+      let fileContents: string;
+      try {
+        fileContents = await fs.readFile(mdxPath, "utf8");
+      } catch {
+        fileContents = await fs.readFile(mdPath, "utf8");
+      }
       const metadata = parseMetadataFromContent(fileContents);
 
-      if (!metadata || !metadata.title) {
+      if (!metadata || !hasRequiredProjectFields(metadata)) {
+        return null;
+      }
+
+      if (!PROJECT_LANG_REGEX.test(metadata.lang) || metadata.lang !== lang) {
         return null;
       }
 
       return {
-        ...metadata,
+        id: metadata.id,
+        title: metadata.title,
+        adCopy: metadata.adCopy,
+        description: metadata.description,
+        highlight: metadata.highlight,
+        serviceUrl: metadata.serviceUrl ?? undefined,
+        image: metadata.image,
+        lang: metadata.lang,
+        tags: metadata.tags ?? [],
+        metrics: metadata.metrics ?? [],
         slug,
-      } as Project;
-    } catch (error) {
+      };
+    } catch {
       // console.error(`Error reading project ${slug}.${lang}:`, error);
       return null;
     }
@@ -173,6 +252,10 @@ const getNumericId = (id?: string | null): number => {
  */
 export const getAllProjects = cache(
   async (lang?: string): Promise<Project[]> => {
+    if (lang !== undefined && !PROJECT_LANG_REGEX.test(lang)) {
+      return [];
+    }
+
     const identifiers = await getProjectIdentifiers();
 
     const filteredIdentifiers = lang

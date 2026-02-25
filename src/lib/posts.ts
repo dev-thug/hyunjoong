@@ -17,6 +17,37 @@ export interface PaginatedPostsResult {
   pageSize: number;
 }
 
+interface ParsedPostMetadata {
+  title?: string;
+  excerpt?: string;
+  category?: string;
+  date?: string;
+  readTime?: string;
+  lang?: string;
+  keywords?: string | string[];
+  hidden?: boolean;
+}
+
+const REQUIRED_POST_METADATA_FIELDS = [
+  "title",
+  "excerpt",
+  "category",
+  "date",
+  "readTime",
+  "lang",
+] as const;
+
+type RequiredPostMetadataField = (typeof REQUIRED_POST_METADATA_FIELDS)[number];
+
+const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const POST_CATEGORIES: readonly PostCategory[] = [
+  "Engineering",
+  "Business",
+  "Insight",
+];
+const POST_SLUG_REGEX = /^[a-z0-9-]+$/;
+const POST_LANG_REGEX = /^(ko|en)$/;
+
 /**
  * 파일명에서 슬러그와 언어 정보를 추출
  * 예: "nextjs-architecture.ko.mdx" -> { slug: "nextjs-architecture", lang: "ko" }
@@ -56,7 +87,7 @@ export const getPostIdentifiers = cache(
  */
 const parseMetadataFromContent = (
   content: string
-): Record<string, string> | null => {
+): ParsedPostMetadata | null => {
   const metadataMatch = content.match(
     /export\s+const\s+metadata\s*=\s*\{([\s\S]*?)\};/
   );
@@ -66,41 +97,97 @@ const parseMetadataFromContent = (
   }
 
   const metadataBlock = metadataMatch[1];
-  const result: Record<string, string> = {};
+  const parseStringField = (key: string): string | undefined => {
+    const match = metadataBlock.match(
+      new RegExp(`${key}:\\s*"((?:[^"\\\\]|\\\\.)*)"`)
+    );
+    if (!match) {
+      return undefined;
+    }
+    return match[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\");
+  };
+  const parseBooleanField = (key: string): boolean | undefined => {
+    const match = metadataBlock.match(new RegExp(`${key}:\\s*(true|false)`));
+    if (!match) {
+      return undefined;
+    }
+    return match[1] === "true";
+  };
+  const parseStringArrayField = (key: string): string[] | undefined => {
+    const match = metadataBlock.match(new RegExp(`${key}:\\s*\\[([\\s\\S]*?)\\]`));
+    if (!match) {
+      return undefined;
+    }
+    const values = [...match[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)]
+      .map((value) => value[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\"))
+      .map((value) => value.trim())
+      .filter(Boolean);
+    return values;
+  };
 
-  const titleMatch = metadataBlock.match(/title:\s*"([^"]+)"/);
-  const excerptMatch = metadataBlock.match(/excerpt:\s*"([^"]+)"/);
-  const categoryMatch = metadataBlock.match(/category:\s*"([^"]+)"/);
-  const dateMatch = metadataBlock.match(/date:\s*"([^"]+)"/);
-  const readTimeMatch = metadataBlock.match(/readTime:\s*"([^"]+)"/);
-  const langMatch = metadataBlock.match(/lang:\s*"([^"]+)"/);
-  // keywords: comma-separated string; value must not contain double quotes
-  const keywordsMatch = metadataBlock.match(/keywords:\s*"([^"]*)"/);
-  const hiddenMatch = metadataBlock.match(/hidden:\s*(true|false)/);
-
-  if (titleMatch) result.title = titleMatch[1];
-  if (excerptMatch) result.excerpt = excerptMatch[1];
-  if (categoryMatch) result.category = categoryMatch[1];
-  if (dateMatch) result.date = dateMatch[1];
-  if (readTimeMatch) result.readTime = readTimeMatch[1];
-  if (langMatch) result.lang = langMatch[1];
-  if (keywordsMatch) result.keywords = keywordsMatch[1];
-  if (hiddenMatch) result.hidden = hiddenMatch[1];
-
-  return result;
+  return {
+    title: parseStringField("title"),
+    excerpt: parseStringField("excerpt"),
+    category: parseStringField("category"),
+    date: parseStringField("date"),
+    readTime: parseStringField("readTime"),
+    lang: parseStringField("lang"),
+    keywords:
+      parseStringArrayField("keywords") ?? parseStringField("keywords"),
+    hidden: parseBooleanField("hidden"),
+  };
 };
+
+const hasRequiredPostMetadataFields = (
+  metadata: ParsedPostMetadata
+): metadata is ParsedPostMetadata &
+  Record<RequiredPostMetadataField, string> => {
+  return REQUIRED_POST_METADATA_FIELDS.every((field) => {
+    const value = metadata[field];
+    return typeof value === "string" && value.trim().length > 0;
+  });
+};
+
+const isValidIsoDate = (value: string): boolean => {
+  if (!ISO_DATE_REGEX.test(value)) {
+    return false;
+  }
+  const parsed = new Date(`${value}T00:00:00.000Z`);
+  return (
+    !Number.isNaN(parsed.getTime()) &&
+    parsed.toISOString().slice(0, 10) === value
+  );
+};
+
+const isPostCategory = (value: string): value is PostCategory => {
+  return POST_CATEGORIES.includes(value as PostCategory);
+};
+
+const normalizeKeywords = (value?: string | string[]): string[] | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+  const items = Array.isArray(value) ? value : value.split(",");
+  const normalizedItems = items.map((item) => item.trim()).filter(Boolean);
+  return normalizedItems.length > 0 ? normalizedItems : undefined;
+};
+
+const isSafePostSlug = (value: string): boolean => POST_SLUG_REGEX.test(value);
+const isSafePostLang = (value: string): boolean => POST_LANG_REGEX.test(value);
 
 /**
  * 슬러그와 언어로 특정 포스트 메타데이터 가져오기 (비동기)
  */
 export const getPostBySlug = cache(
   async (slug: string, lang: string): Promise<PostMetadata | null> => {
+    if (!isSafePostSlug(slug) || !isSafePostLang(lang)) {
+      return null;
+    }
+
     const mdxPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.mdx`);
     const mdPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.md`);
 
     let fileContents: string;
-    let currentLang = lang;
-
     try {
       fileContents = await fs.readFile(mdxPath, "utf8");
     } catch {
@@ -113,27 +200,33 @@ export const getPostBySlug = cache(
 
     const metadata = parseMetadataFromContent(fileContents);
 
-    if (!metadata || !metadata.title) {
+    if (!metadata || !hasRequiredPostMetadataFields(metadata)) {
       return null;
     }
 
-    const keywords = metadata.keywords
-      ? metadata.keywords
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : undefined;
+    if (!isValidIsoDate(metadata.date)) {
+      return null;
+    }
 
-    const hidden = metadata.hidden === "true";
+    if (!isPostCategory(metadata.category)) {
+      return null;
+    }
+
+    if (!isSafePostLang(metadata.lang) || metadata.lang !== lang) {
+      return null;
+    }
+
+    const keywords = normalizeKeywords(metadata.keywords);
+    const hidden = metadata.hidden === true;
 
     return {
       slug,
       lang: metadata.lang || lang,
       title: metadata.title,
-      excerpt: metadata.excerpt || "",
-      category: (metadata.category || "Insight") as PostCategory,
-      date: metadata.date || "",
-      readTime: metadata.readTime || "5 min",
+      excerpt: metadata.excerpt,
+      category: metadata.category,
+      date: metadata.date,
+      readTime: metadata.readTime,
       ...(keywords?.length ? { keywords } : {}),
       ...(hidden ? { hidden: true } : {}),
     };
@@ -152,6 +245,10 @@ export const getAllPosts = cache(
     lang?: string,
     options: { includeHidden?: boolean } = DEFAULT_GET_ALL_POSTS_OPTIONS
   ): Promise<PostMetadata[]> => {
+    if (lang !== undefined && !isSafePostLang(lang)) {
+      return [];
+    }
+
     const identifiers = await getPostIdentifiers();
 
     const filteredIdentifiers = lang

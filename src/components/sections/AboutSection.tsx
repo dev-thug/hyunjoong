@@ -1,5 +1,9 @@
+import type { getDictionary } from "@/get-dictionary";
+
+type HomeDictionary = Awaited<ReturnType<typeof getDictionary>>;
+
 interface AboutSectionProps {
-  readonly dict: any;
+  readonly dict: HomeDictionary;
 }
 
 const AboutSection = ({ dict }: AboutSectionProps) => {

@@ -1,8 +1,11 @@
 import ProjectCard from "@/components/ProjectCard";
 import { getAllProjects } from "@/lib/projects";
+import type { getDictionary } from "@/get-dictionary";
+
+type HomeDictionary = Awaited<ReturnType<typeof getDictionary>>;
 
 interface ProjectsSectionProps {
-  readonly dict: any;
+  readonly dict: HomeDictionary;
   readonly lang: string;
 }
 

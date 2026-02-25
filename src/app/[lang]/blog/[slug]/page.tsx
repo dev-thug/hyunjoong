@@ -104,8 +104,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   // 데이터 페칭 병렬화 (Parallel Data Fetching)
   // 사전 정의된 언어로 사전을 가져오고, 포스트 데이터도 동시에 병렬로 페칭
-  let [dict, post, allPosts] = await Promise.all([
-    getDictionary(lang as Locale),
+  const dict = await getDictionary(lang as Locale);
+  let [post, allPosts] = await Promise.all([
     getPostBySlug(slug, lang),
     getAllPosts(lang, { includeHidden: true }),
   ]);

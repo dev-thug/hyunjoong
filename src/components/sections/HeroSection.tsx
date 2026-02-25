@@ -1,8 +1,11 @@
 import SpotlightText from "@/components/SpotlightText";
 import { BRAND } from "@/constants";
+import type { getDictionary } from "@/get-dictionary";
+
+type HomeDictionary = Awaited<ReturnType<typeof getDictionary>>;
 
 interface HeroSectionProps {
-  readonly dict: any;
+  readonly dict: HomeDictionary;
 }
 
 const HeroSection = ({ dict }: HeroSectionProps) => {

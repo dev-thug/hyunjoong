@@ -71,7 +71,7 @@ export default async function NotFound() {
       {/* Footer Branding */}
       <div className="absolute bottom-12 left-0 w-full text-center z-10 opacity-20 animate-fade-up delay-600">
         <p className="text-[10px] font-mono tracking-[0.5em] uppercase">
-          {BRAND.NAME} // {BRAND.LOCATION}
+          {`${BRAND.NAME} // ${BRAND.LOCATION}`}
         </p>
       </div>
     </main>

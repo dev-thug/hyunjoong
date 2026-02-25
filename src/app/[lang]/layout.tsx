@@ -92,13 +92,13 @@ export default async function LangLayout({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = (await params) as { lang: Locale };
-  const dict = await getDictionary(lang);
 
   return (
     <html lang={lang} className="dark" suppressHydrationWarning>
       <body className={`${inter.variable} ${montserrat.variable} antialiased`}>
         <GlobalNavigationWrapper lang={lang} />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   );

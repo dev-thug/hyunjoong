@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Locale, i18n } from "@/i18n-config";
+import { Locale } from "@/i18n-config";
 import { Globe } from "lucide-react";
 
 const TARGET_LANGUAGE_LABEL: Record<Locale, string> = {
