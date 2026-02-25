@@ -7,6 +7,15 @@ import type { PostMetadata, PostCategory } from "@/types/blog";
  * 블로그 포스트 디렉토리 경로
  */
 const POSTS_DIRECTORY = path.join(process.cwd(), "src/content/posts");
+export const BLOG_POSTS_PAGE_SIZE = 6;
+
+export interface PaginatedPostsResult {
+  items: PostMetadata[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  pageSize: number;
+}
 
 /**
  * 파일명에서 슬러그와 언어 정보를 추출
@@ -162,6 +171,41 @@ export const getAllPosts = cache(
     return resolved;
   }
 );
+
+export const paginatePosts = (
+  posts: PostMetadata[],
+  page: number,
+  pageSize: number
+): PaginatedPostsResult => {
+  const normalizedPageSize = Number.isFinite(pageSize)
+    ? Math.max(1, Math.trunc(pageSize))
+    : BLOG_POSTS_PAGE_SIZE;
+  const totalItems = posts.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / normalizedPageSize));
+  const normalizedPage = Number.isFinite(page)
+    ? Math.max(1, Math.trunc(page))
+    : 1;
+  const currentPage = Math.min(normalizedPage, totalPages);
+  const startIndex = (currentPage - 1) * normalizedPageSize;
+  const endIndex = startIndex + normalizedPageSize;
+
+  return {
+    items: posts.slice(startIndex, endIndex),
+    currentPage,
+    totalPages,
+    totalItems,
+    pageSize: normalizedPageSize,
+  };
+};
+
+export const getPostsPage = async (
+  lang: string,
+  page: number,
+  pageSize: number = BLOG_POSTS_PAGE_SIZE
+): Promise<PaginatedPostsResult> => {
+  const posts = await getAllPosts(lang);
+  return paginatePosts(posts, page, pageSize);
+};
 
 /**
  * generateStaticParams용 슬러그 파라미터 목록

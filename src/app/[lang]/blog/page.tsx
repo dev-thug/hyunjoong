@@ -1,10 +1,10 @@
-import Link from "next/link";
-import { getAllPosts } from "@/lib/posts";
-import { ArrowRight } from "lucide-react";
+import { BLOG_POSTS_PAGE_SIZE, getPostsPage } from "@/lib/posts";
 import type { Metadata } from "next";
+import Pagination from "@/components/Pagination";
+import BlogPostCardList from "@/components/BlogPostCardList";
 
 import { getDictionary } from "@/get-dictionary";
-import { i18n, type Locale } from "@/i18n-config";
+import type { Locale } from "@/i18n-config";
 
 export async function generateMetadata({
   params,
@@ -37,73 +37,47 @@ export default async function BlogPage({
 }: {
   params: Promise<{ lang: string }>;
 }) {
-  const { lang } = await params;
-  const posts = await getAllPosts(lang);
+  const { lang } = (await params) as { lang: Locale };
+  const dict = await getDictionary(lang);
+  const { items: posts, currentPage, totalPages } = await getPostsPage(
+    lang,
+    1,
+    BLOG_POSTS_PAGE_SIZE
+  );
 
   return (
     <div>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
-          INTELLIGENCE
+          {dict.blog.page_title.toUpperCase()}
         </h1>
         <p className="text-gray-400 mt-4 text-lg">
-          Full-stack development, serverless architecture, and business
-          insights.
+          {dict.blog.page_description}
         </p>
       </div>
 
-      {/* 포스트 목록 */}
-      <div className="space-y-6">
-        {posts.map((post, idx) => (
-          <Link
-            key={post.slug}
-            href={`/${lang}/blog/${post.slug}`}
-            className="group block p-6 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all duration-300"
-            tabIndex={0}
-            aria-label={`Read: ${post.title}`}
-          >
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <span className="text-xs font-mono text-gray-600">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-                <span
-                  className={`text-xs font-mono uppercase tracking-wider px-2 py-1 rounded border ${
-                    post.category === "Business"
-                      ? "border-green-500/30 text-green-400"
-                      : post.category === "Engineering"
-                      ? "border-blue-500/30 text-blue-400"
-                      : "border-purple-500/30 text-purple-400"
-                  }`}
-                >
-                  {post.category}
-                </span>
-              </div>
+      <BlogPostCardList
+        posts={posts}
+        lang={lang}
+        readPostAriaTemplate={dict.blog.read_post_aria}
+        readMoreLabel={dict.blog.read_more}
+      />
 
-              <span className="text-xs font-mono text-gray-500">
-                {post.date} · {post.readTime}
-              </span>
-            </div>
-
-            <h2 className="text-2xl font-light text-white mt-4 group-hover:text-gray-200 transition-colors">
-              {post.title}
-            </h2>
-
-            <p className="text-gray-500 mt-2 line-clamp-2">{post.excerpt}</p>
-
-            <div className="flex justify-end mt-4">
-              <span className="inline-flex items-center gap-2 text-sm text-gray-500 group-hover:text-white transition-colors">
-                Read more
-                <ArrowRight
-                  size={14}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </span>
-            </div>
-          </Link>
-        ))}
-      </div>
+      <Pagination
+        basePath={`/${lang}/blog`}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        ariaLabel={dict.blog.pagination}
+        firstLabel={dict.blog.first}
+        lastLabel={dict.blog.last}
+        prevLabel={dict.blog.prev_page}
+        nextLabel={dict.blog.next_page}
+        pageLabel={dict.blog.page}
+        goToPageLabel={dict.blog.go_to_page}
+        currentPageLabel={dict.blog.current_page}
+        className="mt-10 flex justify-center"
+      />
     </div>
   );
 }

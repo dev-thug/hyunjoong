@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local AI tooling caches
+.omc/sessions/
+.omc/state/agent-replay-*.jsonl
+.omc/state/hud-state.json
+.omc/state/last-tool-error.json
+.omc/state/subagent-tracking.json

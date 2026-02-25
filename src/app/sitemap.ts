@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getAllPosts } from "@/lib/posts";
+import { BLOG_POSTS_PAGE_SIZE, getAllPosts } from "@/lib/posts";
 import { getProjectIdentifiers } from "@/lib/projects";
 
 const DEFAULT_BASE_URL = "https://hyunjoong.kim";
@@ -10,11 +10,13 @@ const DEFAULT_BASE_URL = "https://hyunjoong.kim";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
 
-  // Fetch all blog posts (with date for lastModified) and projects in parallel
-  const [allPosts, projectIdentifiers] = await Promise.all([
-    getAllPosts(),
+  // Fetch locale-specific blog posts and projects in parallel
+  const [koPosts, enPosts, projectIdentifiers] = await Promise.all([
+    getAllPosts("ko"),
+    getAllPosts("en"),
     getProjectIdentifiers(),
   ]);
+  const allPosts = [...koPosts, ...enPosts];
 
   // Static pages with their priorities and change frequencies
   const staticPages: MetadataRoute.Sitemap = [
@@ -68,6 +70,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  const blogPaginationPages: MetadataRoute.Sitemap = [
+    { lang: "ko", posts: koPosts.length },
+    { lang: "en", posts: enPosts.length },
+  ].flatMap(({ lang, posts }) => {
+    const totalPages = Math.ceil(posts / BLOG_POSTS_PAGE_SIZE);
+    if (totalPages <= 1) {
+      return [];
+    }
+
+    return Array.from({ length: totalPages - 1 }, (_, index) => ({
+      url: `${baseUrl}/${lang}/blog/page/${index + 2}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
+    }));
+  });
+
   // Blog post pages (lastModified from post date; fallback to now if invalid)
   const blogPages: MetadataRoute.Sitemap = allPosts.map((post) => {
     const parsed = post.date ? new Date(post.date) : null;
@@ -91,5 +110,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })
   );
 
-  return [...staticPages, ...blogPages, ...projectPages];
+  return [...staticPages, ...blogPaginationPages, ...blogPages, ...projectPages];
 }
