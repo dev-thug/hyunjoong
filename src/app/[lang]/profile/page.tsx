@@ -3,6 +3,8 @@ import { CONTACT_EMAIL, SOCIAL_LINKS } from "@/constants";
 import { getDictionary } from "@/get-dictionary";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
+import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
+import { DEFAULT_BASE_URL } from "@/lib/site-config";
 
 /**
  * 프로필 페이지 메타데이터 (다국어)
@@ -14,16 +16,33 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
-  return {
+  return buildLocalizedPageMetadata({
+    lang,
+    path: "/profile",
     title: dict.profile.meta_title,
     description: dict.profile.meta_description,
-  };
+    openGraphType: "profile",
+  });
 }
 
 /**
  * 프로필 페이지
  */
 export default function ProfilePage() {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Hyunjoong Kim",
+    jobTitle: "Full-stack & AWS Cloud Developer",
+    url: baseUrl,
+    sameAs: SOCIAL_LINKS.map((link) => link.href),
+  };
+  const personJsonLdScript = JSON.stringify(personJsonLd).replace(
+    /</g,
+    "\\u003c"
+  );
+
   const skills = [
     {
       category: "Frontend",
@@ -75,7 +94,12 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: personJsonLdScript }}
+      />
+      <div>
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
@@ -248,6 +272,7 @@ export default function ProfilePage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

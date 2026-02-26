@@ -29,7 +29,11 @@ export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
   const { slug, lang } = await params;
-  const project = await getProjectBySlug(slug, lang);
+  const [project, koProject, enProject] = await Promise.all([
+    getProjectBySlug(slug, lang),
+    getProjectBySlug(slug, "ko"),
+    getProjectBySlug(slug, "en"),
+  ]);
 
   if (!project) {
     return { title: "Project Not Found" };
@@ -39,8 +43,6 @@ export async function generateMetadata({
 
   // Build language alternates - check if project exists in both languages
   const languages: Record<string, string> = {};
-  const koProject = await getProjectBySlug(slug, "ko");
-  const enProject = await getProjectBySlug(slug, "en");
 
   if (koProject) languages.ko = `${baseUrl}/ko/projects/${slug}`;
   if (enProject) languages.en = `${baseUrl}/en/projects/${slug}`;
@@ -57,6 +59,7 @@ export async function generateMetadata({
       title: project.title,
       description: project.description || project.adCopy,
       url: `${baseUrl}/${lang}/projects/${slug}`,
+      siteName: "Hyunjoong Kim",
       type: "website",
       locale: lang === "ko" ? "ko_KR" : "en_US",
       images: [
@@ -90,6 +93,29 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const projectUrl = `${baseUrl}/${lang}/projects/${slug}`;
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.description || project.adCopy,
+    url: projectUrl,
+    image: project.image,
+    inLanguage: lang,
+    creator: {
+      "@type": "Person",
+      name: "Hyunjoong Kim",
+      url: baseUrl,
+    },
+    ...(project.serviceUrl ? { sameAs: [project.serviceUrl] } : {}),
+    ...(project.tags.length > 0 ? { keywords: project.tags.join(", ") } : {}),
+  };
+  const projectJsonLdScript = JSON.stringify(projectJsonLd).replace(
+    /</g,
+    "\\u003c"
+  );
+
   // 모든 프로젝트를 가져와서 이전/다음 프로젝트 찾기
   const currentIndex = allProjects.findIndex((p) => p.slug === slug);
   const prevProject = currentIndex > 0 ? allProjects[currentIndex - 1] : null;
@@ -108,7 +134,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   return (
-    <article className="max-w-5xl mx-auto">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: projectJsonLdScript }}
+      />
+      <article className="max-w-5xl mx-auto">
       {/* 헤더 */}
       <header className="mb-12">
         <Link
@@ -272,6 +303,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )}
         </div>
       </nav>
-    </article>
+      </article>
+    </>
   );
 }

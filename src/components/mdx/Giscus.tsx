@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 interface GiscusProps {
   lang: 'ko' | 'en';
@@ -12,16 +12,13 @@ interface GiscusProps {
  * 다국어 지원 (한국어, 영어)
  */
 export default function Giscus({ lang }: GiscusProps) {
-  useEffect(() => {
-    const giscusDiv = document.getElementById('giscus');
-    if (!giscusDiv) return;
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const isWidgetLoadedRef = useRef(false);
 
-    // 기존 Giscus 위젯 제거 (언어 변경 시 재생성)
-    while (giscusDiv.firstChild) {
-      giscusDiv.removeChild(giscusDiv.firstChild);
-    }
+  const createGiscusWidget = useCallback(() => {
+    const giscusDiv = containerRef.current;
+    if (!giscusDiv || isWidgetLoadedRef.current) return;
 
-    // GitHub 저장소 정보 (환경변수로 관리)
     const repo = process.env.NEXT_PUBLIC_GISCUS_REPO;
     const repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID;
     const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID;
@@ -31,40 +28,89 @@ export default function Giscus({ lang }: GiscusProps) {
       return;
     }
 
-    // Giscus 스크립트 동적 로드
+    while (giscusDiv.firstChild) {
+      giscusDiv.removeChild(giscusDiv.firstChild);
+    }
+
     const script = document.createElement('script');
     script.src = 'https://giscus.app/client.js';
     script.async = true;
     script.crossOrigin = 'anonymous';
-
     script.setAttribute('data-repo', repo);
     script.setAttribute('data-repo-id', repoId);
     script.setAttribute('data-category', 'Announcements');
     script.setAttribute('data-category-id', categoryId);
-
-    // Giscus 설정
     script.setAttribute('data-mapping', 'pathname');
     script.setAttribute('data-strict', '0');
     script.setAttribute('data-reactions-enabled', '1');
     script.setAttribute('data-emit-metadata', '0');
     script.setAttribute('data-input-position', 'bottom');
     script.setAttribute('data-theme', 'dark');
-    script.setAttribute('data-lang', lang === 'ko' ? 'ko' : 'en');
+    script.setAttribute('data-lang', lang);
     script.setAttribute('data-loading', 'lazy');
+    script.setAttribute('data-initialized', 'true');
 
     giscusDiv.appendChild(script);
+    isWidgetLoadedRef.current = true;
+  }, [lang]);
 
-    // 클린업: 컴포넌트 언마운트 시 스크립트 제거
+  useEffect(() => {
+    const giscusDiv = containerRef.current;
+    if (!giscusDiv) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (!entry?.isIntersecting) return;
+        createGiscusWidget();
+        observer.disconnect();
+      },
+      { rootMargin: '300px 0px' }
+    );
+
+    observer.observe(giscusDiv);
     return () => {
+      observer.disconnect();
+    };
+  }, [createGiscusWidget]);
+
+  useEffect(() => {
+    if (!isWidgetLoadedRef.current) {
+      return;
+    }
+
+    const iframe = containerRef.current?.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (!iframe?.contentWindow) {
+      return;
+    }
+
+    iframe.contentWindow.postMessage(
+      {
+        giscus: {
+          setConfig: {
+            lang,
+          },
+        },
+      },
+      'https://giscus.app'
+    );
+  }, [lang]);
+
+  useEffect(() => {
+    const giscusDiv = containerRef.current;
+    return () => {
+      if (!giscusDiv) return;
       while (giscusDiv.firstChild) {
         giscusDiv.removeChild(giscusDiv.firstChild);
       }
+      isWidgetLoadedRef.current = false;
     };
-  }, [lang]);
+  }, []);
 
   return (
     <div
       id="giscus"
+      ref={containerRef}
       className="my-12 py-8 border-t border-gray-800"
       data-testid="giscus-container"
     />

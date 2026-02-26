@@ -3,22 +3,9 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { getAllPosts } from "@/lib/posts";
-
-const parseSearchQuery = (
-  value: string | string[] | undefined
-): string | undefined => {
-  if (Array.isArray(value)) {
-    return parseSearchQuery(value[0]);
-  }
-
-  if (typeof value !== "string") {
-    return undefined;
-  }
-
-  const normalized = value.trim();
-  return normalized.length > 0 ? normalized : undefined;
-};
+import { buildBlogListingMetadata } from "@/lib/metadata/blog-listing";
+import { BLOG_POSTS_PAGE_SIZE, getPostsPage } from "@/lib/posts";
+import { parseSearchQuery } from "@/lib/search-query";
 
 export async function generateMetadata({
   params,
@@ -31,31 +18,13 @@ export async function generateMetadata({
   const { q } = await searchParams;
   const query = parseSearchQuery(q);
   const dict = await getDictionary(lang);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
 
-  if (query) {
-    return {
-      title: dict.blog.page_title,
-      description: dict.blog.page_description,
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-
-  return {
+  return buildBlogListingMetadata({
+    lang,
     title: dict.blog.page_title,
     description: dict.blog.page_description,
-    alternates: {
-      canonical: `${baseUrl}/${lang}/blog`,
-      languages: {
-        ko: `${baseUrl}/ko/blog`,
-        en: `${baseUrl}/en/blog`,
-        "x-default": `${baseUrl}/ko/blog`,
-      },
-    },
-  };
+    noIndex: Boolean(query),
+  });
 }
 
 /**
@@ -71,8 +40,10 @@ export default async function BlogPage({
   const { lang } = (await params) as { lang: Locale };
   const { q } = await searchParams;
   const query = parseSearchQuery(q);
-  const dict = await getDictionary(lang);
-  const posts = await getAllPosts(lang);
+  const [dict, paginatedPosts] = await Promise.all([
+    getDictionary(lang),
+    getPostsPage(lang, 1, BLOG_POSTS_PAGE_SIZE, query),
+  ]);
 
   return (
     <div>
@@ -87,10 +58,12 @@ export default async function BlogPage({
       </div>
 
       <BlogSearchClient
-        posts={posts}
+        posts={paginatedPosts.items}
         lang={lang}
-        initialQuery={query}
-        initialPage={1}
+        query={query}
+        currentPage={paginatedPosts.currentPage}
+        totalPages={paginatedPosts.totalPages}
+        totalItems={paginatedPosts.totalItems}
         labels={{
           searchAria: dict.blog.search_aria,
           searchPlaceholder: dict.blog.search_placeholder,

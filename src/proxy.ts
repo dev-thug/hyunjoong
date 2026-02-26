@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { i18n } from './i18n-config';
 
 const getLocale = (request: NextRequest): string => {
-  const negotiatorHeaders: Record<string, string> = {};
-  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
+  const acceptLanguage = request.headers.get("accept-language") ?? "";
+  const negotiatorHeaders: Record<string, string> = {
+    "accept-language": acceptLanguage,
+  };
 
   const locales = [...i18n.locales];
   const languages = new Negotiator({ headers: negotiatorHeaders }).languages(
@@ -16,29 +18,40 @@ const getLocale = (request: NextRequest): string => {
 };
 
 export function proxy(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith("/_next") || pathname.startsWith("/api") || pathname.startsWith("/_vercel")) {
+    return NextResponse.next();
+  }
 
   // Check if there is any supported locale in the pathname
-  const pathnameIsMissingLocale = i18n.locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+  const hasLocalePrefix = i18n.locales.some(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
   );
+  const pathnameIsMissingLocale = !hasLocalePrefix;
 
   // Redirect if there is no locale
   if (pathnameIsMissingLocale) {
+    const startedAt = Date.now();
     const locale = getLocale(request);
-
-    // Redirect to the same path with the detected locale
-    return NextResponse.redirect(
-      new URL(
-        `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
-        request.url
-      )
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname =
+      pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
+    const response = NextResponse.redirect(redirectUrl);
+    const duration = Date.now() - startedAt;
+    response.headers.set("x-locale-redirect", "1");
+    response.headers.append(
+      "Server-Timing",
+      `locale_redirect;desc="locale redirect";dur=${duration}`
     );
+    return response;
   }
+
+  return NextResponse.next();
 }
 
 export const config = {
   // Matcher ignoring `/_next/`, `/api/`, and `/favicon.ico`
   // Exclude: api routes, next internals, favicon, and files with extensions (static assets)
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)',],
+  matcher: ["/((?!api|_next|favicon.ico|.*\\..*).*)"],
 };

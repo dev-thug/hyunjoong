@@ -4,7 +4,14 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import { i18n, type Locale } from "@/i18n-config";
-import { BLOG_POSTS_PAGE_SIZE, getAllPosts, paginatePosts } from "@/lib/posts";
+import { buildBlogListingMetadata } from "@/lib/metadata/blog-listing";
+import {
+  BLOG_POSTS_PAGE_SIZE,
+  getAllPosts,
+  getPostsPage,
+  paginatePosts,
+} from "@/lib/posts";
+import { parseSearchQuery } from "@/lib/search-query";
 
 const PAGE_PARAM_PATTERN = /^[1-9]\d*$/;
 
@@ -25,84 +32,19 @@ const parsePageParam = (pageParam: string): number | null => {
   return parsedPage;
 };
 
-const parseSearchQuery = (
-  value: string | string[] | undefined
-): string | undefined => {
-  if (Array.isArray(value)) {
-    return parseSearchQuery(value[0]);
-  }
-
-  if (typeof value !== "string") {
-    return undefined;
-  }
-
-  const normalized = value.trim();
-  return normalized.length > 0 ? normalized : undefined;
-};
-
 export async function generateMetadata({
   params,
-  searchParams,
 }: {
   params: Promise<{ lang: string; page: string }>;
-  searchParams: Promise<{ q?: string | string[] }>;
 }): Promise<Metadata> {
-  const { lang, page } = (await params) as { lang: Locale; page: string };
-  const { q } = await searchParams;
-  const query = parseSearchQuery(q);
+  const { lang } = (await params) as { lang: Locale; page: string };
   const dict = await getDictionary(lang);
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
-  const parsedPage = parsePageParam(page);
-
-  if (query) {
-    return {
-      title: dict.blog.page_title,
-      description: dict.blog.page_description,
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-
-  if (parsedPage === null || parsedPage < 2) {
-    return {
-      title: dict.blog.page_title,
-      description: dict.blog.page_description,
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-
-  const posts = await getAllPosts(lang);
-  const { totalPages } = paginatePosts(posts, parsedPage, BLOG_POSTS_PAGE_SIZE);
-  if (parsedPage > totalPages) {
-    return {
-      title: dict.blog.page_title,
-      description: dict.blog.page_description,
-      robots: {
-        index: false,
-        follow: false,
-      },
-    };
-  }
-
-  const normalizedPage = String(parsedPage);
-
-  return {
+  return buildBlogListingMetadata({
+    lang,
     title: dict.blog.page_title,
     description: dict.blog.page_description,
-    alternates: {
-      canonical: `${baseUrl}/${lang}/blog/page/${normalizedPage}`,
-      languages: {
-        ko: `${baseUrl}/ko/blog/page/${normalizedPage}`,
-        en: `${baseUrl}/en/blog/page/${normalizedPage}`,
-        "x-default": `${baseUrl}/ko/blog/page/${normalizedPage}`,
-      },
-    },
-  };
+    noIndex: true,
+  });
 }
 
 export const generateStaticParams = async (): Promise<
@@ -140,10 +82,11 @@ export default async function BlogPageByPage({
     notFound();
   }
 
-  const dict = await getDictionary(lang);
-  const posts = await getAllPosts(lang);
-  const { totalPages } = paginatePosts(posts, parsedPage, BLOG_POSTS_PAGE_SIZE);
-  if (parsedPage > totalPages) {
+  const [dict, paginatedPosts] = await Promise.all([
+    getDictionary(lang),
+    getPostsPage(lang, parsedPage, BLOG_POSTS_PAGE_SIZE, query),
+  ]);
+  if (parsedPage > paginatedPosts.totalPages) {
     notFound();
   }
 
@@ -157,10 +100,12 @@ export default async function BlogPageByPage({
       </div>
 
       <BlogSearchClient
-        posts={posts}
+        posts={paginatedPosts.items}
         lang={lang}
-        initialQuery={query}
-        initialPage={parsedPage}
+        query={query}
+        currentPage={parsedPage}
+        totalPages={paginatedPosts.totalPages}
+        totalItems={paginatedPosts.totalItems}
         labels={{
           searchAria: dict.blog.search_aria,
           searchPlaceholder: dict.blog.search_placeholder,

@@ -1,6 +1,4 @@
-"use client";
-
-import { useId, useMemo, useState } from "react";
+import Link from "next/link";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 
 import BlogPostCardList from "@/components/BlogPostCardList";
@@ -27,16 +25,16 @@ interface BlogSearchClientLabels {
 interface BlogSearchClientProps {
   readonly posts: PostMetadata[];
   readonly lang: string;
-  readonly initialQuery?: string;
-  readonly initialPage?: number;
+  readonly query?: string;
+  readonly currentPage: number;
+  readonly totalPages: number;
+  readonly totalItems: number;
   readonly labels: BlogSearchClientLabels;
-  readonly pageSize?: number;
 }
 
 const COUNT_PLACEHOLDER = "{count}";
 const PAGE_PLACEHOLDER = "{page}";
 const ELLIPSIS = "ellipsis";
-const DEFAULT_PAGE_SIZE = 6;
 const MAX_VISIBLE_PAGES_WITHOUT_ELLIPSIS = 7;
 
 const combineClassNames = (...values: Array<string | undefined>): string =>
@@ -83,50 +81,34 @@ const getPageItems = (currentPage: number, totalPages: number): Array<number | t
   return items;
 };
 
-const normalizeQuery = (value: string): string => value.trim().toLowerCase();
-
-const matchesPost = (post: PostMetadata, normalizedQuery: string): boolean => {
+const buildBlogHref = (lang: string, page: number, query?: string): string => {
+  const safePage = Math.max(1, Math.floor(page));
+  const basePath = `/${lang}/blog`;
+  const pathname = safePage === 1 ? basePath : `${basePath}/page/${safePage}`;
+  const normalizedQuery = query?.trim();
   if (!normalizedQuery) {
-    return true;
+    return pathname;
   }
-
-  const searchableContent = [
-    post.title,
-    post.excerpt,
-    post.category,
-    post.keywords?.join(" ") ?? "",
-  ]
-    .join(" ")
-    .toLowerCase();
-
-  return searchableContent.includes(normalizedQuery);
+  const params = new URLSearchParams({ q: normalizedQuery });
+  return `${pathname}?${params.toString()}`;
 };
 
 const BlogSearchClient = ({
   posts,
   lang,
-  initialQuery = "",
-  initialPage = 1,
+  query,
+  currentPage,
+  totalPages,
+  totalItems,
   labels,
-  pageSize = DEFAULT_PAGE_SIZE,
 }: BlogSearchClientProps) => {
-  const inputId = useId();
-  const safePageSize = Math.max(1, pageSize);
-  const [query, setQuery] = useState(initialQuery);
-  const [currentPage, setCurrentPage] = useState(Math.max(1, Math.floor(initialPage)));
-
-  const normalizedQuery = useMemo(() => normalizeQuery(query), [query]);
-  const filteredPosts = useMemo(
-    () => posts.filter((post) => matchesPost(post, normalizedQuery)),
-    [posts, normalizedQuery]
+  const normalizedQuery = query?.trim() ?? "";
+  const safeCurrentPage = Math.min(
+    Math.max(1, Math.floor(currentPage)),
+    Math.max(1, Math.floor(totalPages))
   );
-  const totalItems = filteredPosts.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / safePageSize));
-  const safeCurrentPage = Math.min(currentPage, totalPages);
   const pageItems = getPageItems(safeCurrentPage, totalPages);
-  const startIndex = (safeCurrentPage - 1) * safePageSize;
-  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + safePageSize);
-  const hasQuery = query.trim().length > 0;
+  const hasQuery = normalizedQuery.length > 0;
   const resultsText = getResultsText(labels.resultsCount, totalItems);
 
   const baseButtonClassName =
@@ -135,24 +117,9 @@ const BlogSearchClient = ({
     "border-gray-800 text-gray-400 hover:text-white hover:border-gray-700";
   const activeButtonClassName = "bg-white/10 border-white/30 text-white";
   const disabledButtonClassName = "border-gray-800 text-gray-600 cursor-not-allowed";
-
-  const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value);
-    setCurrentPage(1);
-  };
-
-  const handleClearQuery = () => {
-    setQuery("");
-    setCurrentPage(1);
-  };
-
-  const handleMovePage = (page: number) => {
-    const nextPage = Math.min(Math.max(1, page), totalPages);
-    setCurrentPage(nextPage);
-  };
-
   const hasPrevious = safeCurrentPage > 1;
   const hasNext = safeCurrentPage < totalPages;
+  const blogRootPath = `/${lang}/blog`;
 
   return (
     <div>
@@ -160,41 +127,45 @@ const BlogSearchClient = ({
         aria-label={labels.searchAria}
         className="mb-8 rounded-xl border border-white/10 bg-white/5 p-4 md:p-5"
       >
-        <div role="search" className="flex flex-col gap-3 md:flex-row md:items-center">
-          <label htmlFor={inputId} className="sr-only">
+        <form
+          role="search"
+          className="flex flex-col gap-3 md:flex-row md:items-center"
+          method="get"
+          action={blogRootPath}
+        >
+          <label htmlFor="blog-search" className="sr-only">
             {labels.searchAria}
           </label>
           <input
-            id={inputId}
+            id="blog-search"
+            name="q"
             type="search"
-            value={query}
-            onChange={handleQueryChange}
+            defaultValue={normalizedQuery}
             placeholder={labels.searchPlaceholder}
             aria-label={labels.searchAria}
             className="w-full rounded-lg border border-gray-700/80 bg-black/20 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 outline-none transition-colors focus-visible:border-white/30 focus-visible:ring-2 focus-visible:ring-white/20"
           />
 
           {hasQuery ? (
-            <button
-              type="button"
-              onClick={handleClearQuery}
+            <Link
+              href={blogRootPath}
               aria-label={labels.clearSearch}
               className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-gray-700/90 px-4 text-xs font-mono uppercase tracking-wider text-gray-300 transition-colors hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20 md:flex-shrink-0"
             >
               <X className="h-3.5 w-3.5" aria-hidden="true" />
               {labels.clearSearch}
-            </button>
+            </Link>
           ) : null}
-        </div>
+        </form>
 
         <p className="mt-3 text-xs font-mono uppercase tracking-wider text-gray-500" aria-live="polite">
           {resultsText}
         </p>
       </section>
 
-      {paginatedPosts.length > 0 ? (
+      {posts.length > 0 ? (
         <BlogPostCardList
-          posts={paginatedPosts}
+          posts={posts}
           lang={lang}
           readPostAriaTemplate={labels.readPostAria}
           readMoreLabel={labels.readMore}
@@ -212,35 +183,57 @@ const BlogSearchClient = ({
         <nav aria-label={labels.pagination} className="mt-10 flex justify-center">
           <ul className="flex flex-wrap items-center justify-center gap-2">
             <li>
-              <button
-                type="button"
-                onClick={() => handleMovePage(1)}
-                aria-label={labels.first}
-                disabled={!hasPrevious}
-                className={combineClassNames(
-                  baseButtonClassName,
-                  hasPrevious ? defaultButtonClassName : disabledButtonClassName,
-                  "px-2 hidden sm:inline-flex"
-                )}
-              >
-                {labels.first}
-              </button>
+              {hasPrevious ? (
+                <Link
+                  href={buildBlogHref(lang, 1, normalizedQuery)}
+                  aria-label={labels.first}
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    defaultButtonClassName,
+                    "px-2 hidden sm:inline-flex"
+                  )}
+                >
+                  {labels.first}
+                </Link>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    disabledButtonClassName,
+                    "px-2 hidden sm:inline-flex"
+                  )}
+                >
+                  {labels.first}
+                </span>
+              )}
             </li>
 
             <li>
-              <button
-                type="button"
-                onClick={() => handleMovePage(safeCurrentPage - 1)}
-                aria-label={labels.prevPage}
-                disabled={!hasPrevious}
-                className={combineClassNames(
-                  baseButtonClassName,
-                  hasPrevious ? defaultButtonClassName : disabledButtonClassName
-                )}
-              >
-                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">{labels.prevPage}</span>
-              </button>
+              {hasPrevious ? (
+                <Link
+                  href={buildBlogHref(lang, safeCurrentPage - 1, normalizedQuery)}
+                  aria-label={labels.prevPage}
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    defaultButtonClassName
+                  )}
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">{labels.prevPage}</span>
+                </Link>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    disabledButtonClassName
+                  )}
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">{labels.prevPage}</span>
+                </span>
+              )}
             </li>
 
             {pageItems.map((item, index) => {
@@ -269,49 +262,70 @@ const BlogSearchClient = ({
                       {item}
                     </span>
                   ) : (
-                    <button
-                      type="button"
-                      onClick={() => handleMovePage(item)}
+                    <Link
+                      href={buildBlogHref(lang, item, normalizedQuery)}
                       aria-label={`${labels.goToPage}: ${labels.page} ${item}`}
                       className={combineClassNames(baseButtonClassName, defaultButtonClassName)}
                     >
                       {item}
-                    </button>
+                    </Link>
                   )}
                 </li>
               );
             })}
 
             <li>
-              <button
-                type="button"
-                onClick={() => handleMovePage(safeCurrentPage + 1)}
-                aria-label={labels.nextPage}
-                disabled={!hasNext}
-                className={combineClassNames(
-                  baseButtonClassName,
-                  hasNext ? defaultButtonClassName : disabledButtonClassName
-                )}
-              >
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                <span className="sr-only">{labels.nextPage}</span>
-              </button>
+              {hasNext ? (
+                <Link
+                  href={buildBlogHref(lang, safeCurrentPage + 1, normalizedQuery)}
+                  aria-label={labels.nextPage}
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    defaultButtonClassName
+                  )}
+                >
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">{labels.nextPage}</span>
+                </Link>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    disabledButtonClassName
+                  )}
+                >
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  <span className="sr-only">{labels.nextPage}</span>
+                </span>
+              )}
             </li>
 
             <li>
-              <button
-                type="button"
-                onClick={() => handleMovePage(totalPages)}
-                aria-label={labels.last}
-                disabled={!hasNext}
-                className={combineClassNames(
-                  baseButtonClassName,
-                  hasNext ? defaultButtonClassName : disabledButtonClassName,
-                  "px-2 hidden sm:inline-flex"
-                )}
-              >
-                {labels.last}
-              </button>
+              {hasNext ? (
+                <Link
+                  href={buildBlogHref(lang, totalPages, normalizedQuery)}
+                  aria-label={labels.last}
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    defaultButtonClassName,
+                    "px-2 hidden sm:inline-flex"
+                  )}
+                >
+                  {labels.last}
+                </Link>
+              ) : (
+                <span
+                  aria-disabled="true"
+                  className={combineClassNames(
+                    baseButtonClassName,
+                    disabledButtonClassName,
+                    "px-2 hidden sm:inline-flex"
+                  )}
+                >
+                  {labels.last}
+                </span>
+              )}
             </li>
           </ul>
         </nav>

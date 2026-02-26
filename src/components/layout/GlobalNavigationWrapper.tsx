@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Navigation from "@/components/layout/Navigation";
 import { SCROLL_THRESHOLD } from "@/constants";
 
@@ -15,19 +15,41 @@ interface GlobalNavigationWrapperProps {
 const GlobalNavigationWrapper = ({ lang }: GlobalNavigationWrapperProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const rafIdRef = useRef<number | null>(null);
+  const prevIsScrolledRef = useRef(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > SCROLL_THRESHOLD);
+    const updateScrolledState = () => {
+      rafIdRef.current = null;
+      const nextIsScrolled = window.scrollY > SCROLL_THRESHOLD;
+      if (nextIsScrolled === prevIsScrolledRef.current) {
+        return;
+      }
+      prevIsScrolledRef.current = nextIsScrolled;
+      setIsScrolled(nextIsScrolled);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      if (rafIdRef.current !== null) {
+        return;
+      }
+      rafIdRef.current = window.requestAnimationFrame(updateScrolledState);
+    };
+
+    updateScrolledState();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafIdRef.current !== null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+      }
+    };
   }, []);
 
-  const handleToggleMobileMenu = () => {
+  const handleToggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen((prev) => !prev);
-  };
+  }, []);
 
   return (
     <Navigation

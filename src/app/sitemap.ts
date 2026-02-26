@@ -1,8 +1,44 @@
 import { MetadataRoute } from "next";
-import { BLOG_POSTS_PAGE_SIZE, getAllPosts } from "@/lib/posts";
+import { getAllPosts } from "@/lib/posts";
 import { getProjectIdentifiers } from "@/lib/projects";
 
 const DEFAULT_BASE_URL = "https://hyunjoong.kim";
+export const revalidate = 3600;
+const BUILD_DATE_ENV_KEYS = [
+  "VERCEL_GIT_COMMIT_DATE",
+  "NEXT_PUBLIC_BUILD_DATE",
+] as const;
+
+const toValidDate = (value?: string): Date | null => {
+  if (!value) {
+    return null;
+  }
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+};
+
+const getBuildDate = (): Date => {
+  for (const key of BUILD_DATE_ENV_KEYS) {
+    const parsed = toValidDate(process.env[key]);
+    if (parsed) {
+      return parsed;
+    }
+  }
+  return new Date();
+};
+
+const getLatestPostDate = (posts: Array<{ date: string }>): Date | null => {
+  return posts.reduce<Date | null>((latest, post) => {
+    const parsed = toValidDate(`${post.date}T00:00:00.000Z`);
+    if (!parsed) {
+      return latest;
+    }
+    if (!latest) {
+      return parsed;
+    }
+    return parsed.getTime() > latest.getTime() ? parsed : latest;
+  }, null);
+};
 
 /**
  * Dynamic sitemap generation for all pages, blog posts, and projects
@@ -17,81 +53,66 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     getProjectIdentifiers(),
   ]);
   const allPosts = [...koPosts, ...enPosts];
+  const buildDate = getBuildDate();
+  const latestPostDate = getLatestPostDate(allPosts);
+  const contentLastModified = latestPostDate ?? buildDate;
 
   // Static pages with their priorities and change frequencies
   const staticPages: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/ko`,
-      lastModified: new Date(),
+      lastModified: contentLastModified,
       changeFrequency: "monthly",
       priority: 1.0,
     },
     {
       url: `${baseUrl}/en`,
-      lastModified: new Date(),
+      lastModified: contentLastModified,
       changeFrequency: "monthly",
       priority: 1.0,
     },
     {
       url: `${baseUrl}/ko/blog`,
-      lastModified: new Date(),
+      lastModified: contentLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/en/blog`,
-      lastModified: new Date(),
+      lastModified: contentLastModified,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/ko/projects`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/en/projects`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/ko/profile`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/en/profile`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: "monthly",
       priority: 0.7,
     },
   ];
 
-  const blogPaginationPages: MetadataRoute.Sitemap = [
-    { lang: "ko", posts: koPosts.length },
-    { lang: "en", posts: enPosts.length },
-  ].flatMap(({ lang, posts }) => {
-    const totalPages = Math.ceil(posts / BLOG_POSTS_PAGE_SIZE);
-    if (totalPages <= 1) {
-      return [];
-    }
-
-    return Array.from({ length: totalPages - 1 }, (_, index) => ({
-      url: `${baseUrl}/${lang}/blog/page/${index + 2}`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
-      priority: 0.9,
-    }));
-  });
-
   // Blog post pages (lastModified from post date; fallback to now if invalid)
   const blogPages: MetadataRoute.Sitemap = allPosts.map((post) => {
-    const parsed = post.date ? new Date(post.date) : null;
-    const lastModified =
-      parsed && !Number.isNaN(parsed.getTime()) ? parsed : new Date();
+    const parsed = toValidDate(`${post.date}T00:00:00.000Z`);
+    const lastModified = parsed ?? buildDate;
     return {
       url: `${baseUrl}/${post.lang}/blog/${post.slug}`,
       lastModified,
@@ -104,11 +125,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projectPages: MetadataRoute.Sitemap = projectIdentifiers.map(
     ({ slug, lang }) => ({
       url: `${baseUrl}/${lang}/projects/${slug}`,
-      lastModified: new Date(),
+      lastModified: buildDate,
       changeFrequency: "monthly" as const,
       priority: 0.8,
     })
   );
 
-  return [...staticPages, ...blogPaginationPages, ...blogPages, ...projectPages];
+  return [...staticPages, ...blogPages, ...projectPages];
 }

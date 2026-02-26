@@ -335,16 +335,28 @@ export const filterPostsBySearchQuery = (
   );
 };
 
+const getPostsPageCached = cache(
+  async (
+    lang: string,
+    page: number,
+    pageSize: number,
+    normalizedSearchQuery: string
+  ): Promise<PaginatedPostsResult> => {
+    const posts = await getAllPosts(lang);
+    const filteredPosts = filterPostsBySearchQuery(posts, normalizedSearchQuery);
+
+    return paginatePosts(filteredPosts, page, pageSize);
+  }
+);
+
 export const getPostsPage = async (
   lang: string,
   page: number,
   pageSize: number = BLOG_POSTS_PAGE_SIZE,
   searchQuery?: string
 ): Promise<PaginatedPostsResult> => {
-  const posts = await getAllPosts(lang);
-  const filteredPosts = filterPostsBySearchQuery(posts, searchQuery);
-
-  return paginatePosts(filteredPosts, page, pageSize);
+  const normalizedSearchQuery = normalizeSearchQuery(searchQuery);
+  return getPostsPageCached(lang, page, pageSize, normalizedSearchQuery);
 };
 
 /**

@@ -5,6 +5,7 @@ import { getDictionary } from "@/get-dictionary";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
+import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 
 /**
  * 포트폴리오(프로젝트 목록) 페이지 메타데이터 (다국어)
@@ -16,10 +17,12 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
-  return {
+  return buildLocalizedPageMetadata({
+    lang,
+    path: "/projects",
     title: dict.projects.meta_title,
     description: dict.projects.meta_description,
-  };
+  });
 }
 
 /**

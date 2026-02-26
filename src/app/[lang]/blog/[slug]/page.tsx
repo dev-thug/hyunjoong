@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   getPostBySlug,
   generatePostParams,
   getAllPosts,
-  getPostIdentifiers,
 } from "@/lib/posts";
-import { ArrowLeft, ArrowRight, Languages, AlertCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
@@ -14,6 +13,7 @@ import Giscus from "@/components/mdx/Giscus";
 
 interface BlogPostPageProps {
   params: Promise<{ lang: string; slug: string }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 /**
@@ -33,23 +33,13 @@ export async function generateMetadata({
 }: BlogPostPageProps): Promise<Metadata> {
   const { lang, slug } = await params;
 
-  // 가용한 모든 버전과 메타데이터를 병렬로 가져옴
-  const [post, koPost, enPost, allIdentifiers] = await Promise.all([
+  const [post, koPost, enPost] = await Promise.all([
     getPostBySlug(slug, lang),
     getPostBySlug(slug, "ko"),
     getPostBySlug(slug, "en"),
-    getPostIdentifiers(),
   ]);
 
-  let currentPost = post;
-
-  // 요청된 언어의 포스트가 없으면 다른 언어 버전 사용
-  if (!currentPost) {
-    const otherVersion = allIdentifiers.find((id) => id.slug === slug);
-    if (otherVersion) {
-      currentPost = otherVersion.lang === "ko" ? koPost : enPost;
-    }
-  }
+  const currentPost = post ?? koPost ?? enPost;
 
   if (!currentPost) {
     return { title: "Post Not Found" };
@@ -99,43 +89,57 @@ export async function generateMetadata({
 /**
  * 블로그 포스트 상세 페이지
  */
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { lang, slug } = await params;
+const toQueryString = (
+  searchParams: Record<string, string | string[] | undefined>
+): string => {
+  const urlSearchParams = new URLSearchParams();
 
-  // 데이터 페칭 병렬화 (Parallel Data Fetching)
-  // 사전 정의된 언어로 사전을 가져오고, 포스트 데이터도 동시에 병렬로 페칭
-  const dict = await getDictionary(lang as Locale);
-  let [post, allPosts] = await Promise.all([
-    getPostBySlug(slug, lang),
-    getAllPosts(lang, { includeHidden: true }),
-  ]);
-
-  let isFallback = false;
-  let availableVersion: { slug: string; lang: string } | null = null;
-
-  if (!post) {
-    const allIdentifiers = await getPostIdentifiers();
-    const otherVersions = allIdentifiers.filter((id) => id.slug === slug);
-
-    if (otherVersions.length === 0) {
-      notFound();
+  for (const [key, rawValue] of Object.entries(searchParams)) {
+    if (Array.isArray(rawValue)) {
+      rawValue.forEach((value) => {
+        if (typeof value === "string") {
+          urlSearchParams.append(key, value);
+        }
+      });
+      continue;
     }
 
-    // 첫 번째 가용한 버전을 선택
-    availableVersion = otherVersions[0];
-
-    // 폴백 데이터 페칭도 병렬화
-    [post, allPosts] = await Promise.all([
-      getPostBySlug(slug, availableVersion.lang),
-      getAllPosts(availableVersion.lang, { includeHidden: true }),
-    ]);
-
-    isFallback = true;
+    if (typeof rawValue === "string") {
+      urlSearchParams.set(key, rawValue);
+    }
   }
+
+  const serialized = urlSearchParams.toString();
+  return serialized.length > 0 ? `?${serialized}` : "";
+};
+
+export default async function BlogPostPage({
+  params,
+  searchParams,
+}: BlogPostPageProps) {
+  const { lang, slug } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+
+  const [dict, post] = await Promise.all([
+    getDictionary(lang as Locale),
+    getPostBySlug(slug, lang),
+  ]);
 
   if (!post) {
-    notFound();
+    const [koPost, enPost] = await Promise.all([
+      getPostBySlug(slug, "ko"),
+      getPostBySlug(slug, "en"),
+    ]);
+
+    const availableLang = koPost ? "ko" : enPost ? "en" : null;
+    if (!availableLang) {
+      notFound();
+    }
+    const queryString = toQueryString(resolvedSearchParams);
+    redirect(`/${availableLang}/blog/${slug}${queryString}`);
   }
+
+  const allPosts = await getAllPosts(lang, { includeHidden: true });
 
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
   const prevPost =
@@ -143,10 +147,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
   // MDX 컴포넌트 동적 import (가용한 언어 버전을 사용)
-  const contentLang =
-    isFallback && availableVersion ? availableVersion.lang : lang;
   const { default: PostContent } = await import(
-    `@/content/posts/${slug}.${contentLang}.mdx`
+    `@/content/posts/${slug}.${lang}.mdx`
   );
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
@@ -200,37 +202,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {dict.blog.back_to_blog}
             </span>
           </Link>
-
-          {isFallback && availableVersion && (
-            <div className="mb-12 p-6 rounded-xl border border-amber-500/20 bg-amber-500/5 backdrop-blur-sm">
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-amber-500/10 text-amber-500">
-                  <AlertCircle size={20} />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white mb-1">
-                    {dict.blog.not_available_title}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4">
-                    {dict.blog.not_available_description.replace(
-                      "{lang}",
-                      availableVersion.lang === "ko" ? "한국어" : "English"
-                    )}
-                  </p>
-                  <Link
-                    href={`/${availableVersion.lang}/blog/${slug}`}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-gray-200 transition-colors"
-                  >
-                    <Languages size={14} />
-                    {dict.blog.read_in_language.replace(
-                      "{lang}",
-                      availableVersion.lang === "ko" ? "한국어" : "English"
-                    )}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
 
           <div className="flex items-center gap-4 mb-4">
             <span
