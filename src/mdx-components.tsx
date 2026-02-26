@@ -2,12 +2,41 @@ import type { MDXComponents } from "mdx/types";
 import CodeBlock from "@/components/mdx/CodeBlock";
 import BlogImage from "@/components/mdx/BlogImage";
 import ImageGallery from "@/components/mdx/ImageGallery";
+import { toHeadingId } from "@/lib/toc";
+
+const extractTextContent = (value: unknown): string => {
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map((item) => extractTextContent(item)).join(" ");
+  }
+  if (
+    value &&
+    typeof value === "object" &&
+    "props" in value &&
+    (value as { props?: unknown }).props
+  ) {
+    const props = (value as { props?: { children?: unknown } }).props;
+    return extractTextContent(props?.children);
+  }
+  return "";
+};
 
 /**
  * MDX 컴포넌트 스타일링 정의
  * 마크다운 요소들을 커스텀 React 컴포넌트로 매핑
  */
 export function useMDXComponents(components: MDXComponents): MDXComponents {
+  const headingIdCounts = new Map<string, number>();
+  const getHeadingId = (children: unknown): string => {
+    const rawText = extractTextContent(children).trim();
+    const baseId = toHeadingId(rawText);
+    const nextCount = (headingIdCounts.get(baseId) ?? 0) + 1;
+    headingIdCounts.set(baseId, nextCount);
+    return nextCount === 1 ? baseId : `${baseId}-${nextCount}`;
+  };
+
   return {
     // 헤딩 스타일
     h1: ({ children }) => (
@@ -16,12 +45,18 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </h1>
     ),
     h2: ({ children }) => (
-      <h2 className="text-2xl md:text-3xl font-semibold font-montserrat mt-16 mb-6 text-zinc-100 tracking-tight scroll-mt-20 text-balance">
+      <h2
+        id={getHeadingId(children)}
+        className="text-2xl md:text-3xl font-semibold font-montserrat mt-16 mb-6 text-zinc-100 tracking-tight scroll-mt-20 text-balance"
+      >
         {children}
       </h2>
     ),
     h3: ({ children }) => (
-      <h3 className="text-xl md:text-2xl font-medium font-montserrat mt-12 mb-4 text-zinc-200 tracking-tight scroll-mt-20 text-balance">
+      <h3
+        id={getHeadingId(children)}
+        className="text-xl md:text-2xl font-medium font-montserrat mt-12 mb-4 text-zinc-200 tracking-tight scroll-mt-20 text-balance"
+      >
         {children}
       </h3>
     ),

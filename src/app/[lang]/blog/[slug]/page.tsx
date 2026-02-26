@@ -5,12 +5,15 @@ import {
   generatePostParams,
   getAllPosts,
   getAvailablePostLocales,
+  getPostSourceBySlug,
 } from "@/lib/posts";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import Giscus from "@/components/mdx/Giscus";
+import BlogToc from "@/components/blog/BlogToc";
+import ReadingProgress from "@/components/blog/ReadingProgress";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
 import {
   DEFAULT_OG_IMAGE,
@@ -23,6 +26,7 @@ import {
   safeJsonLdStringify,
 } from "@/lib/json-ld";
 import { NOT_FOUND_METADATA_TITLE } from "@/lib/metadata/constants";
+import { extractTocItems } from "@/lib/toc";
 
 interface BlogPostPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -131,6 +135,8 @@ export default async function BlogPostPage({
   }
 
   const allPosts = await getAllPosts(lang, { includeHidden: true });
+  const postSource = await getPostSourceBySlug(slug, lang);
+  const tocItems = postSource ? extractTocItems(postSource) : [];
 
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
   const prevPost =
@@ -168,7 +174,8 @@ export default async function BlogPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript }}
       />
-      <article className="max-w-[85ch] mx-auto w-full">
+      <div className="mx-auto grid w-full max-w-[1200px] gap-10 lg:grid-cols-[minmax(0,85ch)_280px]">
+      <article id="blog-post-content" className="min-w-0">
         {/* 헤더 */}
         <header className="mb-12">
           <Link
@@ -210,6 +217,25 @@ export default async function BlogPostPage({
 
           <hr className="border-gray-800 mt-8" />
         </header>
+
+        <ReadingProgress
+          targetId="blog-post-content"
+          labels={{
+            readingProgress: dict.blog.reading_progress,
+            readLabel: dict.blog.read_label,
+            remainingLabel: dict.blog.remaining_label,
+          }}
+        />
+
+        <BlogToc
+          mode="mobile"
+          items={tocItems}
+          labels={{
+            tocTitle: dict.blog.toc_title,
+            tocToggle: dict.blog.toc_toggle,
+            tocClose: dict.blog.toc_close,
+          }}
+        />
 
         {/* 본문 */}
         <div className="prose-custom">
@@ -262,6 +288,26 @@ export default async function BlogPostPage({
           </div>
         </nav>
       </article>
+      <div className="hidden lg:block">
+        <ReadingProgress
+          targetId="blog-post-content"
+          labels={{
+            readingProgress: dict.blog.reading_progress,
+            readLabel: dict.blog.read_label,
+            remainingLabel: dict.blog.remaining_label,
+          }}
+        />
+        <BlogToc
+          mode="desktop"
+          items={tocItems}
+          labels={{
+            tocTitle: dict.blog.toc_title,
+            tocToggle: dict.blog.toc_toggle,
+            tocClose: dict.blog.toc_close,
+          }}
+        />
+      </div>
+      </div>
     </>
   );
 }

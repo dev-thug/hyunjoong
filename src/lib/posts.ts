@@ -233,6 +233,27 @@ export const getPostBySlug = cache(
   }
 );
 
+export const getPostSourceBySlug = cache(
+  async (slug: string, lang: string): Promise<string | null> => {
+    if (!isSafePostSlug(slug) || !isSafePostLang(lang)) {
+      return null;
+    }
+
+    const mdxPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.mdx`);
+    const mdPath = path.join(POSTS_DIRECTORY, `${slug}.${lang}.md`);
+
+    try {
+      return await fs.readFile(mdxPath, "utf8");
+    } catch {
+      try {
+        return await fs.readFile(mdPath, "utf8");
+      } catch {
+        return null;
+      }
+    }
+  }
+);
+
 const DEFAULT_GET_ALL_POSTS_OPTIONS = { includeHidden: false } as const;
 
 /**
