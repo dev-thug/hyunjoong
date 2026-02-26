@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { calculateReadingProgress } from "./reading-progress.ts";
+import { calculateReadingProgress } from "./reading-progress";
 
 test("calculates reading progress and remaining percent", () => {
   const result = calculateReadingProgress(250, 1000);

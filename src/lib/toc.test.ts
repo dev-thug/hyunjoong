@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { extractTocItems } from "./toc.ts";
+import { extractTocItems } from "./toc";
 
 test("extracts h2/h3 headings with stable unique ids", () => {
   const mdx = `

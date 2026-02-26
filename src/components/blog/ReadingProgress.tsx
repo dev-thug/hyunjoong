@@ -12,6 +12,7 @@ interface ReadingProgressLabels {
 interface ReadingProgressProps {
   targetId: string;
   labels: ReadingProgressLabels;
+  activateOn?: "mobile" | "desktop" | "always";
 }
 
 const toRoundedPercent = (value: number): number => Math.round(value);
@@ -19,12 +20,22 @@ const toRoundedPercent = (value: number): number => Math.round(value);
 export default function ReadingProgress({
   targetId,
   labels,
+  activateOn = "always",
 }: ReadingProgressProps) {
   const [readPercent, setReadPercent] = useState(0);
   const [remainingPercent, setRemainingPercent] = useState(100);
   const rafIdRef = useRef<number | null>(null);
 
   useEffect(() => {
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    const isEffectEnabled =
+      activateOn === "always" ||
+      (activateOn === "mobile" && !isDesktop) ||
+      (activateOn === "desktop" && isDesktop);
+    if (!isEffectEnabled) {
+      return;
+    }
+
     const updateProgress = () => {
       rafIdRef.current = null;
       const target = document.getElementById(targetId);
@@ -41,8 +52,12 @@ export default function ReadingProgress({
         Math.max(0, window.scrollY - (window.scrollY + rect.top))
       );
       const next = calculateReadingProgress(currentScrolled, totalScrollable);
-      setReadPercent(toRoundedPercent(next.readPercent));
-      setRemainingPercent(toRoundedPercent(next.remainingPercent));
+      const nextRead = toRoundedPercent(next.readPercent);
+      const nextRemaining = toRoundedPercent(next.remainingPercent);
+      setReadPercent((prev) => (prev === nextRead ? prev : nextRead));
+      setRemainingPercent((prev) =>
+        prev === nextRemaining ? prev : nextRemaining
+      );
     };
 
     const handleScroll = () => {
@@ -63,7 +78,7 @@ export default function ReadingProgress({
         window.cancelAnimationFrame(rafIdRef.current);
       }
     };
-  }, [targetId]);
+  }, [targetId, activateOn]);
 
   const progressWidth = useMemo(() => `${readPercent}%`, [readPercent]);
 
@@ -73,7 +88,14 @@ export default function ReadingProgress({
         <span>{labels.readingProgress}</span>
         <span>{readPercent}%</span>
       </div>
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-800">
+      <div
+        className="h-1.5 w-full overflow-hidden rounded-full bg-gray-800"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={readPercent}
+        aria-label={labels.readingProgress}
+      >
         <div
           className="h-full rounded-full bg-white/70 transition-[width] duration-200"
           style={{ width: progressWidth }}

@@ -20,6 +20,7 @@ interface BlogTocProps {
   activeId?: string;
   labels: BlogTocLabels;
   mode?: "mobile" | "desktop" | "both";
+  observeOn?: "mobile" | "desktop" | "always";
 }
 
 const getItemClassName = (item: TocItem, isActive: boolean): string => {
@@ -37,12 +38,22 @@ export default function BlogToc({
   activeId,
   labels,
   mode = "both",
+  observeOn = "always",
 }: BlogTocProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string | undefined>();
 
   useEffect(() => {
     if (items.length === 0) {
+      return;
+    }
+
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    const isObserverEnabled =
+      observeOn === "always" ||
+      (observeOn === "mobile" && !isDesktop) ||
+      (observeOn === "desktop" && isDesktop);
+    if (!isObserverEnabled) {
       return;
     }
 
@@ -71,7 +82,7 @@ export default function BlogToc({
 
     headings.forEach((heading) => observer.observe(heading));
     return () => observer.disconnect();
-  }, [items]);
+  }, [items, observeOn]);
 
   const tocList = useMemo(() => {
     const resolvedActiveId = activeId ?? activeHeadingId;

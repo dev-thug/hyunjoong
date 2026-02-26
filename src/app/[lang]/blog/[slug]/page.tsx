@@ -218,17 +218,21 @@ export default async function BlogPostPage({
           <hr className="border-gray-800 mt-8" />
         </header>
 
-        <ReadingProgress
-          targetId="blog-post-content"
-          labels={{
-            readingProgress: dict.blog.reading_progress,
-            readLabel: dict.blog.read_label,
-            remainingLabel: dict.blog.remaining_label,
-          }}
-        />
+        <div className="lg:hidden">
+          <ReadingProgress
+            activateOn="mobile"
+            targetId="blog-post-content"
+            labels={{
+              readingProgress: dict.blog.reading_progress,
+              readLabel: dict.blog.read_label,
+              remainingLabel: dict.blog.remaining_label,
+            }}
+          />
+        </div>
 
         <BlogToc
           mode="mobile"
+          observeOn="mobile"
           items={tocItems}
           labels={{
             tocTitle: dict.blog.toc_title,
@@ -290,6 +294,7 @@ export default async function BlogPostPage({
       </article>
       <div className="hidden lg:block">
         <ReadingProgress
+          activateOn="desktop"
           targetId="blog-post-content"
           labels={{
             readingProgress: dict.blog.reading_progress,
@@ -299,6 +304,7 @@ export default async function BlogPostPage({
         />
         <BlogToc
           mode="desktop"
+          observeOn="desktop"
           items={tocItems}
           labels={{
             tocTitle: dict.blog.toc_title,
