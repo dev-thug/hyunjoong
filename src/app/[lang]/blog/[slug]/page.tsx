@@ -4,6 +4,7 @@ import {
   getPostBySlug,
   generatePostParams,
   getAllPosts,
+  getAvailablePostLocales,
 } from "@/lib/posts";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
@@ -45,13 +46,17 @@ export async function generateMetadata({
 }: BlogPostPageProps): Promise<Metadata> {
   const { lang, slug } = await params;
 
-  const [post, koPost, enPost] = await Promise.all([
+  const [post, availableLocales] = await Promise.all([
     getPostBySlug(slug, lang),
-    getPostBySlug(slug, "ko"),
-    getPostBySlug(slug, "en"),
+    getAvailablePostLocales(slug),
   ]);
+  const hasKo = availableLocales.includes("ko");
+  const hasEn = availableLocales.includes("en");
+  const fallbackLang = hasKo ? "ko" : hasEn ? "en" : null;
+  const fallbackPost =
+    !post && fallbackLang ? await getPostBySlug(slug, fallbackLang) : null;
 
-  const currentPost = post ?? koPost ?? enPost;
+  const currentPost = post ?? fallbackPost;
 
   if (!currentPost) {
     return { title: NOT_FOUND_METADATA_TITLE };
@@ -64,7 +69,7 @@ export async function generateMetadata({
     section: "blog",
     title: currentPost.title,
     description: currentPost.excerpt,
-    availableLocales: { ko: Boolean(koPost), en: Boolean(enPost) },
+    availableLocales: { ko: hasKo, en: hasEn },
     image: DEFAULT_OG_IMAGE,
     openGraphType: "article",
     publishedTime: currentPost.date,

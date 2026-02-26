@@ -5,6 +5,7 @@ import {
   getProjectBySlug,
   getAllProjects,
   generateProjectParams,
+  getAvailableProjectLocales,
 } from "@/lib/projects";
 import { getDictionary } from "@/get-dictionary";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
@@ -33,11 +34,12 @@ export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
   const { slug, lang } = (await params) as { slug: string; lang: Locale };
-  const [project, koProject, enProject] = await Promise.all([
+  const [project, availableLocales] = await Promise.all([
     getProjectBySlug(slug, lang),
-    getProjectBySlug(slug, "ko"),
-    getProjectBySlug(slug, "en"),
+    getAvailableProjectLocales(slug),
   ]);
+  const hasKo = availableLocales.includes("ko");
+  const hasEn = availableLocales.includes("en");
 
   if (!project) {
     return { title: NOT_FOUND_METADATA_TITLE };
@@ -50,7 +52,7 @@ export async function generateMetadata({
     section: "projects",
     title: `${project.title} | ${SITE_NAME}`,
     description: project.description || project.adCopy,
-    availableLocales: { ko: Boolean(koProject), en: Boolean(enProject) },
+    availableLocales: { ko: hasKo, en: hasEn },
     image: project.image,
   });
 }

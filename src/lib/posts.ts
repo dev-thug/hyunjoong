@@ -368,3 +368,16 @@ export const generatePostParams = async (): Promise<
   const identifiers = await getPostIdentifiers();
   return identifiers.map(({ slug, lang }) => ({ slug, lang }));
 };
+
+export const getAvailablePostLocales = cache(
+  async (slug: string): Promise<string[]> => {
+    if (!isSafePostSlug(slug)) {
+      return [];
+    }
+
+    const identifiers = await getPostIdentifiers();
+    return identifiers
+      .filter((item) => item.slug === slug)
+      .map((item) => item.lang);
+  }
+);

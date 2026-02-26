@@ -281,3 +281,16 @@ export const generateProjectParams = async (): Promise<
 > => {
   return await getProjectIdentifiers();
 };
+
+export const getAvailableProjectLocales = cache(
+  async (slug: string): Promise<string[]> => {
+    if (!PROJECT_SLUG_REGEX.test(slug)) {
+      return [];
+    }
+
+    const identifiers = await getProjectIdentifiers();
+    return identifiers
+      .filter((item) => item.slug === slug)
+      .map((item) => item.lang);
+  }
+);
