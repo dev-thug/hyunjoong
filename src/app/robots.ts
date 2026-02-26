@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
-
-const DEFAULT_BASE_URL = "https://hyunjoong.kim";
+import { DEFAULT_BASE_URL } from "@/lib/site-config";
 
 /**
  * Robots.txt configuration for search engine crawling

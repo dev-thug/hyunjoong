@@ -1,8 +1,7 @@
 import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/posts";
 import { getProjectIdentifiers } from "@/lib/projects";
-
-const DEFAULT_BASE_URL = "https://hyunjoong.kim";
+import { DEFAULT_BASE_URL } from "@/lib/site-config";
 export const revalidate = 3600;
 const BUILD_DATE_ENV_KEYS = [
   "VERCEL_GIT_COMMIT_DATE",

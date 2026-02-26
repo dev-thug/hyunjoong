@@ -4,6 +4,7 @@ import HomeLayoutWrapper from "@/components/layout/HomeLayoutWrapper";
 import HeroSection from "@/components/sections/HeroSection";
 import { type Locale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
+import { DEFAULT_BASE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/site-config";
 
 // 초기 로딩에 필수적이지 않은 하단 섹션들을 dynamic import로 분리하여 번들 크기 최적화
 const AboutSection = dynamic(
@@ -26,17 +27,17 @@ export default async function Home({
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
 
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "Hyunjoong Kim",
+    name: SITE_NAME,
     alternateName: lang === "ko" ? "김현중" : "Hyunjoong Kim",
     jobTitle: "Full-Stack Developer",
     description: dict.hero.meta_description,
     url: `${baseUrl}/${lang}`,
-    image: `${baseUrl}/images/og-profile.png`,
+    image: `${baseUrl}${DEFAULT_OG_IMAGE}`,
     sameAs: [
       "https://github.com/hyunjoongkim",
       "https://linkedin.com/in/hyunjoongkim",
@@ -51,7 +52,7 @@ export default async function Home({
     url: `${baseUrl}/${lang}`,
     author: {
       "@type": "Person",
-      name: "Hyunjoong Kim",
+      name: SITE_NAME,
     },
   };
 

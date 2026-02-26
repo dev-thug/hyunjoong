@@ -10,6 +10,7 @@ import { getDictionary } from "@/get-dictionary";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
+import { DEFAULT_BASE_URL, SITE_NAME } from "@/lib/site-config";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -39,7 +40,7 @@ export async function generateMetadata({
     return { title: "Project Not Found" };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
 
   // Build language alternates - check if project exists in both languages
   const languages: Record<string, string> = {};
@@ -49,7 +50,7 @@ export async function generateMetadata({
   if (koProject) languages["x-default"] = `${baseUrl}/ko/projects/${slug}`;
 
   return {
-    title: `${project.title} | Hyunjoong Kim`,
+    title: `${project.title} | ${SITE_NAME}`,
     description: project.description || project.adCopy,
     alternates: {
       canonical: `${baseUrl}/${lang}/projects/${slug}`,
@@ -59,7 +60,7 @@ export async function generateMetadata({
       title: project.title,
       description: project.description || project.adCopy,
       url: `${baseUrl}/${lang}/projects/${slug}`,
-      siteName: "Hyunjoong Kim",
+      siteName: SITE_NAME,
       type: "website",
       locale: lang === "ko" ? "ko_KR" : "en_US",
       images: [
@@ -93,7 +94,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
   const projectUrl = `${baseUrl}/${lang}/projects/${slug}`;
   const projectJsonLd = {
     "@context": "https://schema.org",
@@ -105,7 +106,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     inLanguage: lang,
     creator: {
       "@type": "Person",
-      name: "Hyunjoong Kim",
+      name: SITE_NAME,
       url: baseUrl,
     },
     ...(project.serviceUrl ? { sameAs: [project.serviceUrl] } : {}),

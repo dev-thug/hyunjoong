@@ -10,6 +10,7 @@ import type { Metadata } from "next";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import Giscus from "@/components/mdx/Giscus";
+import { DEFAULT_BASE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/site-config";
 
 interface BlogPostPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -45,7 +46,7 @@ export async function generateMetadata({
     return { title: "Post Not Found" };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
 
   const languages: Record<string, string> = {};
   if (koPost) languages.ko = `${baseUrl}/ko/blog/${slug}`;
@@ -66,14 +67,14 @@ export async function generateMetadata({
       title: currentPost.title,
       description: currentPost.excerpt,
       url: `${baseUrl}/${currentPost.lang}/blog/${slug}`,
-      siteName: "Hyunjoong Kim",
+      siteName: SITE_NAME,
       type: "article",
       publishedTime: currentPost.date,
       locale: currentPost.lang === "ko" ? "ko_KR" : "en_US",
       images: [
         {
-          url: "/images/og-profile.png",
-          alt: "Hyunjoong Kim",
+          url: DEFAULT_OG_IMAGE,
+          alt: SITE_NAME,
         },
       ],
     },
@@ -81,7 +82,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: currentPost.title,
       description: currentPost.excerpt,
-      images: ["/images/og-profile.png"],
+      images: [DEFAULT_OG_IMAGE],
     },
   };
 }
@@ -151,9 +152,9 @@ export default async function BlogPostPage({
     `@/content/posts/${slug}.${lang}.mdx`
   );
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://hyunjoong.kim";
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
   const articleUrl = `${baseUrl}/${post.lang}/blog/${slug}`;
-  const ogImageUrl = `${baseUrl}/images/og-profile.png`;
+  const ogImageUrl = `${baseUrl}${DEFAULT_OG_IMAGE}`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -164,12 +165,12 @@ export default async function BlogPostPage({
     url: articleUrl,
     author: {
       "@type": "Person",
-      name: "Hyunjoong Kim",
+      name: SITE_NAME,
       url: baseUrl,
     },
     publisher: {
       "@type": "Organization",
-      name: "Hyunjoong Kim",
+      name: SITE_NAME,
       logo: {
         "@type": "ImageObject",
         url: ogImageUrl,
