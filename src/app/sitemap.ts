@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/posts";
 import { getProjectIdentifiers } from "@/lib/projects";
-import { DEFAULT_BASE_URL } from "@/lib/site-config";
+import { getSiteBaseUrl } from "@/lib/site-config";
 export const revalidate = 3600;
 const BUILD_DATE_ENV_KEYS = [
   "VERCEL_GIT_COMMIT_DATE",
@@ -43,7 +43,7 @@ const getLatestPostDate = (posts: Array<{ date: string }>): Date | null => {
  * Dynamic sitemap generation for all pages, blog posts, and projects
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
 
   // Fetch locale-specific blog posts and projects in parallel
   const [koPosts, enPosts, projectIdentifiers] = await Promise.all([

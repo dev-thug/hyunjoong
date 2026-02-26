@@ -1,7 +1,11 @@
 import GlobalNavigationWrapper from "@/components/layout/GlobalNavigationWrapper";
 import { i18n, type Locale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
-import { DEFAULT_BASE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/site-config";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_NAME,
+  getSiteBaseUrl,
+} from "@/lib/site-config";
 import type { Metadata } from "next";
 import { Inter, Montserrat } from "next/font/google";
 import "../globals.css";
@@ -32,7 +36,7 @@ export async function generateMetadata({
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
 
   return {
     title: {

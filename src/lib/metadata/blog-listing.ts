@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
 import {
-  DEFAULT_BASE_URL,
   DEFAULT_OG_IMAGE,
   SITE_NAME,
+  getSiteBaseUrl,
 } from "@/lib/site-config";
 
 interface BlogListingMetadataOptions {
@@ -23,7 +23,7 @@ export const buildBlogListingMetadata = ({
   noIndexFollow = false,
   canonicalPath = "/blog",
 }: BlogListingMetadataOptions): Metadata => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
   const normalizedCanonicalPath = canonicalPath.startsWith("/")
     ? canonicalPath
     : `/${canonicalPath}`;
