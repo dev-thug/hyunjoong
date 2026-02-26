@@ -11,6 +11,8 @@ interface BlogListingMetadataOptions {
   title: string;
   description: string;
   noIndex?: boolean;
+  noIndexFollow?: boolean;
+  canonicalPath?: string;
 }
 
 export const buildBlogListingMetadata = ({
@@ -18,21 +20,30 @@ export const buildBlogListingMetadata = ({
   title,
   description,
   noIndex = false,
+  noIndexFollow = false,
+  canonicalPath = "/blog",
 }: BlogListingMetadataOptions): Metadata => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
-  const canonicalUrl = `${baseUrl}/${lang}/blog`;
+  const normalizedCanonicalPath = canonicalPath.startsWith("/")
+    ? canonicalPath
+    : `/${canonicalPath}`;
+  const canonicalUrl = `${baseUrl}/${lang}${normalizedCanonicalPath}`;
+  const koUrl = `${baseUrl}/ko${normalizedCanonicalPath}`;
+  const enUrl = `${baseUrl}/en${normalizedCanonicalPath}`;
   const locale = lang === "ko" ? "ko_KR" : "en_US";
 
   return {
     title,
     description,
-    ...(noIndex ? { robots: { index: false, follow: true } as const } : {}),
+    ...(noIndex
+      ? { robots: { index: false, follow: noIndexFollow } as const }
+      : {}),
     alternates: {
       canonical: canonicalUrl,
       languages: {
-        ko: `${baseUrl}/ko/blog`,
-        en: `${baseUrl}/en/blog`,
-        "x-default": `${baseUrl}/ko/blog`,
+        ko: koUrl,
+        en: enUrl,
+        "x-default": koUrl,
       },
     },
     openGraph: {

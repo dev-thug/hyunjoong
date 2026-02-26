@@ -37,13 +37,17 @@ export async function generateMetadata({
 }: {
   params: Promise<{ lang: string; page: string }>;
 }): Promise<Metadata> {
-  const { lang } = (await params) as { lang: Locale; page: string };
+  const { lang, page } = (await params) as { lang: Locale; page: string };
   const dict = await getDictionary(lang);
+  const parsedPage = parsePageParam(page);
+  const canonicalPath =
+    parsedPage !== null && parsedPage >= 2 ? `/blog/page/${parsedPage}` : "/blog";
   return buildBlogListingMetadata({
     lang,
     title: dict.blog.page_title,
     description: dict.blog.page_description,
     noIndex: true,
+    canonicalPath,
   });
 }
 
