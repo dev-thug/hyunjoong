@@ -57,9 +57,6 @@
     "toc_title": "Table of contents",
     "toc_toggle": "Show contents",
     "toc_close": "Hide contents",
-    "reading_progress": "Reading Progress",
-    "read_label": "Read",
-    "remaining_label": "Remaining",
     "not_available_title": "Post not available in English",
     "not_available_description": "This post is only available in {lang}. You can read it in that language below.",
     "read_in_language": "Read in {lang}"

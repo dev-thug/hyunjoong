@@ -220,15 +220,11 @@ export default async function BlogPostPage({
         <BlogToc
           mode="mobile"
           observeOn="mobile"
-          targetId="blog-post-content"
           items={tocItems}
           labels={{
             tocTitle: dict.blog.toc_title,
             tocToggle: dict.blog.toc_toggle,
             tocClose: dict.blog.toc_close,
-            readingProgress: dict.blog.reading_progress,
-            readLabel: dict.blog.read_label,
-            remainingLabel: dict.blog.remaining_label,
           }}
         />
 
@@ -287,15 +283,11 @@ export default async function BlogPostPage({
         <BlogToc
           mode="desktop"
           observeOn="desktop"
-          targetId="blog-post-content"
           items={tocItems}
           labels={{
             tocTitle: dict.blog.toc_title,
             tocToggle: dict.blog.toc_toggle,
             tocClose: dict.blog.toc_close,
-            readingProgress: dict.blog.reading_progress,
-            readLabel: dict.blog.read_label,
-            remainingLabel: dict.blog.remaining_label,
           }}
         />
       </div>
