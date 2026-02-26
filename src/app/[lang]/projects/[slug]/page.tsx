@@ -10,7 +10,9 @@ import { getDictionary } from "@/get-dictionary";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
-import { DEFAULT_BASE_URL, SITE_NAME } from "@/lib/site-config";
+import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
+import { getSiteBaseUrl, SITE_NAME } from "@/lib/site-config";
+import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -29,7 +31,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const { slug, lang } = await params;
+  const { slug, lang } = (await params) as { slug: string; lang: Locale };
   const [project, koProject, enProject] = await Promise.all([
     getProjectBySlug(slug, lang),
     getProjectBySlug(slug, "ko"),
@@ -40,43 +42,16 @@ export async function generateMetadata({
     return { title: "Project Not Found" };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
-
-  // Build language alternates - check if project exists in both languages
-  const languages: Record<string, string> = {};
-
-  if (koProject) languages.ko = `${baseUrl}/ko/projects/${slug}`;
-  if (enProject) languages.en = `${baseUrl}/en/projects/${slug}`;
-  if (koProject) languages["x-default"] = `${baseUrl}/ko/projects/${slug}`;
-
-  return {
+  return buildContentDetailMetadata({
+    lang,
+    canonicalLang: lang,
+    slug,
+    section: "projects",
     title: `${project.title} | ${SITE_NAME}`,
     description: project.description || project.adCopy,
-    alternates: {
-      canonical: `${baseUrl}/${lang}/projects/${slug}`,
-      languages,
-    },
-    openGraph: {
-      title: project.title,
-      description: project.description || project.adCopy,
-      url: `${baseUrl}/${lang}/projects/${slug}`,
-      siteName: SITE_NAME,
-      type: "website",
-      locale: lang === "ko" ? "ko_KR" : "en_US",
-      images: [
-        {
-          url: project.image,
-          alt: `${project.title} showcase image`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: project.title,
-      description: project.description || project.adCopy,
-      images: [project.image],
-    },
-  };
+    availableLocales: { ko: Boolean(koProject), en: Boolean(enProject) },
+    image: project.image,
+  });
 }
 
 /**
@@ -94,7 +69,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
   const projectUrl = `${baseUrl}/${lang}/projects/${slug}`;
   const projectJsonLd = {
     "@context": "https://schema.org",
@@ -104,18 +79,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     url: projectUrl,
     image: project.image,
     inLanguage: lang,
-    creator: {
-      "@type": "Person",
-      name: SITE_NAME,
-      url: baseUrl,
-    },
+    creator: buildSitePerson(baseUrl),
     ...(project.serviceUrl ? { sameAs: [project.serviceUrl] } : {}),
     ...(project.tags.length > 0 ? { keywords: project.tags.join(", ") } : {}),
   };
-  const projectJsonLdScript = JSON.stringify(projectJsonLd).replace(
-    /</g,
-    "\\u003c"
-  );
+  const projectJsonLdScript = safeJsonLdStringify(projectJsonLd);
 
   // 모든 프로젝트를 가져와서 이전/다음 프로젝트 찾기
   const currentIndex = allProjects.findIndex((p) => p.slug === slug);

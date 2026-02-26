@@ -10,7 +10,17 @@ import type { Metadata } from "next";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import Giscus from "@/components/mdx/Giscus";
-import { DEFAULT_BASE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/site-config";
+import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
+import {
+  DEFAULT_OG_IMAGE,
+  getSiteBaseUrl,
+  toAbsoluteSiteUrl,
+} from "@/lib/site-config";
+import {
+  buildSitePerson,
+  buildSitePublisher,
+  safeJsonLdStringify,
+} from "@/lib/json-ld";
 
 interface BlogPostPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -46,45 +56,19 @@ export async function generateMetadata({
     return { title: "Post Not Found" };
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
-
-  const languages: Record<string, string> = {};
-  if (koPost) languages.ko = `${baseUrl}/ko/blog/${slug}`;
-  if (enPost) languages.en = `${baseUrl}/en/blog/${slug}`;
-  if (koPost) languages["x-default"] = `${baseUrl}/ko/blog/${slug}`;
-
-  return {
+  return buildContentDetailMetadata({
+    lang: currentPost.lang as Locale,
+    canonicalLang: currentPost.lang as Locale,
+    slug,
+    section: "blog",
     title: currentPost.title,
     description: currentPost.excerpt,
-    ...(currentPost.hidden
-      ? { robots: { index: false, follow: false } as const }
-      : {}),
-    alternates: {
-      canonical: `${baseUrl}/${currentPost.lang}/blog/${slug}`,
-      languages,
-    },
-    openGraph: {
-      title: currentPost.title,
-      description: currentPost.excerpt,
-      url: `${baseUrl}/${currentPost.lang}/blog/${slug}`,
-      siteName: SITE_NAME,
-      type: "article",
-      publishedTime: currentPost.date,
-      locale: currentPost.lang === "ko" ? "ko_KR" : "en_US",
-      images: [
-        {
-          url: DEFAULT_OG_IMAGE,
-          alt: SITE_NAME,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: currentPost.title,
-      description: currentPost.excerpt,
-      images: [DEFAULT_OG_IMAGE],
-    },
-  };
+    availableLocales: { ko: Boolean(koPost), en: Boolean(enPost) },
+    image: DEFAULT_OG_IMAGE,
+    openGraphType: "article",
+    publishedTime: currentPost.date,
+    noIndex: Boolean(currentPost.hidden),
+  });
 }
 
 /**
@@ -152,9 +136,9 @@ export default async function BlogPostPage({
     `@/content/posts/${slug}.${lang}.mdx`
   );
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
   const articleUrl = `${baseUrl}/${post.lang}/blog/${slug}`;
-  const ogImageUrl = `${baseUrl}${DEFAULT_OG_IMAGE}`;
+  const ogImageUrl = toAbsoluteSiteUrl(DEFAULT_OG_IMAGE);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -163,25 +147,14 @@ export default async function BlogPostPage({
     description: post.excerpt,
     datePublished: post.date,
     url: articleUrl,
-    author: {
-      "@type": "Person",
-      name: SITE_NAME,
-      url: baseUrl,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      logo: {
-        "@type": "ImageObject",
-        url: ogImageUrl,
-      },
-    },
+    author: buildSitePerson(baseUrl),
+    publisher: buildSitePublisher(baseUrl, ogImageUrl),
     image: ogImageUrl,
     articleSection: post.category,
     ...(post.keywords?.length ? { keywords: post.keywords } : {}),
   };
 
-  const jsonLdScript = JSON.stringify(jsonLd).replace(/</g, "\\u003c");
+  const jsonLdScript = safeJsonLdStringify(jsonLd);
 
   return (
     <>

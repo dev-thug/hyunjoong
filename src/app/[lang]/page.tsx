@@ -4,7 +4,13 @@ import HomeLayoutWrapper from "@/components/layout/HomeLayoutWrapper";
 import HeroSection from "@/components/sections/HeroSection";
 import { type Locale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
-import { DEFAULT_BASE_URL, DEFAULT_OG_IMAGE, SITE_NAME } from "@/lib/site-config";
+import {
+  DEFAULT_OG_IMAGE,
+  SITE_NAME,
+  getSiteBaseUrl,
+  toAbsoluteSiteUrl,
+} from "@/lib/site-config";
+import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
 
 // 초기 로딩에 필수적이지 않은 하단 섹션들을 dynamic import로 분리하여 번들 크기 최적화
 const AboutSection = dynamic(
@@ -27,17 +33,15 @@ export default async function Home({
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
 
   const personSchema = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: SITE_NAME,
+    ...buildSitePerson(baseUrl),
     alternateName: lang === "ko" ? "김현중" : "Hyunjoong Kim",
     jobTitle: "Full-Stack Developer",
     description: dict.hero.meta_description,
-    url: `${baseUrl}/${lang}`,
-    image: `${baseUrl}${DEFAULT_OG_IMAGE}`,
+    image: toAbsoluteSiteUrl(DEFAULT_OG_IMAGE),
     sameAs: [
       "https://github.com/hyunjoongkim",
       "https://linkedin.com/in/hyunjoongkim",
@@ -60,11 +64,11 @@ export default async function Home({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(personSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(websiteSchema) }}
       />
       <HomeLayoutWrapper>
         {/* LCP 요소: 즉시 렌더링 */}

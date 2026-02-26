@@ -4,7 +4,8 @@ import { getDictionary } from "@/get-dictionary";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
-import { DEFAULT_BASE_URL } from "@/lib/site-config";
+import { getSiteBaseUrl } from "@/lib/site-config";
+import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
 
 /**
  * 프로필 페이지 메타데이터 (다국어)
@@ -29,19 +30,14 @@ export async function generateMetadata({
  * 프로필 페이지
  */
 export default function ProfilePage() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL;
+  const baseUrl = getSiteBaseUrl();
   const personJsonLd = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Hyunjoong Kim",
+    ...buildSitePerson(baseUrl),
     jobTitle: "Full-stack & AWS Cloud Developer",
-    url: baseUrl,
     sameAs: SOCIAL_LINKS.map((link) => link.href),
   };
-  const personJsonLdScript = JSON.stringify(personJsonLd).replace(
-    /</g,
-    "\\u003c"
-  );
+  const personJsonLdScript = safeJsonLdStringify(personJsonLd);
 
   const skills = [
     {
