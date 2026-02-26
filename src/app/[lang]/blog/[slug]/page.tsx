@@ -21,6 +21,7 @@ import {
   buildSitePublisher,
   safeJsonLdStringify,
 } from "@/lib/json-ld";
+import { NOT_FOUND_METADATA_TITLE } from "@/lib/metadata/constants";
 
 interface BlogPostPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -53,7 +54,7 @@ export async function generateMetadata({
   const currentPost = post ?? koPost ?? enPost;
 
   if (!currentPost) {
-    return { title: "Post Not Found" };
+    return { title: NOT_FOUND_METADATA_TITLE };
   }
 
   return buildContentDetailMetadata({

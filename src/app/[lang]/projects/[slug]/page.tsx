@@ -13,6 +13,7 @@ import type { Locale } from "@/i18n-config";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
 import { getSiteBaseUrl, SITE_NAME } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
+import { NOT_FOUND_METADATA_TITLE } from "@/lib/metadata/constants";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -39,7 +40,7 @@ export async function generateMetadata({
   ]);
 
   if (!project) {
-    return { title: "Project Not Found" };
+    return { title: NOT_FOUND_METADATA_TITLE };
   }
 
   return buildContentDetailMetadata({
