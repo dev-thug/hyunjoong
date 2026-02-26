@@ -4,21 +4,27 @@ import Link from "next/link";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
 } from "react";
 import type { TocItem } from "@/lib/toc";
+import { calculateReadingProgress } from "@/components/blog/reading-progress";
 
 interface BlogTocLabels {
   tocTitle: string;
   tocToggle: string;
   tocClose: string;
+  readingProgress: string;
+  readLabel: string;
+  remainingLabel: string;
 }
 
 interface BlogTocProps {
   items: TocItem[];
   activeId?: string;
   labels: BlogTocLabels;
+  targetId: string;
   mode?: "mobile" | "desktop" | "both";
   observeOn?: "mobile" | "desktop" | "always";
 }
@@ -37,22 +43,31 @@ export default function BlogToc({
   items,
   activeId,
   labels,
+  targetId,
   mode = "both",
   observeOn = "always",
 }: BlogTocProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeHeadingId, setActiveHeadingId] = useState<string | undefined>();
+  const [readPercent, setReadPercent] = useState(0);
+  const [remainingPercent, setRemainingPercent] = useState(100);
+  const progressRafRef = useRef<number | null>(null);
+
+  const shouldEnableByViewport = (target: "mobile" | "desktop" | "always") => {
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    return (
+      target === "always" ||
+      (target === "mobile" && !isDesktop) ||
+      (target === "desktop" && isDesktop)
+    );
+  };
 
   useEffect(() => {
     if (items.length === 0) {
       return;
     }
 
-    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-    const isObserverEnabled =
-      observeOn === "always" ||
-      (observeOn === "mobile" && !isDesktop) ||
-      (observeOn === "desktop" && isDesktop);
+    const isObserverEnabled = shouldEnableByViewport(observeOn);
     if (!isObserverEnabled) {
       return;
     }
@@ -83,6 +98,55 @@ export default function BlogToc({
     headings.forEach((heading) => observer.observe(heading));
     return () => observer.disconnect();
   }, [items, observeOn]);
+
+  useEffect(() => {
+    const isProgressEnabled = shouldEnableByViewport(observeOn);
+    if (!isProgressEnabled) {
+      return;
+    }
+
+    const updateProgress = () => {
+      progressRafRef.current = null;
+      const target = document.getElementById(targetId);
+      if (!target) {
+        setReadPercent(0);
+        setRemainingPercent(100);
+        return;
+      }
+
+      const rect = target.getBoundingClientRect();
+      const start = window.scrollY + rect.top;
+      const totalScrollable = Math.max(1, target.scrollHeight - window.innerHeight);
+      const currentScrolled = Math.min(
+        totalScrollable,
+        Math.max(0, window.scrollY - start)
+      );
+      const next = calculateReadingProgress(currentScrolled, totalScrollable);
+      const roundedRead = Math.round(next.readPercent);
+      const roundedRemain = Math.round(next.remainingPercent);
+      setReadPercent((prev) => (prev === roundedRead ? prev : roundedRead));
+      setRemainingPercent((prev) => (prev === roundedRemain ? prev : roundedRemain));
+    };
+
+    const handleScroll = () => {
+      if (progressRafRef.current !== null) {
+        return;
+      }
+      progressRafRef.current = window.requestAnimationFrame(updateProgress);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+      if (progressRafRef.current !== null) {
+        window.cancelAnimationFrame(progressRafRef.current);
+      }
+    };
+  }, [targetId, observeOn]);
 
   const tocList = useMemo(() => {
     const resolvedActiveId = activeId ?? activeHeadingId;
@@ -116,6 +180,37 @@ export default function BlogToc({
 
   const showMobile = mode === "both" || mode === "mobile";
   const showDesktop = mode === "both" || mode === "desktop";
+  const progressWidth = `${readPercent}%`;
+  const progressSection = (
+    <div className="mb-4 rounded-lg border border-white/10 bg-black/20 p-3">
+      <div className="mb-2 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-gray-500">
+        <span>{labels.readingProgress}</span>
+        <span>{readPercent}%</span>
+      </div>
+      <div
+        className="h-1.5 w-full overflow-hidden rounded-full bg-gray-800"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={readPercent}
+        aria-label={labels.readingProgress}
+      >
+        <div
+          className="h-full rounded-full bg-white/70 transition-[width] duration-200"
+          style={{ width: progressWidth }}
+          aria-hidden="true"
+        />
+      </div>
+      <div className="mt-2 flex items-center justify-between text-[11px] text-gray-500">
+        <span>
+          {labels.readLabel}: {readPercent}%
+        </span>
+        <span>
+          {labels.remainingLabel}: {remainingPercent}%
+        </span>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -136,6 +231,7 @@ export default function BlogToc({
           className="glass-panel mt-3 rounded-xl border border-white/10 p-3"
           style={mobilePanelStyle}
         >
+          {progressSection}
           <ul className="space-y-1">{tocList}</ul>
         </nav>
       </div>
@@ -150,6 +246,7 @@ export default function BlogToc({
           <h2 className="mb-3 text-xs font-mono uppercase tracking-wider text-gray-500">
             {labels.tocTitle}
           </h2>
+          {progressSection}
           <ul className="space-y-1">{tocList}</ul>
         </nav>
       </aside>

@@ -13,7 +13,6 @@ import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import Giscus from "@/components/mdx/Giscus";
 import BlogToc from "@/components/blog/BlogToc";
-import ReadingProgress from "@/components/blog/ReadingProgress";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
 import {
   DEFAULT_OG_IMAGE,
@@ -218,26 +217,18 @@ export default async function BlogPostPage({
           <hr className="border-gray-800 mt-8" />
         </header>
 
-        <div className="lg:hidden">
-          <ReadingProgress
-            activateOn="mobile"
-            targetId="blog-post-content"
-            labels={{
-              readingProgress: dict.blog.reading_progress,
-              readLabel: dict.blog.read_label,
-              remainingLabel: dict.blog.remaining_label,
-            }}
-          />
-        </div>
-
         <BlogToc
           mode="mobile"
           observeOn="mobile"
+          targetId="blog-post-content"
           items={tocItems}
           labels={{
             tocTitle: dict.blog.toc_title,
             tocToggle: dict.blog.toc_toggle,
             tocClose: dict.blog.toc_close,
+            readingProgress: dict.blog.reading_progress,
+            readLabel: dict.blog.read_label,
+            remainingLabel: dict.blog.remaining_label,
           }}
         />
 
@@ -293,23 +284,18 @@ export default async function BlogPostPage({
         </nav>
       </article>
       <div className="hidden lg:block">
-        <ReadingProgress
-          activateOn="desktop"
-          targetId="blog-post-content"
-          labels={{
-            readingProgress: dict.blog.reading_progress,
-            readLabel: dict.blog.read_label,
-            remainingLabel: dict.blog.remaining_label,
-          }}
-        />
         <BlogToc
           mode="desktop"
           observeOn="desktop"
+          targetId="blog-post-content"
           items={tocItems}
           labels={{
             tocTitle: dict.blog.toc_title,
             tocToggle: dict.blog.toc_toggle,
             tocClose: dict.blog.toc_close,
+            readingProgress: dict.blog.reading_progress,
+            readLabel: dict.blog.read_label,
+            remainingLabel: dict.blog.remaining_label,
           }}
         />
       </div>
