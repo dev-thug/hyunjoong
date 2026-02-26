@@ -11,7 +11,7 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
-import { getSiteBaseUrl, SITE_NAME } from "@/lib/site-config";
+import { getSiteBaseUrl, SITE_NAME, toAbsoluteSiteUrl } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
 import { NOT_FOUND_METADATA_TITLE } from "@/lib/metadata/constants";
 
@@ -78,7 +78,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     name: project.title,
     description: project.description || project.adCopy,
     url: projectUrl,
-    image: project.image,
+    image: toAbsoluteSiteUrl(project.image),
     inLanguage: lang,
     creator: buildSitePerson(baseUrl),
     ...(project.serviceUrl ? { sameAs: [project.serviceUrl] } : {}),
