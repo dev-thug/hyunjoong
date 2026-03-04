@@ -66,7 +66,8 @@ git --version
 
 ## 1) 프로젝트 클론
 
-먼저 브리지 서버 역할의 저장소를 클론한다.
+먼저 브리지 서버 역할의 저장소를 클론한다.  
+이 브리지 서버는 **OpenAI 호환 API 엔드포인트를 제공**하고, 실제 모델 실행은 내부에서 **CLI(예: Cursor CLI)**를 통해 처리하는 구조다.
 
 ```bash
 git clone https://github.com/dev-thug/agent-cli-to-api.git
@@ -78,17 +79,32 @@ cd agent-cli-to-api
 ## 2) 의존성 설치 및 서버 실행
 
 ```bash
-npm install
-npm run build
-npm run start
+# 의존성 설치
+uv sync
 ```
 
-로컬에서 API 브리지가 뜨면 기본적으로 아래와 비슷한 엔드포인트를 제공한다.
+OpenClaw 연동 기준으로는 포트 `11434`로 게이트웨이를 띄우는 구성을 권장한다.
+
+### 방법 A) 직접 실행
+
+```bash
+uv run agent-cli-to-api cursor-agent --host 127.0.0.1 --port 11434
+```
+
+### 방법 B) launchd로 백그라운드 실행(macOS, 권장)
+
+```bash
+scripts/install_launchd.sh --provider cursor-agent --host 127.0.0.1 --port 11434
+```
+
+실사용에서는 **직접 작성한 launchd 스크립트 방식**을 추천한다. 재부팅 이후 자동 실행과 프로세스 유지 관리가 훨씬 안정적이기 때문이다.
+
+`11434`를 쓰는 이유는 OpenClaw에서 **Custom Provider 기본 포트가 11434**로 맞춰져 있어 설정 충돌을 줄일 수 있기 때문이다.
+
+브리지가 정상 구동되면 아래와 같은 OpenAI 호환 엔드포인트를 제공한다.
 
 - `http://127.0.0.1:11434/v1/chat/completions`
 - OpenAI 호환 형태의 요청/응답 포맷
-
-> 포트는 프로젝트 설정에 따라 다를 수 있다. `README` 또는 환경변수 파일을 우선 확인하자.
 
 ---
 
@@ -100,13 +116,17 @@ OpenClaw 모델 설정에서 외부 SaaS API 대신, 방금 띄운 로컬 브리
 openclaw configure --section models
 ```
 
-설정 포인트는 다음 3개다.
+모델 선택 화면에서 **Custom Provider**를 선택해야 한다.
+
+설정 포인트는 다음과 같다.
 
 - **provider/base URL**: `http://127.0.0.1:11434/v1`
 - **model name**: 브리지에서 노출하는 모델 ID(예: `auto` 또는 프로젝트 문서 기준 값)
-- **api key**: 필요 시 더미값 또는 로컬 토큰
+- **api key**: 반드시 아무 값이라도 입력
 
-이 시점부터 OpenClaw는 네가 지정한 커스텀 경로를 통해 모델 응답을 받는다.
+> 주의: API key를 비워두면 OpenClaw에서 에러가 발생한다. 실제 인증이 필요 없는 환경이어도 더미 문자열(예: `dummy-key`)을 반드시 넣어야 한다.
+
+이 시점부터 OpenClaw는 커스텀 프로바이더 경로를 통해 모델 응답을 받는다.
 
 ---
 

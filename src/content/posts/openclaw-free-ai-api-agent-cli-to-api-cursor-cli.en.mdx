@@ -66,6 +66,8 @@ git --version
 
 ## 1) Clone the bridge project
 
+This bridge exposes **OpenAI-compatible API endpoints**, while actual model execution is handled through a **CLI backend (for example, Cursor CLI)**.
+
 ```bash
 git clone https://github.com/dev-thug/agent-cli-to-api.git
 cd agent-cli-to-api
@@ -76,17 +78,32 @@ cd agent-cli-to-api
 ## 2) Install dependencies and run
 
 ```bash
-npm install
-npm run build
-npm run start
+# install dependencies
+uv sync
 ```
 
-You should get OpenAI-compatible endpoints similar to:
+For OpenClaw integration, run the gateway on port `11434`.
+
+### Option A) Run directly
+
+```bash
+uv run agent-cli-to-api cursor-agent --host 127.0.0.1 --port 11434
+```
+
+### Option B) Run in background via launchd (macOS, recommended)
+
+```bash
+scripts/install_launchd.sh --provider cursor-agent --host 127.0.0.1 --port 11434
+```
+
+For real usage, the launchd script is recommended because restart behavior and long-running process management are more reliable.
+
+The reason for using `11434` is simple: it is the **default custom provider port in OpenClaw**, so you avoid unnecessary port mismatch issues.
+
+When it is running correctly, you should get OpenAI-compatible endpoints similar to:
 
 - `http://127.0.0.1:11434/v1/chat/completions`
 - OpenAI-style request/response format
-
-> Port or env details may differ by project version. Check the repository `README` first.
 
 ---
 
@@ -98,11 +115,15 @@ Configure OpenClaw model settings to use your local bridge endpoint:
 openclaw configure --section models
 ```
 
+In the model selection UI, choose **Custom Provider**.
+
 Set these values:
 
 - **provider/base URL**: `http://127.0.0.1:11434/v1`
 - **model name**: model ID exposed by the bridge (for example `auto`)
-- **api key**: dummy or local token if required
+- **api key**: enter any non-empty value
+
+> Important: if the API key field is empty, OpenClaw throws an error. Even when real auth is not required, provide a dummy value such as `dummy-key`.
 
 Now OpenClaw receives model responses through your custom provider path.
 
