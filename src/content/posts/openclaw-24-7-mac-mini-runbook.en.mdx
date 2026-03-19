@@ -1,0 +1,144 @@
+export const metadata = {
+  title: "Running OpenClaw 24/7 on a Mac mini: Sleep Settings to Stable Operations",
+  excerpt:
+    "A practical runbook for operating OpenClaw 24/7 on a Mac mini. Learn the exact sleep settings, gateway health checks, and fast recovery routine for reliable uptime.",
+  category: "Engineering",
+  date: "2026-03-19",
+  readTime: "9 min",
+  lang: "en",
+  keywords: [
+    "OpenClaw",
+    "Mac mini",
+    "24/7",
+    "Gateway",
+    "pmset",
+    "Telegram",
+    "Self-hosted AI"
+  ],
+  hidden: false,
+};
+
+# Running OpenClaw 24/7 on a Mac mini: Sleep Settings to Stable Operations
+
+A Mac mini can become a great always-on personal AI server for OpenClaw.  
+The real question is simple: **"Will it stay online reliably?"**
+
+This guide is a practical runbook for running OpenClaw 24/7 on macOS, focused on power settings, gateway checks, and a repeatable recovery flow.
+
+---
+
+## 1) First principle: display sleep is not system sleep
+
+This is where most setups fail.
+
+- **Display sleep**: screen turns off, services can keep running
+- **System sleep**: CPU/processes pause and networking may drop
+
+For OpenClaw, the target state is straightforward:
+
+> the display can sleep, but the system must stay awake
+
+---
+
+## 2) Core setup: macOS power policy
+
+Check your current policy first:
+
+```bash
+pmset -g custom
+```
+
+Recommended baseline for 24/7 operation:
+
+```bash
+sudo pmset -a sleep 0
+sudo pmset -a disksleep 0
+sudo pmset -a displaysleep 10
+```
+
+- `sleep 0`: disables system sleep
+- `disksleep 0`: disables disk sleep
+- `displaysleep 10`: allows only the display to sleep after 10 minutes
+
+This combination keeps the machine available while still reducing screen power usage.
+
+---
+
+## 3) OpenClaw health-check routine
+
+For daily verification, one command is enough:
+
+```bash
+openclaw gateway status
+```
+
+Healthy state indicators:
+
+- status is `running`
+- RPC probe is `ok`
+
+To diagnose config/runtime issues:
+
+```bash
+openclaw doctor
+```
+
+And apply auto-fixable issues:
+
+```bash
+openclaw doctor --fix
+```
+
+---
+
+## 4) Common risk: service path tied to nvm runtime
+
+Many local setups use Node via `nvm`. That's fine for development, but long-running services can break when their launch path points to a specific version-managed runtime.
+
+Typical break scenarios:
+
+- removing or rotating Node versions
+- changing shell initialization
+- updates that alter executable paths
+
+So even if it works today, startup failures can appear later.  
+For long-term stability, keep service runtime paths explicit and predictable.
+
+---
+
+## 5) 3-minute recovery runbook
+
+When the assistant becomes unresponsive, this sequence resolves most incidents quickly:
+
+1. Check `openclaw gateway status`
+2. If unhealthy, run `openclaw gateway restart`
+3. If still failing, diagnose with `openclaw doctor`
+4. If required, reinstall service with `openclaw gateway install`
+
+Reliability comes from a repeatable runbook, not from ad-hoc debugging each time.
+
+---
+
+## 6) What "24/7 ready" actually means
+
+Saying "24/7 capable" is accurate, but these conditions still matter:
+
+- stable power (no outage)
+- stable internet
+- post-update reboot checks
+- periodic status checks (`gateway status`)
+
+Local hosting gives flexibility and lower cost, but you own the operational responsibility.
+
+---
+
+## Conclusion
+
+OpenClaw on a Mac mini is high-leverage and practical for personal operations.  
+In practice, reliability comes down to three habits:
+
+1. disable system sleep
+2. monitor gateway health regularly
+3. keep a simple documented recovery routine
+
+Do this consistently, and your setup behaves less like an experiment and more like a dependable personal operator.
