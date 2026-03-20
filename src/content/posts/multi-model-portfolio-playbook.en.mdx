@@ -1,0 +1,159 @@
+export const metadata = {
+  title: "Task-Based Multi-Model Portfolio: Operating for Quality, Latency, and Cost",
+  excerpt:
+    "A single model strategy breaks at scale. This practical guide explains how to design a task-based multi-model portfolio with routing, fallback, and evaluation loops.",
+  category: "Engineering",
+  date: "2026-03-20",
+  readTime: "10 min",
+  lang: "en",
+  keywords: [
+    "Multi-model",
+    "LLM routing",
+    "AI operations",
+    "Portfolio strategy",
+    "Cost optimization",
+    "Latency optimization"
+  ],
+  hidden: false,
+};
+
+# Task-Based Multi-Model Portfolio: Operating for Quality, Latency, and Cost
+
+One question comes up in almost every AI system discussion:
+
+> "Can't we just use one great model for everything?"
+
+Short answer: **it can work early, but usually fails at scale**.  
+As traffic and workload diversity grow, single-model operations quickly hit cost and latency limits.
+
+This is why many teams are moving to a **task-based multi-model portfolio**.
+
+---
+
+## 1) What a multi-model portfolio actually means
+
+It means you do not send every request to the same model.  
+You route each request to the best model tier for that task.
+
+- lightweight classification/summarization: fast, low-cost models
+- general writing/dev assistance: balanced models
+- complex reasoning/high-risk tasks: high-capability models
+
+The goal is not "more models."  
+The goal is **policy-driven model allocation**.
+
+---
+
+## 2) Why single-model strategies break
+
+A single model feels simple at first. In production, recurring issues appear:
+
+- expensive models handle trivial requests
+- latency spikes during peak traffic
+- no meaningful failover path during provider incidents
+- one global policy cannot satisfy all team priorities
+
+In practice, model selection is not a one-time pick.  
+It is a **workload segmentation problem**.
+
+---
+
+## 3) Practical design framework
+
+### A. Classify tasks before selecting models
+
+Start by classifying workloads:
+
+- `G0` rule-based: no LLM needed
+- `G1` lightweight: short summaries, classification, simple Q&A
+- `G2` general: writing, coding assistance, standard agent tasks
+- `G3` advanced: complex reasoning, high-stakes assistance
+
+Without this layer, routing becomes guesswork.
+
+### B. Define three model tiers
+
+- `Tier S`: low-cost, low-latency
+- `Tier M`: balanced quality/cost
+- `Tier L`: top capability, high-cost tolerance
+
+A solid baseline mapping is `G1 -> S`, `G2 -> M`, `G3 -> L`.
+
+### C. Fix routing order
+
+1. hard constraints (security, data locality, context limits)
+2. workload classification (G1/G2/G3)
+3. default tier selection (S/M/L)
+4. fallback chain on failure
+5. budget guardrails and downgrade policy
+
+Fixed order improves consistency and incident response speed.
+
+---
+
+## 4) Fallback is the real reliability layer
+
+Many teams design routing but under-design fallback.  
+That is where major outages hurt the most.
+
+Recommended pattern:
+
+- primary fallback: different provider in same tier
+- secondary fallback: one tier down for response continuity
+- final fallback: safe rule-based response or retry guidance
+
+Fallback is not just error handling.  
+It is your continuity policy.
+
+---
+
+## 5) No evaluation loop, no sustainable operation
+
+Multi-model operations need a minimal evaluation system:
+
+- offline benchmark set with real tasks and edge cases
+- shadow testing for side-by-side comparison
+- canary rollout with partial traffic
+- online monitoring for quality/cost/latency/errors
+
+Core metrics:
+
+- quality: task success, factuality, instruction adherence
+- cost: cost per request, monthly cost per workload group
+- speed: p50/p95 latency, timeout rate
+- reliability: provider error rate, fallback rate
+
+---
+
+## 6) A practical two-week rollout plan
+
+### Week 1
+
+- label ~30 recent requests by G1/G2/G3
+- establish baseline quality/cost/latency
+- shortlist 2-3 candidate models
+
+### Week 2
+
+- ship routing v1 (static rules + simple classifier)
+- implement two-stage fallback
+- run canary at 10%
+- compare metrics, then expand gradually
+
+The key is not perfect architecture.  
+The key is a measurable operational loop.
+
+---
+
+## Conclusion
+
+A task-based multi-model portfolio is not a trend tactic.  
+It is an operating system for balancing quality, latency, and cost.
+
+Start with three moves:
+
+1. classify tasks (G1/G2/G3)
+2. route by model tiers (S/M/L)
+3. build fallback and evaluation from day one
+
+With this setup, your team stops chasing model hype and starts running AI like an engineered system.
