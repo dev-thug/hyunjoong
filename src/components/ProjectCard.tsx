@@ -35,15 +35,10 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
             </div>
 
             {/* 타이틀 */}
-            <h3 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-thin font-montserrat text-white mb-4 md:mb-8 leading-[0.9] md:leading-[0.85] tracking-tighter mix-blend-screen group-hover:mix-blend-normal transition-all duration-500">
-              {project.title.split(" ").map((word, i) => (
-                <span
-                  key={i}
-                  className="block group-hover:translate-x-1 md:group-hover:translate-x-2 transition-transform duration-700"
-                >
-                  {word}
-                </span>
-              ))}
+            <h3 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-thin font-montserrat text-white mb-4 md:mb-8 leading-[1.08] md:leading-[1] tracking-tight break-keep mix-blend-screen group-hover:mix-blend-normal transition-all duration-500">
+              <span className="inline-block group-hover:translate-x-1 md:group-hover:translate-x-2 transition-transform duration-700">
+                {project.title}
+              </span>
             </h3>
 
             {/* 설명 */}
