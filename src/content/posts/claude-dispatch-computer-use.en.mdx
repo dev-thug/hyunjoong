@@ -1,0 +1,147 @@
+export const metadata = {
+  title:
+    "Claude Takes the Wheel on Your Mac: How Dispatch and Computer Use Redraw Agent Boundaries",
+  excerpt:
+    "In March 2026 Anthropic shipped Computer Use in Claude Cowork and Claude Code alongside Dispatch. This post ties official docs, press, and hands-on reviews into how it works, what it requires, and where the risks sit.",
+  category: "Insight",
+  date: "2026-03-26",
+  readTime: "14 min",
+  lang: "en",
+  keywords: [
+    "Anthropic",
+    "Claude",
+    "Claude Cowork",
+    "Claude Code",
+    "Dispatch",
+    "Computer Use",
+    "AI Agent",
+    "macOS",
+    "Prompt Injection",
+  ],
+  hidden: false,
+};
+
+# Claude Takes the Wheel on Your Mac: How Dispatch and Computer Use Redraw Agent Boundaries
+
+The next frontier for agentic AI is not **talking** but **acting on your tools**. In March 2026 Anthropic added **Computer Use** to Claude Cowork and Claude Code as a research preview, and paired it with **Dispatch** so you can **give instructions from your phone and see the finished work on your Mac**.
+
+This article draws on the [Anthropic blog](https://claude.com/blog/dispatch-and-computer-use), Help Center, [MacRumors](https://www.macrumors.com/2026/03/24/claude-use-mac-remotely-iphone/), [VentureBeat](https://venturebeat.com/technology/anthropics-claude-can-now-control-your-mac-escalating-the-fight-to-build-ai), and [MacStories’ Dispatch hands-on](https://www.macstories.net/stories/hands-on-with-claude-dispatch-for-cowork/) to explain **what changed**, **how tool selection is ordered**, and **what to assume on safety and governance**.
+
+---
+
+## In one sentence
+
+- **Computer Use**: Inside Cowork and Code, Claude can finish tasks by driving **mouse, keyboard, and screen** across apps and browsers—not a separate API surface, and framed as low-setup.
+- **Dispatch**: A **continuous conversation** pipeline where you assign work from **mobile (e.g. iPhone)** and execution completes on **Mac**, with the **desktop app awake**.
+- **Current limits**: **macOS only**, **Claude Pro / Max**, **research preview**—for complex multi-app jobs, keep expectations modest on **reliability and speed**.
+
+---
+
+## Why “screen control” now
+
+Beyond summarizing documents, people and teams want **unbroken workflows** across **Slack, calendar, browser, IDE**. Anthropic’s post says that when **connectors** (Slack, Google Calendar, etc.) are missing, Claude can **explore the screen directly**. The hierarchy is explicit: **best connector → browser → GUI as last resort**.
+
+Press such as VentureBeat frames this as competition to build **agents that actually work**, alongside tension with **open-source computer-automation stacks**. (This blog covers OSS tools too; here the focus is **design trade-offs in a commercial product**.)
+
+---
+
+## What Computer Use does (official framing)
+
+Per the [official post (2026-03-23)](https://claude.com/blog/dispatch-and-computer-use):
+
+- When the right tool is not wired in, Claude can **navigate with pointer, clicks, and scroll** to complete the task.
+- It can try **opening files**, **using the browser**, and **running dev tools** with **minimal extra setup**, per Anthropic.
+- **Explicit user approval** is required **before accessing a new app**.
+- To mitigate **prompt injection**, model activation during computer use is **automatically scanned**, they say.
+- They also state plainly that **computer use is still early**, **mistakes happen**, and **threats evolve**. They recommend **trusted apps first** and **avoiding sensitive data**.
+
+That mix is both marketing and safety copy; as a user, it helps to separate **convenience** from **who bears responsibility when something goes wrong**.
+
+---
+
+## Tool order: why the screen comes last
+
+Combining VentureBeat and Help Center material, the rough order is:
+
+1. **First-party connectors** (Gmail, Slack, Google Calendar, Drive, etc.)—fast and stable.
+2. **Browser paths** such as **Claude for Chrome**—the middle layer when no connector exists.
+3. **Screenshot-driven GUI control**—maximum generality, but **slower and more failure-prone**.
+
+Help Center copy compares fetching Slack via connector (seconds) with driving Slack through the UI (much slower, higher error rate). That is **product philosophy** and **engineering reality**. Screen control is not a **master key**; it is a **detour**.
+
+---
+
+## Dispatch: your phone as a remote
+
+Dispatch landed in Cowork first; coverage describes **extension to Claude Code** in the same wave. After pairing mobile and Mac (e.g. via QR), you **assign work in natural language from the phone** and Claude runs on the Mac.
+
+Official examples are intuitive:
+
+- A **morning briefing** while commuting
+- **Edit, test, and open a PR** from the IDE
+- Keep a long-running task like **3D printing** aligned with an initial plan mid-stream
+
+The prerequisites are clear: the **desktop app must be awake and running**, and only **macOS** is supported. Marketing often says “your Mac works while you’re away,” but in practice **your Mac is always the session host**.
+
+---
+
+## Pricing, platform, release status
+
+- **Claude Pro / Max** subscribers (pricing varies by region and tier; press often cites Pro around **$17/month** and higher Max tiers).
+- **macOS-only** research preview; Windows users are out of scope for now.
+- Anthropic states results **may not be perfect** and complex jobs may need a **second attempt**.
+
+---
+
+## Security and compliance: read the footnotes with the hype
+
+### 1) What’s on screen is what the model can “see”
+
+GUI automation relies on screenshots and UI interpretation. VentureBeat notes **sensitive on-screen data** can be exposed, and that even when Anthropic steers away from certain actions (e.g. trading, sensitive inputs, facial imagery), **guardrails are not absolute**.
+
+### 2) Permissions, block lists, injection scanning
+
+Layers include **per-app allowlists**, **default blocks** for some sensitive categories (investing, crypto, etc., per reporting), **user blocklists**, and **stop controls**.
+
+Still, **mistakes, malicious pages, and malicious instructions** remain plausible. Because the agent path is close to **keyboard and mouse as the user**, **audit and forensics** questions follow quickly. VentureBeat highlights a gap between enterprise features and **centralized audit of Cowork activity**.
+
+### 3) Real-world difficulty
+
+MacStories’ John Voorhees reports that for Dispatch-related flows, **research and summaries work**, but across attempts **success and failure were closer to fifty-fifty**—aligned with the “research preview” label. Plan for **demo vs. production** gap.
+
+---
+
+## Takeaways for developers and architects
+
+1. **Integration priority**: When designing automation, **APIs, events, and official connectors** still win. Screen control is a **bridge** for **legacy or closed UIs**.
+2. **Observability**: For team use, do not rely only on product defaults for **who touched which app, when**—define **policy and logging** explicitly.
+3. **Prompt-injection surface**: Browser, document, and chat content become **agent input**. Refresh threat models assuming classic web risks can **spill into desktop actions**.
+4. **Cost and quotas**: Agentic runs burn **tokens and plan limits** quickly via sub-agents and tool calls (per user reports and press). For internal PoCs, design **budget caps** up front.
+
+---
+
+## Closing
+
+**Computer Use + Dispatch** pushes the vision of Claude as an **operator on your Mac**, not just a chat window. Anthropic also draws a line: **accuracy, speed, and security are still early**.
+
+If you evaluate adoption, three practices help:
+
+- **Scope to trusted apps and data**.
+- **Prefer connectors and APIs** wherever they exist.
+- Read “research preview” as **no SLA**.
+
+---
+
+## References
+
+- [Put Claude to work on your computer — Anthropic (Claude blog)](https://claude.com/blog/dispatch-and-computer-use)
+- [Assign tasks to Claude from anywhere (Dispatch) — Support](https://support.claude.com/en/articles/13947068-assign-tasks-to-claude-from-anywhere-in-cowork)
+- [Let Claude use your computer in Cowork — Support](https://support.claude.com/en/articles/14128542-let-claude-use-your-computer-in-cowork)
+- [Anthropic’s Claude can now control your Mac — VentureBeat](https://venturebeat.com/technology/anthropics-claude-can-now-control-your-mac-escalating-the-fight-to-build-ai)
+- [Claude AI Can Now Use Your Mac While You're Away — MacRumors](https://www.macrumors.com/2026/03/24/claude-use-mac-remotely-iphone/)
+- [Hands-on with Claude Dispatch for Cowork — MacStories](https://www.macstories.net/stories/hands-on-with-claude-dispatch-for-cowork/)
+- [Computer use tool — Claude API docs](https://docs.anthropic.com/en/docs/agents-and-tools/computer-use) (API vs. app behavior may differ; useful for concepts)
+
+---
+
+*Written from public reporting, documentation, and reviews. Pricing and feature availability can change; confirm the latest announcements and your account settings before relying on them in production.*
