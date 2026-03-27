@@ -1,0 +1,176 @@
+export const metadata = {
+  title:
+    "Post-RAG Architecture: Practical Design for GraphRAG, Hybrid Retrieval, and Evaluation",
+  excerpt:
+    "Why vector-only RAG breaks in production, when GraphRAG is worth the complexity, and how to run a reliable evaluation loop across retrieval, generation, latency, and cost.",
+  category: "Engineering",
+  date: "2026-03-27",
+  readTime: "12 min",
+  lang: "en",
+  keywords: [
+    "RAG",
+    "GraphRAG",
+    "Hybrid Search",
+    "BM25",
+    "RRF",
+    "Reranking",
+    "RAG Evaluation",
+    "LLM Ops",
+  ],
+  hidden: false,
+};
+
+# Post-RAG Architecture: Practical Design for GraphRAG, Hybrid Retrieval, and Evaluation
+
+RAG is now table stakes. The harder part starts after launch.  
+In production, most failures come from **retrieval strategy and evaluation design**, not from model size.
+
+This post uses Microsoft Research, Azure AI Search, and Haystack docs to answer three questions:
+
+- What kinds of questions does GraphRAG actually win on?
+- Why has hybrid retrieval become the default in practice?
+- Why does a single "answer accuracy" metric fail in real operations?
+
+---
+
+## One-line takeaway
+
+- **Vector-only RAG** is strong on local queries, weak on global corpus-level questions.
+- **Hybrid retrieval (dense + sparse + rerank)** is usually the most robust baseline.
+- **Evaluation must be split** across retrieval quality, grounded generation quality, and runtime cost/latency.
+
+---
+
+## 1) Why conventional RAG becomes unstable
+
+Vector retrieval is great at finding semantically similar chunks.  
+But production queries are rarely that simple.
+
+- Exact-match heavy requests (codes, identifiers, proper nouns)
+- Global questions ("What are the main themes across this corpus?")
+- Relationship-heavy questions requiring multiple entities and links
+
+This matches Microsoft Research's GraphRAG framing: conventional RAG struggles on global sensemaking queries.
+
+---
+
+## 2) When GraphRAG is a good fit
+
+GraphRAG treats your corpus as an **entity-relation-community structure**, not just independent chunks.
+
+At a high level:
+
+1. Build an entity/relationship graph from source text.
+2. Prepare community-level summaries.
+3. Generate partial answers and synthesize them into a final answer.
+
+### Best-fit scenarios
+
+- Research/strategy workloads that require **corpus-wide understanding**
+- Frequent **relationship discovery** questions
+- Use cases where **comprehensiveness and diversity** matter
+
+### Trade-offs
+
+- Heavier indexing and operational complexity
+- Potentially high maintenance cost with fast-changing data
+- Overkill for straightforward FAQ-style systems
+
+Recent LazyGraphRAG and BenchmarkQED work pushes this frontier further by improving cost-quality trade-offs and benchmarking rigor.
+
+---
+
+## 3) Why hybrid retrieval is now the default
+
+Azure AI Search documents this architecture clearly:
+
+- Run full-text (BM25) and vector retrieval **in parallel**
+- Fuse rankings via **RRF (Reciprocal Rank Fusion)**
+- Optionally apply semantic reranking after fusion
+
+The practical value is simple: do not rely on one retrieval signal.
+
+- Dense retrieval captures semantics
+- Sparse/BM25 captures exact tokens and lexical constraints
+- RRF stabilizes final ranking by rewarding items ranked high across methods
+
+In production, teams often add a cross-encoder reranker to sharpen top-k evidence before generation.
+
+---
+
+## 4) Evaluation design: one metric is not enough
+
+Haystack docs make the separation explicit:
+
+1. **Retriever evaluation**: Did we fetch the right evidence?
+2. **Generator evaluation**: Did we answer faithfully from that evidence?
+
+### Recommended metric set
+
+- Retrieval: Recall@k, MRR/MAP (label-based), context relevance
+- Generation: faithfulness, answer relevance, hallucination rate
+- Operations: p95 latency, cost per query, retry rate, escalation rate
+
+BenchmarkQED is valuable because it separates query synthesis (AutoQ), evaluation (AutoE), and dataset prep (AutoD), enabling more reproducible RAG comparisons.
+
+---
+
+## 5) A practical three-stage roadmap
+
+### Stage 1: Fast wins
+
+- Deploy hybrid retrieval (BM25 + vector)
+- Add RRF and reranking
+- Ship a minimum dashboard (recall/faithfulness/latency/cost)
+
+### Stage 2: Quality hardening
+
+- Introduce query routing (exact-match, semantic, global)
+- Enforce evidence citation and context compression
+- Run offline regression sets plus online sample review
+
+### Stage 3: Advanced expansion
+
+- Add GraphRAG family methods when global/relational queries become frequent
+- Maintain domain-specific eval sets and budget guardrails
+
+---
+
+## 6) Architecture checklist for teams
+
+- Are most user queries local or global?
+- Are exact-token failures frequent?
+- Do we evaluate retriever and generator separately?
+- Are we swapping models repeatedly before fixing retrieval?
+
+Answering these four questions usually unlocks quality improvements faster than another model migration.
+
+---
+
+## Closing
+
+In the Post-RAG phase, advantage comes less from "bigger models" and more from **better retrieval strategy + tighter evaluation loops**.
+
+A practical order of operations:
+
+1. Make hybrid retrieval your baseline.
+2. Split evaluation across retrieval, generation, and operations.
+3. Add GraphRAG where global and relational reasoning truly dominates.
+
+That is how teams move from demo-grade RAG to production-grade RAG.
+
+---
+
+## References
+
+- [From Local to Global: A Graph RAG Approach to Query-Focused Summarization (Microsoft Research)](https://www.microsoft.com/en-us/research/publication/from-local-to-global-a-graph-rag-approach-to-query-focused-summarization/)
+- [Project GraphRAG (Microsoft Research)](https://www.microsoft.com/en-us/research/project/graphrag/)
+- [LazyGraphRAG: Setting a new standard for quality and cost (Microsoft Research Blog)](https://www.microsoft.com/en-us/research/blog/lazygraphrag-setting-a-new-standard-for-quality-and-cost/)
+- [BenchmarkQED: Automated benchmarking of RAG systems (Microsoft Research Blog)](https://www.microsoft.com/en-us/research/blog/benchmarkqed-automated-benchmarking-of-rag-systems/)
+- [Hybrid search overview (Azure AI Search)](https://learn.microsoft.com/en-us/azure/search/hybrid-search-overview)
+- [Hybrid search scoring with RRF (Azure AI Search)](https://learn.microsoft.com/en-us/azure/search/hybrid-search-ranking)
+- [Evaluation (Haystack docs)](https://docs.haystack.deepset.ai/docs/evaluation)
+
+---
+
+*This article is based on public documentation and research/engineering posts. Features, metrics, and API behavior can change across versions, so validate against the latest docs before production rollout.*
