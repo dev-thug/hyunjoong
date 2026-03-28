@@ -1,125 +1,106 @@
 ---
-name: vercel-react-best-practices
-description: React and Next.js performance optimization guidelines from Vercel Engineering. This skill should be used when writing, reviewing, or refactoring React/Next.js code to ensure optimal performance patterns. Triggers on tasks involving React components, Next.js pages, data fetching, bundle optimization, or performance improvements.
-license: MIT
-metadata:
-  author: vercel
-  version: "1.0.0"
+name: blog-autopublisher
+description: OpenClaw skill for the Hyunjoong blog that automatically scouts AI topics, chooses a post aligned with the site's architecture-first tone, drafts bilingual MDX, validates it, and commits/pushes to the blog repo on the `develop` branch when publishing is requested or scheduled.
 ---
 
-# Vercel React Best Practices
+# Blog Autopublisher
 
-Comprehensive performance optimization guide for React and Next.js applications, maintained by Vercel. Contains 45 rules across 8 categories, prioritized by impact to guide automated refactoring and code generation.
+## Goal
 
-## When to Apply
+Turn daily AI-topic scouting into publish-ready blog posts for `hyunjoong.kim`.
 
-Reference these guidelines when:
-- Writing new React components or Next.js pages
-- Implementing data fetching (client or server-side)
-- Reviewing code for performance issues
-- Refactoring existing React/Next.js code
-- Optimizing bundle size or load times
+## Working mode
 
-## Rule Categories by Priority
+Use this skill when the user wants the blog to run as an automated publishing pipeline:
 
-| Priority | Category | Impact | Prefix |
-|----------|----------|--------|--------|
-| 1 | Eliminating Waterfalls | CRITICAL | `async-` |
-| 2 | Bundle Size Optimization | CRITICAL | `bundle-` |
-| 3 | Server-Side Performance | HIGH | `server-` |
-| 4 | Client-Side Data Fetching | MEDIUM-HIGH | `client-` |
-| 5 | Re-render Optimization | MEDIUM | `rerender-` |
-| 6 | Rendering Performance | MEDIUM | `rendering-` |
-| 7 | JavaScript Performance | LOW-MEDIUM | `js-` |
-| 8 | Advanced Patterns | LOW | `advanced-` |
+- scout AI-related topics daily
+- select a topic that fits the site's tone
+- draft Korean and English posts
+- validate the post against repo conventions
+- commit and push to `develop`
 
-## Quick Reference
+## Required context
 
-### 1. Eliminating Waterfalls (CRITICAL)
+- Work in `/Users/mini/.openclaw/workspace/blog`
+- Use the existing `CLAUDE.md` conventions as the source of truth for content structure
+- Preserve the repo's MDX metadata format: `export const metadata = { ... }`
+- Keep Korean and English versions aligned in meaning and section order
 
-- `async-defer-await` - Move await into branches where actually used
-- `async-parallel` - Use Promise.all() for independent operations
-- `async-dependencies` - Use better-all for partial dependencies
-- `async-api-routes` - Start promises early, await late in API routes
-- `async-suspense-boundaries` - Use Suspense to stream content
+## Daily autopublish flow
 
-### 2. Bundle Size Optimization (CRITICAL)
+1. Gather recent AI topics worth writing about.
+2. Filter for topics that are:
+   - relevant to developer productivity, architecture, tooling, infra, or agent workflows
+   - actionable or opinionated rather than news-only
+   - a fit for the site's direct, engineering-minded tone
+3. Choose one topic with the strongest fit.
+4. Draft the post in Korean first, then draft the English version.
+5. Keep claims grounded in sources or clearly label opinion.
+6. Validate the files.
+7. If publish mode is enabled, commit on `develop` and push.
 
-- `bundle-barrel-imports` - Import directly, avoid barrel files
-- `bundle-dynamic-imports` - Use next/dynamic for heavy components
-- `bundle-defer-third-party` - Load analytics/logging after hydration
-- `bundle-conditional` - Load modules only when feature is activated
-- `bundle-preload` - Preload on hover/focus for perceived speed
+## Topic selection rules
 
-### 3. Server-Side Performance (HIGH)
+Prefer topics that:
 
-- `server-cache-react` - Use React.cache() for per-request deduplication
-- `server-cache-lru` - Use LRU cache for cross-request caching
-- `server-serialization` - Minimize data passed to client components
-- `server-parallel-fetching` - Restructure components to parallelize fetches
-- `server-after-nonblocking` - Use after() for non-blocking operations
+- explain a system, workflow, or tradeoff
+- help developers make decisions
+- connect AI to architecture, automation, or leverage
+- can be supported with official docs or stable references
 
-### 4. Client-Side Data Fetching (MEDIUM-HIGH)
+Avoid topics that are:
 
-- `client-swr-dedup` - Use SWR for automatic request deduplication
-- `client-event-listeners` - Deduplicate global event listeners
+- pure product hype
+- shallow announcement summaries
+- overly speculative without operational value
+- unrelated to the blog's existing focus
 
-### 5. Re-render Optimization (MEDIUM)
+## Writing rules
 
-- `rerender-defer-reads` - Don't subscribe to state only used in callbacks
-- `rerender-memo` - Extract expensive work into memoized components
-- `rerender-dependencies` - Use primitive dependencies in effects
-- `rerender-derived-state` - Subscribe to derived booleans, not raw values
-- `rerender-functional-setstate` - Use functional setState for stable callbacks
-- `rerender-lazy-state-init` - Pass function to useState for expensive values
-- `rerender-transitions` - Use startTransition for non-urgent updates
+- Lead with the bottom line.
+- Use concise sections and concrete examples.
+- Keep the tone sharp, practical, and calm.
+- Do not pad with generic intros.
+- Do not fabricate facts, metrics, or product behavior.
+- Prefer architecture, operations, and decision-making over raw feature recaps.
 
-### 6. Rendering Performance (MEDIUM)
+## Draft structure
 
-- `rendering-animate-svg-wrapper` - Animate div wrapper, not SVG element
-- `rendering-content-visibility` - Use content-visibility for long lists
-- `rendering-hoist-jsx` - Extract static JSX outside components
-- `rendering-svg-precision` - Reduce SVG coordinate precision
-- `rendering-hydration-no-flicker` - Use inline script for client-only data
-- `rendering-activity` - Use Activity component for show/hide
-- `rendering-conditional-render` - Use ternary, not && for conditionals
+For each post, aim for:
 
-### 7. JavaScript Performance (LOW-MEDIUM)
+- title
+- excerpt
+- clear category
+- publish date
+- read time estimate
+- keywords
+- short intro
+- body sections with practical takeaways
+- conclusion with an opinionated recommendation
 
-- `js-batch-dom-css` - Group CSS changes via classes or cssText
-- `js-index-maps` - Build Map for repeated lookups
-- `js-cache-property-access` - Cache object properties in loops
-- `js-cache-function-results` - Cache function results in module-level Map
-- `js-cache-storage` - Cache localStorage/sessionStorage reads
-- `js-combine-iterations` - Combine multiple filter/map into one loop
-- `js-length-check-first` - Check array length before expensive comparison
-- `js-early-exit` - Return early from functions
-- `js-hoist-regexp` - Hoist RegExp creation outside loops
-- `js-min-max-loop` - Use loop for min/max instead of sort
-- `js-set-map-lookups` - Use Set/Map for O(1) lookups
-- `js-tosorted-immutable` - Use toSorted() for immutability
+## Validation checklist
 
-### 8. Advanced Patterns (LOW)
+Before publishing:
 
-- `advanced-event-handler-refs` - Store event handlers in refs
-- `advanced-use-latest` - useLatest for stable callback refs
+- confirm both `.ko.mdx` and `.en.mdx` exist when bilingual output is intended
+- verify metadata fields are valid and consistent
+- ensure the slug matches file names
+- check formatting and internal links
+- run repo checks if needed (`npm run lint`, `npm run build` when appropriate)
 
-## How to Use
+## Git workflow
 
-Read individual rule files for detailed explanations and code examples:
+- Use `develop` as the publish branch.
+- Keep commits focused.
+- Push only when the user explicitly asked for autopublish or scheduling.
+- If the repo is dirty with unrelated changes, stop and report it.
 
-```
-rules/async-parallel.md
-rules/bundle-barrel-imports.md
-rules/_sections.md
-```
+## When to use references
 
-Each rule file contains:
-- Brief explanation of why it matters
-- Incorrect code example with explanation
-- Correct code example with explanation
-- Additional context and references
+Add `references/` files for reusable guidance such as:
 
-## Full Compiled Document
+- topic scoring rubric
+- bilingual post template
+- sources policy
+- validation and publish checklist
 
-For the complete guide with all rules expanded: `AGENTS.md`
