@@ -1,0 +1,148 @@
+export const metadata = {
+  title: "AI Agent Orchestration Is the Real Bottleneck: Design These Layers First",
+  excerpt:
+    "Agent systems usually fail in orchestration before they fail in model quality. This post breaks down workflow design, tool permissions, fallback, and evaluation as architecture problems.",
+  category: "Engineering",
+  date: "2026-03-29",
+  readTime: "9 min",
+  lang: "en",
+  keywords: [
+    "AI agents",
+    "orchestration",
+    "MCP",
+    "workflow architecture",
+    "tool permissions",
+    "fallback"
+  ],
+  hidden: false,
+};
+
+# AI Agent Orchestration Is the Real Bottleneck: Design These Layers First
+
+Most AI conversations still start with the model.
+In practice, the first thing that breaks is usually **orchestration**.
+
+If an agent setup feels unstable, the problem is rarely raw model intelligence. It is usually one of these four layers:
+
+- what work gets delegated to agents
+- which tools get which permissions
+- how failures roll back or degrade
+- how success is measured
+
+In other words, agent systems are not just a model competition. They are an **operational design problem**.
+
+---
+
+## 1) As agents grow, flow matters more than model quality
+
+A single chatbot mostly cares about input and output.  
+Agents introduce a much longer path:
+
+- planning
+- tool calls
+- external state lookups
+- result validation
+- retry or branching logic
+
+If that path is loose, quality becomes inconsistent.  
+A better model does not fix a bad flow.
+
+That is why agent design should be framed through orchestration patterns from day one: **sequential, parallel, handoff, and approval-based** flows.
+
+---
+
+## 2) Why MCP helps, and what it does not solve
+
+Model Context Protocol (MCP) is useful because it standardizes tool connectivity.  
+Standardized connectivity makes it easier for agents to work across multiple tools consistently.
+
+But one common mistake shows up immediately:
+
+> "We added MCP, so the architecture problem is solved."
+
+It is not.
+
+MCP standardizes the **connection layer**, but these questions still remain:
+
+- which servers are trusted
+- which tools can be opened in which context
+- where authentication and approval boundaries live
+- how logs and audit trails are preserved
+
+So MCP is part of the infrastructure, not the operating policy itself.
+
+---
+
+## 3) Tool permissions are policy, not just capability
+
+The more capable agents become, the more sensitive tool permissions get.  
+Treating read-only tools and write-capable tools as the same layer causes problems.
+
+A sane baseline looks like this:
+
+- read tools: allowed by default
+- risky write tools: require explicit approval
+- external system changes: require audit logging
+- sensitive data access: least privilege and scope limits
+
+The key point is simple: tool permissions are not a feature list.  
+They are a **system policy**.
+
+---
+
+## 4) An agent without fallback is a demo
+
+Fallback is the part teams most often underdesign.
+
+Failures are not exceptions. They are normal.  
+So the system should already know how to degrade:
+
+- retry the same task through a smaller model or simpler route
+- return from cache or prior state when tools fail
+- switch high-risk actions to human approval
+- stop safely with a static response when nothing else works
+
+Fallback does not make the system perfect.  
+It makes the system survivable.
+
+---
+
+## 5) Without evaluation, more agents usually means worse operations
+
+Agents are hard to test. That is exactly why an evaluation loop has to come first.
+
+At minimum, track:
+
+- task-focused test cases
+- tool call success and failure logs
+- completion rate
+- retry rate
+- human intervention rate
+- cost and latency
+
+"It worked once" is not a meaningful signal.  
+Agents need repeatability to count as a system.
+
+---
+
+## 6) What to decide before shipping agents
+
+The right order usually looks like this:
+
+1. decide what problem to automate
+2. split it into human-approved and fully automated paths
+3. classify tools into read, write, and risky actions
+4. define fallback paths for failures
+5. define the evaluation metrics
+
+If you do this in reverse, you usually end up with a demo.
+
+---
+
+## Conclusion
+
+The agent era is not mainly about finding a smarter model.  
+It is about designing **orchestration, permissions, fallback, and evaluation** first.
+
+MCP and similar tool frameworks are only the start.  
+The real difference comes from the operating rules you put on top.
