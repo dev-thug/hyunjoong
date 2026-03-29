@@ -1,0 +1,184 @@
+export const metadata = {
+  title: "The Real Bottleneck in Agentic AI: The Control Plane, Not the Model",
+  excerpt:
+    "In 2026, the center of gravity in AI is shifting from better models to the control plane that keeps agents safe, observable, and repeatable. This post breaks down orchestration, permissions, verification, and fallback from an architecture-first angle.",
+  category: "Engineering",
+  date: "2026-03-30",
+  readTime: "9 min",
+  lang: "en",
+  keywords: [
+    "agentic AI",
+    "control plane",
+    "orchestration",
+    "tool permissions",
+    "verification loop",
+    "fallback",
+  ],
+  hidden: false,
+};
+
+# The Real Bottleneck in Agentic AI: The Control Plane, Not the Model
+
+AI headlines in 2026 still sound like model competition.
+But in real systems, the bigger difference comes from how agents are grouped, constrained, and verified.
+
+Put simply: **the model is the engine**, and **the control plane is the operating system around it**.
+A powerful engine does not help much if there is no steering, braking, or instrumentation.
+
+What teams need now is not a flashier demo.
+They need an architecture that lets agents complete real work safely.
+
+---
+
+## 1) Why the control plane matters now
+
+The center of AI products has shifted toward:
+
+- single-turn answers
+- repetitive task automation
+- tool calls and external state
+- multi-agent collaboration
+- long-running tasks that can be resumed
+
+At this stage, model quality alone is not enough.
+The same model can produce very different outcomes depending on the system around it.
+
+- some tasks should run automatically
+- some should wait for approval
+- some should stay read-only
+- some should end with a human check
+
+So the real competitive edge moves from model capability to **workflow design**.
+
+---
+
+## 2) Think of agent systems as four layers
+
+Agentic systems are easier to reason about when you split them into four layers.
+
+### 1. Reasoning layer
+
+This decides what to do and in what order.
+The important property here is not “smartness” but predictability.
+
+### 2. Tool layer
+
+This includes search, code edits, deployments, database reads, and browser actions.
+The more tools you expose, the faster risk grows alongside convenience.
+
+### 3. Policy layer
+
+This defines who can do what, when approval is required, and what gets logged.
+Without this layer, an agent is not a disciplined automation system. It is just a loose bundle of permissions.
+
+### 4. Verification layer
+
+This checks whether the outcome is actually correct.
+Tests, schema validation, link checks, diff review, and runtime checks all belong here.
+
+When these layers are separated cleanly, the system can grow without collapsing under its own complexity.
+
+---
+
+## 3) What to solve before going multi-agent
+
+Multi-agent systems look impressive, but without the basics they usually just add more complexity.
+
+Before adding more agents, answer these questions:
+
+- Which tasks should be delegated to software at all?
+- Which tasks must always require approval?
+- What is the rollback path if something fails?
+- How do you keep an audit trail?
+- Can you reproduce the same execution path from the same input?
+
+If these five things are unclear, more agents will not help.
+They will just increase operational load.
+
+---
+
+## 4) The real value of MCP and tool standardization
+
+Protocols like Model Context Protocol (MCP) matter for a simple reason: they make tool integration more consistent.
+When the wiring is consistent, agents can interact with tools more predictably.
+
+But standardization alone is not enough.
+
+Standardization solves **connection mechanics**.
+Architecture still has to solve **operating policy**.
+
+For example:
+
+- which servers should be read-only
+- which tools require approval before invocation
+- which actions must be audited
+- how far sensitive data is allowed to flow
+
+MCP is the wiring.
+The control plane is the policy.
+They are not the same problem.
+
+---
+
+## 5) Good agents are designed for failure
+
+Agent systems become useful only when they treat failure as normal, not exceptional.
+
+That is why fallback matters.
+
+- return cached or prior state when a tool fails
+- store intermediate state for long-running tasks
+- keep high-risk changes behind approval
+- branch automatically into retry paths when verification fails
+
+With fallback, a system may be slower, but it is less likely to break suddenly.
+That difference matters a lot in production.
+
+---
+
+## 6) This month’s AI direction makes the pattern clearer
+
+Recent AI momentum points in the same direction:
+
+- longer context windows
+- stronger tool use
+- more automation
+- longer-running tasks
+- more complex collaboration patterns
+
+Whether you look at OpenAI’s Codex-related updates or Anthropic’s push on computer use and tool use, the theme is not just “bigger models.”
+It is “systems that can work longer and safer.”
+
+So the important question is not only:
+
+> Is the model smart?
+
+It is also:
+
+> Can this model move through our workflow safely, repeatably, and with verification?
+
+---
+
+## 7) A checklist for architecture-first teams
+
+If you are introducing agentic AI, these should be settled early:
+
+- Are read-only tools separated from write tools?
+- Are there explicit approval gates for risky paths?
+- Is outcome verification automated?
+- Is rollback state preserved?
+- Are logs and audit trails kept?
+- Is the execution path reproducible?
+- Does the system know when a human should step in?
+
+If you cannot answer those, you do not really have an agent system yet.
+You mostly have a demo.
+
+---
+
+## Closing
+
+The AI race in 2026 cannot be explained by model benchmarks alone.
+The real contest is about how tightly you can bind orchestration, policy, verification, and fallback into a reliable control plane.
+
+Instead of waiting for a better model, it is more practical to design the workflow so the model you already have can operate safely inside the organization’s real work.
