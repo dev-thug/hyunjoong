@@ -1,0 +1,196 @@
+export const metadata = {
+  title: "Agentic Workflow Architecture: How to Run AI Agents as a Product",
+  excerpt:
+    "Model quality matters, but execution structure matters more. This post lays out a practical framework for designing agentic workflows around decomposition, routing, state, and observability.",
+  category: "Engineering",
+  date: "2026-03-31",
+  readTime: "10 min",
+  lang: "en",
+  keywords: ["Agentic AI", "Workflow architecture", "LLM operations", "Orchestration", "Observability", "AI agents"],
+  hidden: false,
+};
+
+# Agentic Workflow Architecture: How to Run AI Agents as a Product
+
+AI conversations are shifting away from model quality alone and toward **how agents actually work**. Recent releases from OpenAI and Anthropic have put more emphasis on tool use, long-running tasks, and orchestration than on chat quality by itself.
+
+But once you put agents into production, they become messy fast.  
+This is no longer a single-prompt problem. State appears, tools get added, and failure recovery becomes mandatory.
+
+That is why agentic systems should be treated as an **architecture problem**, not a model contest.
+
+---
+
+## 1) A one-sentence definition of agentic AI
+
+An agentic workflow is a system that takes a goal, breaks it into steps, calls tools, validates results, and keeps going until the job is done.
+
+In other words, the core is not “smart answers.” It is a **repeatable execution loop**.
+
+- interpret the input
+- break it into sub-tasks
+- call the right tools
+- validate intermediate results
+- recover from failure or switch paths
+
+Without this structure, an agent is basically just a long prompt.
+
+---
+
+## 2) Good agents start with boundaries, not models
+
+A lot of teams pick a model first. That order is backwards.
+
+The first thing to define is:
+
+- which requests should be handled by rules
+- which requests can end with a single LLM call
+- which requests should go through a multi-step agent
+- which tasks need human-in-the-loop approval
+
+Without these boundaries, every request flows into the agent path, and the system quickly becomes expensive and slow.
+
+A practical split looks like this:
+
+- `G0`: rule-based handling
+- `G1`: single-model response
+- `G2`: workflow with tool use
+- `G3`: multi-step agent with validation, approval, and recovery
+
+An agent should be an **upgraded path**, not the default for everything.
+
+---
+
+## 3) The real core is the loop and the state
+
+Agentic systems usually run through the following loop:
+
+1. Plan
+2. Act
+3. Observe
+4. Adjust
+5. Stop
+
+The hard part is that the longer this loop runs, the harder state management becomes.
+
+### Why explicit state matters
+
+Agents tend to lose track of:
+
+- the current goal
+- completed steps
+- remaining steps
+- tool results
+- failure causes
+- retry status
+
+So state should live outside the prompt as a first-class structure.
+
+- task ID
+- step checkpoints
+- tool result logs
+- retry counters
+- approval pending state
+
+That makes debugging possible and future automation much easier.
+
+---
+
+## 4) Orchestration matters more than the prompt
+
+Agent quality is often determined by orchestration, not the model.
+
+Good orchestration gives you:
+
+- step-level timeouts
+- tool-call ordering
+- clear parallelizable branches
+- fallback paths on failure
+- audit logs
+
+For example, a document-processing agent is better designed as a pipeline:
+
+- draft generation
+- fact checking
+- link validation
+- tone review
+- final approval
+
+That is much more reliable than asking a single prompt to “do everything.”
+
+---
+
+## 5) Without observability, agents cannot be operated
+
+Agentic systems fail in many ways:
+
+- the wrong tool gets called
+- the right tool is called in the wrong order
+- intermediate state drifts
+- the workflow loops forever
+- the result looks fine but is wrong
+
+At minimum, you need visibility into:
+
+- the execution path for each request
+- tools used and their arguments
+- step-level latency
+- failure and retry rates
+- whether the final output passed validation
+
+That is what turns an agent from a “cool demo” into a **product you can operate**.
+
+---
+
+## 6) Five practical design principles
+
+### 1. Keep single responsibility
+
+If one agent does too much, debugging becomes painful. Split by function.
+
+### 2. Restrict tool access aggressively
+
+Exposing every tool raises the failure rate. Allow only what is needed.
+
+### 3. Separate generation from validation
+
+Do not mix drafting, verification, and deployment in the same step.
+
+### 4. Design for failure as a normal path
+
+Failure is part of the workflow, not an exception. Build fallback paths ahead of time.
+
+### 5. Leave room for human intervention
+
+Automate the routine parts, but keep an approval point for important actions.
+
+---
+
+## 7) The AI race is no longer only about model scores
+
+Recent releases show model vendors moving in the same direction:
+
+- better tool use
+- longer task persistence
+- more stable agent execution
+- stronger operational and safety layers
+
+The differentiator is shifting away from raw benchmark scores and toward **how rarely the system breaks in real workflows**.
+
+So if you build products, pay attention to **system design news**, not only model announcements.
+
+---
+
+## Closing: agents are systems, not models
+
+To run agentic AI well, you need structure before you need prettier prompts.
+
+- what tasks belong to the agent
+- where state lives
+- how tools are restricted
+- how failures recover
+- what gets validated and how
+
+If you can answer those questions, the agent becomes a product.
+
+If you cannot, even the best model eventually turns into an unstable automation script.
