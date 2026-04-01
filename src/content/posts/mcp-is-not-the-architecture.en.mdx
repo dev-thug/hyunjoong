@@ -1,0 +1,198 @@
+export const metadata = {
+  title: "MCP Is Not the Architecture: What Production AI Agents Actually Need",
+  excerpt:
+    "MCP, multi-agent workflows, and tool integrations are hot right now, but production systems live or die by context, state, and control planes — not the protocol alone.",
+  category: "Engineering",
+  date: "2026-04-02",
+  readTime: "11 min",
+  lang: "en",
+  keywords: [
+    "MCP",
+    "AI Agents",
+    "Context Engineering",
+    "Agent Orchestration",
+    "Production Architecture",
+    "State Management",
+    "Tooling",
+    "LLMOps",
+  ],
+  hidden: false,
+};
+
+# MCP Is Not the Architecture: What Production AI Agents Actually Need
+
+Whenever people talk about AI agents these days, MCP comes up fast. That makes sense: tool access gets cleaner, context is standardized, and model-to-system interactions become easier to reason about. But the problems that actually break production systems usually do **not** come from MCP itself. They come from the **full architecture around it**.
+
+The short version:
+
+- **MCP is a connection standard.**
+- **Architecture is context, state, control, and observability.**
+
+This post draws on Anthropic's MCP introduction, Google's 2026 agent trends, and Microsoft's multi-agent orchestration patterns to break down what a real production-ready design needs.
+
+---
+
+## The core takeaway
+
+- MCP is powerful, but it does not make an agent reliable by itself.
+- Production quality is determined by **how context flows** and **where state lives**.
+- As agent count grows, **orchestration and failure recovery** matter more than model choice.
+- In real operations, **permission boundaries, audit logs, latency, and retry policy** matter more than raw tool count.
+
+---
+
+## 1) What MCP solves — and what it does not
+
+Anthropic describes MCP as an **open standard** for connecting AI assistants to the systems where data lives. That definition is exactly right. MCP reduces connection friction.
+
+In practice, it helps standardize:
+
+- which tools are available
+- which resources can be accessed
+- how context is exchanged
+
+But MCP does **not** automatically solve:
+
+- bad tool selection
+- lost state during long-running work
+- incidents caused by overly broad permissions
+- missing recovery paths when tools fail
+- mismatch between user intent and execution plan
+
+So MCP improves the quality of **tool connectivity**, but it does not guarantee the quality of **system operation**.
+
+---
+
+## 2) The real bottleneck is context
+
+The most underestimated word in modern AI systems is context.
+
+Agents do not become smarter just because you feed them a longer prompt. What they need is:
+
+- **Relevant context**: only the information needed for the current task
+- **Fresh context**: do not trust stale state
+- **Structured context**: state and events, not only freeform prose
+- **Bounded context**: clear limits on tokens and memory
+
+This is also why Anthropic's work around MCP and code execution keeps returning to context efficiency. Agent quality can collapse when the context-cost structure is wrong.
+
+### Practical patterns
+
+- Do not re-inject the entire conversation every time; keep task-level summaries.
+- Separate raw logs from summary logs.
+- Store tool outputs in full, but feed models a cleaned version.
+- Treat long-term memory as explicit state, not just vector search.
+
+---
+
+## 3) Multi-agent systems get harder as state gets shared
+
+The common thread across Google Cloud's 2026 agent trends and Microsoft's orchestration patterns is simple: agents are moving toward **workload-level specialization**.
+
+And once that happens, the first thing that breaks is usually not reasoning. It is **shared state**.
+
+### Common failure modes
+
+- Agent A sees one fact and Agent B sees another
+- A plan produced by one agent never reaches the next one
+- Retry logic causes duplicate execution
+- A human approval step exists, but the approved state is never recorded
+
+### A safer structure
+
+1. **Planner** decomposes the task.
+2. **Workers** perform discrete tool actions.
+3. **Reducer** merges results.
+4. **State store** tracks job IDs, approval status, tool outputs, and failure reasons.
+5. **Guardrail layer** blocks unsafe actions and enforces permissions.
+
+The key question is not whether you have multi-agent behavior. It is **who knows what, and who is allowed to change what**.
+
+---
+
+## 4) Production systems need a control plane
+
+An agent system is still an automation system. Without a control plane, it is impossible to operate safely.
+
+You should always have:
+
+- **Least privilege**: separate read, write, and deploy permissions
+- **Explicit approval**: humans must approve high-risk actions like payment, deletion, or deployment
+- **Audit logs**: record what context was used, what tool was called, and why
+- **Idempotency**: the same request should not break the system twice
+- **Timeout / retry policy**: no infinite waiting and no infinite retries
+- **Fallback path**: a manual route when tools fail
+
+As agents get smarter, these controls do not become less important. They become more important.
+
+---
+
+## 5) A practical architecture: MCP + state + orchestration
+
+The most reliable pattern usually looks something like this:
+
+```text
+User Request
+  → Policy / Auth
+  → Planner LLM
+  → MCP Tool Layer
+  → State Store / Audit Log
+  → Worker Agents
+  → Validator / Reducer
+  → Human Approval (if needed)
+  → Final Response
+```
+
+### Design principles
+
+- Keep MCP at the **tool boundary**.
+- Keep task state in a **separate store**.
+- Expose tool results only after they pass a **validation layer**.
+- Separate automatic execution from human approval through policy, not ad hoc logic.
+
+With this split, MCP stays a lightweight interface standard, while product quality is managed through orchestration.
+
+---
+
+## 6) Why this topic matters right now
+
+The 2026 AI trend is not “one stronger model and done.” It is:
+
+- more tools
+- more agents
+- more workflows
+- more integration points
+
+That shifts the right question from “which model should we use?” to questions like:
+
+- Where is context generated?
+- Who owns the state?
+- Where are failures detected?
+- Where are permissions enforced?
+- When does a human step in?
+
+MCP is a good standard because it makes these questions easier to answer. But the answers still come from architecture.
+
+---
+
+## Closing thought
+
+Adopting MCP does not finish an agent system. What survives production is **not the connection standard**, but the **operational structure** around it.
+
+A sensible order is usually:
+
+1. Standardize tool connectivity.
+2. Separate context from state.
+3. Design orchestration and approval boundaries.
+4. Add observability and recovery.
+
+MCP is the starting point. Architecture comes next.
+
+---
+
+### References
+
+- Anthropic, [Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol)
+- Anthropic, [Code execution with MCP: building more efficient AI agents](https://www.anthropic.com/engineering/code-execution-with-mcp)
+- Google Cloud, [AI agent trends 2026 report](https://cloud.google.com/resources/content/ai-agent-trends-2026)
+- Microsoft Tech Community, [Orchestrating multi-agent intelligence](https://techcommunity.microsoft.com/blog/azuredevcommunityblog/orchestrating-multi-agent-intelligence-mcp-driven-patterns-in-agent-framework/4462150)

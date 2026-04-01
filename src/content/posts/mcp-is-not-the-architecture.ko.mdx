@@ -1,0 +1,202 @@
+export const metadata = {
+  title: "MCP는 아키텍처가 아니다: 프로덕션 AI 에이전트의 진짜 설계",
+  excerpt:
+    "MCP, 멀티 에이전트, 툴 연결이 화제가 된 지금, 실제로 프로덕션을 버티게 만드는 건 프로토콜이 아니라 컨텍스트, 상태, 제어면입니다.",
+  category: "Engineering",
+  date: "2026-04-02",
+  readTime: "11 min",
+  lang: "ko",
+  keywords: [
+    "MCP",
+    "AI Agents",
+    "Context Engineering",
+    "Agent Orchestration",
+    "Production Architecture",
+    "State Management",
+    "Tooling",
+    "LLMOps",
+  ],
+  hidden: false,
+};
+
+# MCP는 아키텍처가 아니다: 프로덕션 AI 에이전트의 진짜 설계
+
+요즘 AI 에이전트 얘기를 하면 MCP가 먼저 나온다. 툴 연결이 쉬워지고, 컨텍스트를 표준화하고, 모델이 시스템과 대화하는 방식이 정리되니 당연하다. 하지만 프로덕션에서 터지는 문제는 대개 MCP 자체가 아니라 **MCP를 얹은 뒤의 전체 아키텍처**에서 나온다.
+
+한 줄로 말하면 이렇다.
+
+- **MCP는 연결 규격**이다.
+- **아키텍처는 컨텍스트, 상태, 제어, 관측성**이다.
+
+이 글은 Anthropic의 MCP 소개 문서, Google Cloud의 2026 agent trends, Microsoft의 multi-agent orchestration 패턴을 바탕으로, 실제 서비스에 필요한 설계를 정리한다.
+
+---
+
+## 핵심 결론
+
+- MCP는 강력하지만, 그것만으로 에이전트가 안정적이 되지는 않는다.
+- 프로덕션 품질은 **컨텍스트를 어떻게 주고받는가**와 **상태를 어디에 두는가**에서 갈린다.
+- 에이전트가 여러 개로 늘어날수록 **오케스트레이션과 실패 복구**가 모델 선택보다 중요해진다.
+- 실제 운영에서는 툴 수보다 **권한 경계, 감사 로그, 지연 시간, 재시도 전략**이 더 중요하다.
+
+---
+
+## 1) MCP가 해결하는 것과 해결하지 못하는 것
+
+Anthropic은 MCP를 AI assistant를 데이터와 도구가 있는 시스템에 연결하는 **open standard**로 설명한다. 이 정의는 정확하다. MCP는 연결 문제를 줄인다.
+
+즉:
+
+- 어떤 툴을 쓸 수 있는지
+- 어떤 리소스가 있는지
+- 어떤 방식으로 컨텍스트를 주고받는지
+
+를 더 일관되게 만든다.
+
+하지만 MCP가 자동으로 해결하지 않는 것도 분명하다.
+
+- 잘못된 툴 선택
+- 장기 작업 중 상태 유실
+- 권한이 넓은 툴로 인한 사고
+- 도구 실패 시의 복구 경로 부재
+- 사용자 의도와 실행 계획의 불일치
+
+즉, MCP는 **도구 연결의 품질**을 올리지만, **시스템 운영 품질**까지 보장하지는 않는다.
+
+---
+
+## 2) 진짜 병목은 컨텍스트다
+
+최근 AI 시스템에서 제일 많이 과소평가되는 단어가 컨텍스트다.
+
+에이전트는 단순히 prompt를 더 길게 넣는다고 똑똑해지지 않는다. 필요한 건 다음 네 가지다.
+
+- **Relevant context**: 지금 작업에 필요한 정보만 넣기
+- **Fresh context**: 오래된 상태를 믿지 않기
+- **Structured context**: 자유서술보다 구조화된 상태와 이벤트
+- **Bounded context**: 토큰과 기억의 경계를 명확히 두기
+
+Anthropic이 MCP와 함께 코드 실행, 도구 호출 효율을 이야기하는 이유도 결국 같다. 에이전트의 품질은 모델이 아니라 **컨텍스트 비용 구조**에 의해 쉽게 무너진다.
+
+### 실전 패턴
+
+- 대화 전체를 매번 재주입하지 말고, 작업 단위 요약을 유지한다.
+- 원본 로그와 요약 로그를 분리한다.
+- 툴 응답은 원문 저장, 모델 입력은 정제본 사용을 기본으로 둔다.
+- 장기 기억은 벡터 검색만 믿지 말고, 명시적 state store를 둔다.
+
+---
+
+## 3) 멀티 에이전트가 늘어날수록 상태 설계가 중요해진다
+
+Google Cloud의 2026 agent trends와 Microsoft의 multi-agent orchestration 글이 공통으로 보여주는 방향은 단순하다. 에이전트는 점점 더 **업무 단위의 분업 시스템**으로 간다.
+
+이때 가장 먼저 무너지는 건 분산 추론이 아니라 **공유 상태**다.
+
+### 흔한 실패
+
+- 에이전트 A가 본 사실과 에이전트 B가 본 사실이 다르다
+- 한 에이전트가 생성한 plan이 다른 에이전트에게 전달되지 않는다
+- 재시도 후 중복 실행이 발생한다
+- 인간 승인 단계가 있는데도 상태가 반영되지 않는다
+
+### 권장 구조
+
+1. **Planner**가 작업을 분해한다.
+2. **Worker**들이 개별 툴 작업을 수행한다.
+3. **Reducer**가 결과를 합친다.
+4. **State store**가 작업 ID, 승인 상태, 툴 결과, 실패 원인을 기록한다.
+5. **Guardrail layer**가 권한과 위험 작업을 차단한다.
+
+이 구조에서 중요한 건 멀티 에이전트라는 이름이 아니라, **누가 무엇을 알고 있고 무엇을 바꿀 수 있는가**다.
+
+---
+
+## 4) 프로덕션에서 필요한 제어면
+
+에이전트 시스템은 결국 자동화 시스템이다. 그래서 제어면이 없으면 운영이 불가능하다.
+
+반드시 있어야 하는 것들:
+
+- **권한 최소화**: 읽기/쓰기/배포 권한 분리
+- **명시적 승인**: 결제, 삭제, 배포 같은 고위험 작업은 인간 승인
+- **감사 로그**: 어떤 컨텍스트로 어떤 툴을 왜 호출했는지 저장
+- **Idempotency**: 같은 요청이 두 번 와도 결과가 망가지지 않게
+- **Timeout / retry policy**: 무한 대기와 무한 재시도 금지
+- **Fallback path**: 툴 실패 시 수동 처리 경로
+
+에이전트가 똑똑해질수록 이런 장치들은 덜 중요해지는 게 아니라, 오히려 더 중요해진다.
+
+---
+
+## 5) 추천 아키텍처: MCP + state + orchestration
+
+실제로는 아래처럼 가져가는 편이 가장 무난하다.
+
+```text
+User Request
+  → Policy / Auth
+  → Planner LLM
+  → MCP Tool Layer
+  → State Store / Audit Log
+  → Worker Agents
+  → Validator / Reducer
+  → Human Approval (if needed)
+  → Final Response
+```
+
+### 설계 원칙
+
+- MCP는 **툴 경계**에만 둔다.
+- 작업 상태는 **별도 저장소**에 둔다.
+- 툴 실행 결과는 **검증 계층**을 지난 뒤에만 사용자에게 노출한다.
+- 자동 실행과 인간 승인 단계를 섞지 말고, 정책으로 분리한다.
+
+이렇게 하면 MCP는 가벼운 접속 규약으로 남고, 실제 제품 품질은 오케스트레이션에서 관리할 수 있다.
+
+---
+
+## 6) 지금 이 주제가 중요한 이유
+
+2026년의 AI 트렌드는 더 강한 모델 하나로 끝나지 않는다. 오히려:
+
+- 더 많은 툴
+- 더 많은 에이전트
+- 더 많은 워크플로우
+- 더 많은 연결 지점
+
+이 늘어난다.
+
+그럴수록 팀이 물어야 하는 질문은 “어떤 모델을 쓸까?”보다 다음에 가깝다.
+
+- 컨텍스트는 어디서 생성되는가?
+- 상태는 누가 소유하는가?
+- 실패는 어디서 감지되는가?
+- 권한은 어디서 막히는가?
+- 사람이 개입해야 하는 순간은 언제인가?
+
+MCP는 이 질문들을 쉽게 만들어 주는 좋은 표준이다. 하지만 답은 아키텍처가 정한다.
+
+---
+
+## 마무리
+
+MCP를 도입했다고 해서 에이전트 시스템이 완성되지는 않는다. 프로덕션에서 살아남는 건 **연결 규격**이 아니라 **운영 가능한 구조**다.
+
+그래서 순서는 보통 이렇게 가는 게 맞다.
+
+1. 툴 연결을 표준화한다.
+2. 컨텍스트와 상태를 분리한다.
+3. 오케스트레이션과 승인 경계를 설계한다.
+4. 관측성과 복구 전략을 붙인다.
+
+MCP는 시작점이다. 아키텍처는 그 다음이다.
+
+---
+
+### 참고 자료
+
+- Anthropic, [Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol)
+- Anthropic, [Code execution with MCP: building more efficient AI agents](https://www.anthropic.com/engineering/code-execution-with-mcp)
+- Google Cloud, [AI agent trends 2026 report](https://cloud.google.com/resources/content/ai-agent-trends-2026)
+- Microsoft Tech Community, [Orchestrating multi-agent intelligence](https://techcommunity.microsoft.com/blog/azuredevcommunityblog/orchestrating-multi-agent-intelligence-mcp-driven-patterns-in-agent-framework/4462150)
