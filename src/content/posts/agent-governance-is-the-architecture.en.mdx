@@ -1,0 +1,153 @@
+export const metadata = {
+  title: "Agent Governance Is the Architecture: The Real Control Plane in the MCP Era",
+  excerpt:
+    "If MCP standardized tool connectivity, permissions, policy, audit, and isolation are what make production AI agents safe.",
+  category: "Engineering",
+  date: "2026-04-03",
+  readTime: "10 min",
+  lang: "en",
+  keywords: [
+    "MCP",
+    "AI Agents",
+    "Agent Governance",
+    "Permissions",
+    "Runtime Security",
+    "Tool Access",
+    "Orchestration",
+    "LLMOps",
+  ],
+  hidden: false,
+};
+
+# Agent Governance Is the Architecture: The Real Control Plane in the MCP Era
+
+A lot of teams make the same mistake once MCP starts looking useful: they assume tool connectivity is the hard part, so once the wiring exists, the agent system is basically done.
+
+It isn’t.
+
+The real production question is not whether the agent can call tools. It is **who can do what, under which conditions, with what audit trail**.
+
+In early April 2026, Microsoft released the Agent Governance Toolkit, and Cerbos published a practical breakdown of MCP permissions. The message is clear: the conversation has moved from “can the agent act?” to **“how do we constrain, observe, and approve its actions?”**
+
+---
+
+## The core takeaway
+
+- Agent permissions are a **system design** problem, not a model quality problem.
+- The biggest failures usually come from **overbroad access** and **unaudited execution**, not raw reasoning mistakes.
+- In production, least privilege, explicit approval, audit logs, and sandboxing should be the default.
+- MCP makes tool integration easier, but it does not provide safety or operations by itself.
+
+---
+
+## 1) What MCP actually solves
+
+MCP standardizes how agents talk to external systems. That is a real improvement: tool registration, invocation, and response handling become much cleaner.
+
+What MCP does well:
+
+- exposes tools in a consistent way
+- lowers the cost of connecting models to systems
+- gives multiple tools a common interaction pattern
+
+What MCP does not do:
+
+- design permission boundaries for you
+- stop dangerous actions automatically
+- replace auditing and traceability
+- manage approval state across retries
+
+So yes, MCP is wiring. But architecture is the control panel.
+
+---
+
+## 2) Permissions are where agents usually fail first
+
+In practice, incidents are rarely caused by an agent being “not smart enough.” They happen because the agent is allowed to do too much.
+
+Common failure modes include:
+
+- a read-only agent accidentally gets delete permissions
+- an agent acting on behalf of a user exceeds that user’s actual rights
+- an approved task gets executed twice during retries
+- nobody can reconstruct which tool produced which result later
+
+You do not fix this by using a bigger model. Without a permission model, a smarter agent just fails faster and with more impact.
+
+---
+
+## 3) Production agents need a policy layer
+
+The interesting part of Microsoft’s Agent Governance Toolkit is not that it introduces another agent framework. It adds a **control plane above the agent**.
+
+A practical stack usually looks like this:
+
+1. **Identity**: who is the agent representing?
+2. **Policy**: what should be allowed or blocked?
+3. **Interception**: can we inspect tool calls before they run?
+4. **Approval**: do risky actions require a human?
+5. **Audit**: can we reconstruct what happened later?
+6. **Isolation**: are dangerous steps confined to a sandbox?
+
+Miss one of these and operations get messy very quickly.
+
+My priority order would be:
+
+- **1st: least privilege**
+- **2nd: approval gates**
+- **3rd: audit logs**
+- **4th: isolated execution**
+- **5th: meaningful observability**
+
+If those are missing, calling the system “autonomous” is mostly marketing.
+
+---
+
+## 4) MCP permissions are a design principle, not a feature
+
+Cerbos makes the right point: if an agent acts on behalf of a user, it should only operate inside a reduced version of that user’s permissions.
+
+The important question is not whether you can add permission checks. You can.
+The real question is whether you treat permissions as a **first-class system principle**.
+
+Good designs usually have these traits:
+
+- separate read, write, and admin actions by tool
+- route destructive actions through a dedicated approval flow
+- version policies in code and configuration
+- let policy changes affect live agents quickly
+- default to deny when something is unclear
+
+That is the level where “safe enough to run” starts becoming a serious claim.
+
+---
+
+## 5) What teams can do right now
+
+You do not need a giant platform to start.
+
+- define an allowlist of tools per agent
+- put destructive actions behind a separate approval step
+- attach correlation IDs to every tool call
+- store raw outputs, but feed the model summaries
+- make retries idempotent
+- put approval, execution, and failure into one operator view
+
+Do that and the agent becomes trustworthy not because it is smarter, but because it is **more operable**.
+
+---
+
+## Conclusion
+
+MCP has made agent connectivity much better. But the harder production problems are still here:
+
+- who can execute
+- what can be executed
+- under what conditions
+- how the action is recorded and audited
+
+So my conclusion is simple:
+
+**MCP is the starting point. Governance is the architecture.**
+
+If you want to run agents for real, design permissions, policies, auditing, and isolation before you optimize the model.
