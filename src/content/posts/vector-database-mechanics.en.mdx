@@ -1,0 +1,211 @@
+export const metadata = {
+  title: "How Vector Databases Work: Embeddings, Retrieval, and Matching in Practice",
+  excerpt:
+    "A technical explanation of how vector databases store embeddings, search them with ANN, and match results back to original documents.",
+  category: "Engineering",
+  date: "2026-04-06",
+  readTime: "10 min",
+  lang: "en",
+  keywords: [
+    "Vector Database",
+    "ANN",
+    "Embedding",
+    "Similarity Search",
+    "RAG",
+    "Indexing"
+  ],
+  hidden: false,
+};
+
+# How Vector Databases Work: Embeddings, Retrieval, and Matching in Practice
+
+To really understand vector databases, you need to go beyond “it can do semantic search.”  
+The real question is more concrete:
+
+- Where are embeddings stored?
+- What is the database actually searching?
+- How is the original document matched back to the vector?
+- Why do these systems retrieve the “closest” item instead of the exact one?
+
+This post explains the mechanics in engineering terms.
+
+---
+
+## Bottom line
+
+- A vector DB stores **original data + vector + metadata** together.
+- Retrieval is usually done through **Approximate Nearest Neighbor (ANN)** search.
+- The result is not the vector itself; the database returns an **ID linked to the original document**.
+
+---
+
+## 1) Start with the storage layout
+
+When you store documents in a vector DB, you are not just converting the whole document into a vector and calling it a day. The usual structure looks more like this:
+
+- **id**: the unique key for a document or chunk
+- **vector**: the embedding values
+- **payload / metadata**: source, language, type, date, permissions, and more
+- **original text or reference**: either the raw text or a pointer to it
+
+For example:
+
+```json
+{
+  "id": "doc_123_chunk_4",
+  "vector": [0.12, -0.44, 0.88, ...],
+  "metadata": {
+    "docId": "doc_123",
+    "source": "handbook",
+    "lang": "ko",
+    "chunkIndex": 4
+  },
+  "text": "The original text for this chunk..."
+}
+```
+
+The key point is that **the vector is never truly alone**. It is always tied to an identifier and metadata.
+
+---
+
+## 2) How embeddings are stored
+
+An embedding is the output of turning text or images into a numeric array.  
+That array is usually a dense vector with hundreds of dimensions.
+
+That vector is a compressed representation of meaning, so semantically similar items tend to land near each other in vector space.
+
+### What matters at storage time
+
+- which embedding model generated the vector
+- how many dimensions it has
+- how the source data was chunked
+- which metadata was attached
+
+Change any of those and the search quality can change a lot.
+
+---
+
+## 3) How retrieval works
+
+At query time, the user’s question is embedded the same way.
+
+Example flow:
+
+1. A user asks: “Why do vector DBs matter in RAG?”
+2. The question is converted into an embedding.
+3. The DB compares that query vector with stored vectors.
+4. It finds the nearest ones.
+5. It returns the document IDs or chunk IDs linked to those vectors.
+6. The application fetches the original text from those IDs.
+
+So retrieval is **not string matching**. It is distance calculation in vector space.
+
+---
+
+## 4) What does “closeness” mean?
+
+Vector DBs compute similarity between vectors using distance or similarity metrics. Common ones include:
+
+- **cosine similarity**: how aligned two vectors are
+- **dot product**: inner-product scoring
+- **Euclidean distance**: geometric distance in space
+
+In practice, cosine similarity or dot product is common.
+
+The important part is not the formula itself. The important part is that the embedding model was trained so that **similar meaning → nearby vectors**.
+
+---
+
+## 5) Why ANN instead of exact search?
+
+Vector spaces are high-dimensional and large. Comparing every vector to every query is too slow.
+
+That is why most vector DBs use **Approximate Nearest Neighbor (ANN)** search.
+
+ANN means:
+
+- do not compare against every vector exactly
+- search for the most likely close candidates fast
+
+Common indexing ideas include:
+
+- graph-based traversal
+- clustering
+- quantization
+- hierarchical search
+
+You trade a bit of precision for a lot of speed.
+
+---
+
+## 6) How the original value is matched back
+
+This is the part people often miss. A vector DB does not usually give you the vector as the answer. It returns the **ID** associated with that vector.
+
+Example:
+
+- Search result: `doc_123_chunk_4`
+- The app uses that ID to fetch the original document or chunk
+- The final answer shown to the user is the raw text, summary, or metadata
+
+In other words, the matching flow is:
+
+- **storage**: split text into chunks and assign IDs
+- **embedding**: generate a vector for each chunk
+- **indexing**: store vector + ID together
+- **search**: run similarity search and return IDs
+- **lookup**: fetch the original chunk by ID
+
+That separation is what makes vector search practical.
+
+---
+
+## 7) Why separate vectors from original text?
+
+Vectors are good for search, but they are not human-readable.  
+Original text is human-readable, but not ideal for similarity search.
+
+So systems keep them separate:
+
+- vector: for finding things
+- original text: for showing things
+
+That is also why RAG works cleanly.
+
+---
+
+## 8) Practical things to watch
+
+### Chunk size
+Too large loses precision. Too small loses context.
+
+### Metadata filtering
+Without language, permission, type, or freshness filters, results get noisy.
+
+### Re-ranking
+The first retrieved candidates are not always the best final results.
+
+### Freshness
+If the embedding model or index changes, you may need to reindex.
+
+---
+
+## Closing
+
+A vector DB is not magic. But once you understand the mechanics, it becomes pretty straightforward.
+
+1. Split the documents.
+2. Create embeddings.
+3. Store vectors with IDs.
+4. Embed the query.
+5. Use ANN to find nearby vectors.
+6. Fetch the original text by ID.
+
+That is the core loop.
+
+My recommendation:
+
+- separate vectors from original text in your design
+- add metadata filtering and re-ranking early
+- understand the speed/accuracy tradeoff of ANN indexing
