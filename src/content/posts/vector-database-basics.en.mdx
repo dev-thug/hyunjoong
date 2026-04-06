@@ -1,0 +1,155 @@
+export const metadata = {
+  title: "What Is a Vector Database? Why It Matters for AI Search and RAG",
+  excerpt:
+    "A practical explanation of vector databases, how they differ from traditional databases, and why they matter for AI search, RAG, and recommendation systems.",
+  category: "Engineering",
+  date: "2026-04-06",
+  readTime: "9 min",
+  lang: "en",
+  keywords: [
+    "Vector Database",
+    "RAG",
+    "Embedding",
+    "Semantic Search",
+    "AI Search",
+    "Retrieval"
+  ],
+  hidden: false,
+};
+
+# What Is a Vector Database? Why It Matters for AI Search and RAG
+
+A vector database gets mentioned constantly in AI systems, but the idea is simpler than it sounds.  
+At a high level, it is **a store for quickly finding data with similar meaning**.
+
+Traditional key-value lookups are fast when you already know the exact value. A vector database is better when you want to find things like sentences, images, or code snippets by **semantic similarity**.
+
+---
+
+## Bottom line
+
+- A vector DB is a store for **semantic search**.
+- It is especially useful for AI search, RAG, recommendation, and duplicate detection.
+- The real quality comes from **embedding quality, chunking strategy, and post-retrieval validation**, not the database alone.
+
+---
+
+## 1) What is a vector?
+
+In AI, text and images are often converted into numeric arrays. These numeric arrays are called **vectors**.
+
+For example:
+
+- "The cat is on the sofa"
+- "A cat is sitting on the sofa"
+
+The words differ, but the meaning is close. Vector representations make that similarity measurable.
+
+So a vector database is basically **a database that can find semantically similar content even when the exact words do not match**.
+
+---
+
+## 2) How is it different from a regular database?
+
+Relational or document databases are usually strong at:
+
+- exact filtering
+- sorting
+- aggregation
+- transactions
+
+Vector databases are strong at:
+
+- similarity search
+- comparing sentences, documents, or images
+- AI retrieval
+- candidate generation for recommendations
+
+They are not really competitors. They solve different problems. In practice, teams usually use **a normal database plus a vector database**.
+
+---
+
+## 3) Why do we need vector databases?
+
+Once you build AI products, the hard part is often no longer CRUD. The harder part becomes:
+
+- finding the most relevant document for a user question
+- grouping similar support tickets
+- retrieving the right evidence from product docs
+- pulling the right code or policy section
+
+Exact keyword matching quickly hits a limit here. You often need to find content with the same meaning, not the same phrasing.
+
+That is where vector databases come in.
+
+---
+
+## 4) What does a vector DB do in RAG?
+
+RAG, or Retrieval-Augmented Generation, is a setup where the model retrieves relevant context before generating an answer.
+
+The flow usually looks like this:
+
+1. Split documents into chunks.
+2. Convert each chunk into embeddings.
+3. Store those embeddings in a vector DB.
+4. Convert the user query into an embedding.
+5. Search for similar chunks.
+6. Feed the retrieved chunks to the LLM.
+
+In this setup, the vector DB acts as the **retrieval engine**.
+
+---
+
+## 5) Using a vector DB does not solve everything
+
+A common mistake is to assume that adding a vector DB automatically makes AI search good. It does not.
+
+What matters more is:
+
+### Embedding quality
+The model used to generate vectors changes the search quality.
+
+### Chunking strategy
+Chunks that are too large lose precision. Chunks that are too small lose context.
+
+### Metadata filtering
+Language, date, type, and permission filters often matter.
+
+### Re-ranking
+The first retrieved results are not always the best ones.
+
+### Validation
+Retrieved results can look plausible and still be wrong.
+
+A vector DB is the engine. The design makes it effective.
+
+---
+
+## 6) When should you use one?
+
+Vector databases are especially useful for:
+
+- internal document search
+- support FAQ suggestions
+- codebase similarity search
+- RAG-based chatbots
+- recommendation candidate generation
+- similar content discovery
+
+If your system is mostly about exact filtering or transactions, you do not need to start here.
+
+---
+
+## Closing
+
+A vector database is not the magic AI database.  
+But once you need **meaning-based retrieval**, it becomes core infrastructure.
+
+My recommendation:
+
+1. start with a regular database for correctness and operations
+2. add a vector DB when retrieval becomes a real need
+3. design embeddings, chunking, and re-ranking together
+
+That is the safest and most realistic path.
