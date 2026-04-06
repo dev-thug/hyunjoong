@@ -1,0 +1,211 @@
+export const metadata = {
+  title: "The real bottleneck in the MCP era is not the model, it's permissions",
+  excerpt: "As AI agents become better at using tools, the bottleneck shifts from model quality to permission design. This post lays out a least-privilege operating model for MCP-based tool use.",
+  category: "Engineering",
+  date: "2026-04-07",
+  readTime: "10 min",
+  lang: "en",
+  keywords: [
+    "MCP",
+    "AI agent permissions",
+    "least privilege",
+    "tool governance",
+    "agent orchestration",
+    "authorization",
+    "AI security"
+  ],
+  hidden: false,
+};
+
+# The real bottleneck in the MCP era is not the model, it's permissions
+
+Bottom line: **the better your agent gets at acting, the more your system depends on permission design instead of model quality.**
+
+With MCP, many teams start by asking which tools to connect. That is the wrong first question. The real questions are:
+
+- What should this agent be allowed to do?
+- Under what conditions should it do it?
+- When something goes wrong, who detects it and how is it reversed?
+
+If you do not answer those questions early, every extra tool makes the system less manageable, not more useful.
+
+---
+
+## Why permissions matter now
+
+MCP gives agents a standard interface for talking to external systems. The important part is not the standard itself. It is that **standardized tool access makes access control unavoidable**.
+
+Before, an LLM only had to generate text. Now it can:
+
+- create GitHub issues
+- inspect deployment status
+- read internal docs
+- trigger operational actions
+- even touch billing or admin workflows
+
+At that point, the agent is no longer just a responder. It behaves more like a **user that can act**.
+
+If it can act, it needs a permission model.
+
+---
+
+## Common failure modes
+
+### 1) Opening everything at once
+
+This is the most common mistake. "It is internal, so it is fine" usually leads to a system that feels convenient for a week and then becomes impossible to control.
+
+The problem is not only malicious prompting. More often it is:
+
+- over-execution in the wrong context
+- touching the wrong resource because names are similar
+- changes with a bigger blast radius than intended
+- repeated actions that quietly inflate cost
+
+### 2) Trusting the model too much
+
+"A good model will behave safely" is not an operating principle.
+
+Permissions belong at the **system boundary**, not inside the model's reasoning.
+
+### 3) Making every risky action wait on a human
+
+Hard approval gates can feel safe, but they become a bottleneck fast.
+
+A better system is:
+
+- automated for low-risk actions
+- narrowly reviewed for sensitive actions
+- policy-driven for the rest
+
+---
+
+## The four-layer model I recommend
+
+I find it useful to split AI tool permissions into four layers.
+
+### 1) Read-only
+
+Observation only.
+
+Examples:
+- document search
+- status checks
+- log inspection
+- calendar lookups
+
+This is the baseline permission every agent should earn first.
+
+### 2) Scoped write
+
+Write access with tight boundaries.
+
+Examples:
+- create issues in one repository
+- post messages only in one channel
+- open branches in one project
+
+Here, the real question is not "can it write?" but **where can it write?**
+
+### 3) Conditional action
+
+Actions that depend on policy.
+
+Examples:
+- auto-deploy to staging, but require approval for production
+- stop execution when cost crosses a threshold
+- allow external sending only for specific targets
+
+This is where a policy engine pays off.
+
+### 4) Break-glass
+
+Rare, high-risk operations.
+
+Examples:
+- privilege escalation
+- destructive deletion
+- payments or transfers
+- anything that can interrupt production
+
+Do not blend these into the normal flow. Put them on a separate audit path.
+
+---
+
+## Where the control actually belongs
+
+In an MCP-based agent stack, control usually works best at these points.
+
+### At tool registration time
+
+Decide whether the tool should be exposed at all. This is the strongest filter.
+
+### Before execution
+
+Inspect the prompt and context, then decide whether the action is allowed.
+
+### During parameter validation
+
+Strongly restrict resource names, environments, orgs, amounts, and file paths.
+
+### After execution
+
+Keep an audit trail. Without logs, you will not know what happened later.
+
+---
+
+## A sane reference architecture
+
+A practical baseline looks like this:
+
+`LLM → Planner → Policy Check → Tool Adapter → Audit Log`
+
+The key idea is simple: **do not let the LLM hit the tool directly**.
+
+- The Planner decides what should happen
+- The Policy Check decides whether it is allowed
+- The Tool Adapter handles execution
+- The Audit Log records the result
+
+That separation makes model swaps easier and risk easier to contain.
+
+---
+
+## What teams should actually do
+
+Permission design is not a document exercise. At minimum, you need:
+
+- risk tiers per tool
+- environment separation for dev / staging / prod
+- allowed scopes per user and per agent
+- a list of actions that require approval
+- audit log retention rules
+- rollback steps when a tool fails
+
+Without those, MCP adoption is not "adding capability". It is expanding the blast radius.
+
+---
+
+## My conclusion
+
+MCP is not a fad. It is the direction the space is moving in. Agents will keep getting better at using tools, which means permissions will become a structural concern, not a nice-to-have.
+
+So the order is always the same:
+
+1. Do not connect too many tools.
+2. Design least privilege first.
+3. Isolate high-risk actions.
+4. Make everything auditable.
+
+**The most practical way to improve agent performance is not a stronger model. It is a narrower permission set.**
+
+---
+
+## References
+
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [MCP specification](https://modelcontextprotocol.io/specification)
+- [MCP permissions: securing AI agent access to tools](https://www.cerbos.dev/blog/mcp-permissions-securing-ai-agent-access-to-tools)
+- [MCP in the enterprise](https://www.glean.com/blog/mcp-mar-drop-2026)
+
+*This post is based on public docs and the recent direction of MCP / agent adoption. Product permission models and API behavior change quickly, so check the latest docs before implementing anything in production.*
