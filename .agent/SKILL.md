@@ -1,106 +1,95 @@
 ---
 name: blog-autopublisher
-description: OpenClaw skill for the Hyunjoong blog that automatically scouts AI topics, chooses a post aligned with the site's architecture-first tone, drafts bilingual MDX, validates it, and commits/pushes to the blog repo on the `develop` branch when publishing is requested or scheduled.
+description: OpenClaw skill for scheduled autopublishing of the Hyunjoong blog. Use when OpenClaw cron should research AI-related topics, infer the user's current interests from prior conversation context, choose a topic that fits the site's architecture-first tone, draft bilingual MDX, validate the result, and commit/push to `develop` automatically.
 ---
 
 # Blog Autopublisher
 
 ## Goal
 
-Turn daily AI-topic scouting into publish-ready blog posts for `hyunjoong.kim`.
+Run a scheduled research-to-publish pipeline for `hyunjoong.kim`.
 
-## Working mode
+## Trigger
 
-Use this skill when the user wants the blog to run as an automated publishing pipeline:
+Use this skill from OpenClaw cron when a scheduled job should:
 
-- scout AI-related topics daily
-- select a topic that fits the site's tone
-- draft Korean and English posts
-- validate the post against repo conventions
+- research AI-related topics
+- infer the user's interests from conversation context and recent blog history
+- pick one topic that fits the blog's tone
+- draft Korean and English MDX posts
+- validate the content
 - commit and push to `develop`
 
 ## Required context
 
 - Work in `/Users/mini/.openclaw/workspace/blog`
-- Use the existing `CLAUDE.md` conventions as the source of truth for content structure
-- Preserve the repo's MDX metadata format: `export const metadata = { ... }`
-- Keep Korean and English versions aligned in meaning and section order
+- Follow `CLAUDE.md` for repo conventions
+- Preserve `export const metadata = { ... }` exactly
+- Keep ko/en versions aligned in meaning and section order
+- Use recent conversation context as a signal for topic selection
 
-## Daily autopublish flow
+## Cron flow
 
-1. Gather recent AI topics worth writing about.
-2. Filter for topics that are:
-   - relevant to developer productivity, architecture, tooling, infra, or agent workflows
-   - actionable or opinionated rather than news-only
-   - a fit for the site's direct, engineering-minded tone
-3. Choose one topic with the strongest fit.
-4. Draft the post in Korean first, then draft the English version.
-5. Keep claims grounded in sources or clearly label opinion.
-6. Validate the files.
-7. If publish mode is enabled, commit on `develop` and push.
+1. Research current AI topics and practical issues.
+2. Read recent conversation context and blog history to infer user interests.
+3. Score each candidate against the site's tone and the user's current interests.
+4. Select the strongest topic.
+5. Draft `.ko.mdx` and `.en.mdx`.
+6. Validate metadata, links, and formatting.
+7. Commit on `develop` and push.
 
-## Topic selection rules
+## Topic rules
 
 Prefer topics that:
 
-- explain a system, workflow, or tradeoff
-- help developers make decisions
-- connect AI to architecture, automation, or leverage
-- can be supported with official docs or stable references
+- connect AI to developer leverage, architecture, tooling, infra, or automation
+- match recurring themes from recent conversation context
+- are actionable or opinionated
+- can be supported with stable sources or clearly labeled opinion
 
 Avoid topics that are:
 
-- pure product hype
+- pure hype
 - shallow announcement summaries
-- overly speculative without operational value
-- unrelated to the blog's existing focus
+- speculative without operational value
+- outside the blog's scope
 
 ## Writing rules
 
-- Lead with the bottom line.
-- Use concise sections and concrete examples.
+- Start with the bottom line.
 - Keep the tone sharp, practical, and calm.
-- Do not pad with generic intros.
-- Do not fabricate facts, metrics, or product behavior.
-- Prefer architecture, operations, and decision-making over raw feature recaps.
+- Avoid generic intros and filler.
+- Do not invent facts, metrics, or product behavior.
+- Prefer architecture, operations, and decision-making over feature recaps.
 
-## Draft structure
+## Output shape
 
-For each post, aim for:
+For each run, produce:
 
-- title
-- excerpt
-- clear category
-- publish date
-- read time estimate
-- keywords
-- short intro
-- body sections with practical takeaways
-- conclusion with an opinionated recommendation
+- one chosen topic
+- bilingual MDX drafts
+- validation result
+- commit/push status
+- short summary for the user
 
 ## Validation checklist
 
-Before publishing:
-
-- confirm both `.ko.mdx` and `.en.mdx` exist when bilingual output is intended
-- verify metadata fields are valid and consistent
-- ensure the slug matches file names
-- check formatting and internal links
-- run repo checks if needed (`npm run lint`, `npm run build` when appropriate)
+- both locales exist when needed
+- metadata fields are valid and consistent
+- slug matches file names
+- formatting and internal links are correct
+- repo checks pass when available
 
 ## Git workflow
 
-- Use `develop` as the publish branch.
+- Use `develop`.
 - Keep commits focused.
-- Push only when the user explicitly asked for autopublish or scheduling.
-- If the repo is dirty with unrelated changes, stop and report it.
+- Push automatically after successful validation.
+- If unrelated changes exist, report and stop.
 
-## When to use references
+## References
 
-Add `references/` files for reusable guidance such as:
-
-- topic scoring rubric
-- bilingual post template
-- sources policy
-- validation and publish checklist
-
+- `references/topic-scorer.md`
+- `references/publish-checklist.md`
+- `references/user-context.md`
+- `references/topic-selection-playbook.md`

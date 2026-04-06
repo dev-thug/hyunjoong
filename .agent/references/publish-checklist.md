@@ -1,9 +1,8 @@
 # Publish checklist
 
-- topic fits the blog tone
-- metadata valid
-- both locales present when required
-- claims sourced or labeled opinion
-- lint/build green when needed
-- commit message describes the post clearly
-- push to `develop`
+- choose one strong topic
+- write ko/en drafts
+- validate metadata and links
+- confirm repo checks
+- commit on develop
+- push to origin
