@@ -65,6 +65,32 @@
     "meta_title": "Profile",
     "meta_description": "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems."
   },
+  "contact": {
+    "meta_title": "Contact",
+    "meta_description": "Send project collaboration, development, or technical consulting inquiries.",
+    "eyebrow": "Contact",
+    "title": "Tell me about your project",
+    "subtitle": "Leave your name, contact details, and message. I will review it and reply by email.",
+    "response_label": "Response",
+    "response_time": "I usually respond within 1-2 business days.",
+    "fields": {
+      "name": "Name",
+      "name_placeholder": "Your name",
+      "contact": "Contact",
+      "contact_placeholder": "Email, phone, LinkedIn, etc.",
+      "message": "Message",
+      "message_placeholder": "Share the project context, role needed, timeline, or anything useful."
+    },
+    "validation": {
+      "name_required": "Please enter your name.",
+      "contact_required": "Please enter your contact details.",
+      "message_required": "Please enter your message."
+    },
+    "submit": "Send inquiry",
+    "submitting": "Sending...",
+    "success": "Your inquiry has been sent. I will get back to you after reviewing it.",
+    "error": "Something went wrong while sending your inquiry. Please try again soon."
+  },
   "notFound": {
     "title": "404",
     "subtitle": "Beyond the Reach",

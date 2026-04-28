@@ -64,6 +64,32 @@
     "meta_title": "Profile",
     "meta_description": "풀스택 아키텍트. 서버리스 아키텍처, 비즈니스 인텔리전스, 확장 가능한 시스템을 전문으로 합니다."
   },
+  "contact": {
+    "meta_title": "Contact",
+    "meta_description": "프로젝트 협업, 개발 문의, 기술 컨설팅 요청을 남겨 주세요.",
+    "eyebrow": "Contact",
+    "title": "프로젝트 이야기를 들려주세요",
+    "subtitle": "이름, 연락처, 문의 내용을 남겨주시면 확인 후 이메일로 답변드리겠습니다.",
+    "response_label": "응답",
+    "response_time": "보통 1-2영업일 내에 답변드립니다.",
+    "fields": {
+      "name": "이름",
+      "name_placeholder": "홍길동",
+      "contact": "연락처",
+      "contact_placeholder": "이메일, 전화번호, LinkedIn 등",
+      "message": "문의 내용",
+      "message_placeholder": "프로젝트 배경, 필요한 역할, 일정 등을 편하게 적어주세요."
+    },
+    "validation": {
+      "name_required": "이름을 입력해 주세요.",
+      "contact_required": "연락처를 입력해 주세요.",
+      "message_required": "문의 내용을 입력해 주세요."
+    },
+    "submit": "문의 보내기",
+    "submitting": "전송 중...",
+    "success": "문의가 전송되었습니다. 확인 후 연락드리겠습니다.",
+    "error": "문의 전송 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
+  },
   "notFound": {
     "title": "404",
     "subtitle": "연결할 수 없는 경로",

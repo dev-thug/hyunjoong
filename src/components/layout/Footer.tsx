@@ -1,11 +1,25 @@
+"use client";
+
 import { Github, Linkedin, Twitter } from "lucide-react";
-import { SOCIAL_LINKS, CONTACT_EMAIL, BRAND } from "@/constants";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import {
+  SOCIAL_LINKS,
+  BRAND,
+  NAV_CONTACT_LABEL,
+  getContactHref,
+} from "@/constants";
 
 const SOCIAL_ICONS = [Github, Linkedin, Twitter] as const;
 
 const FOOTER_CTA = { main: "LET'S", sub: "TALK." } as const;
 
+const DEFAULT_LOCALE = "ko";
+
 const Footer = () => {
+  const params = useParams<{ lang?: string }>();
+  const lang = params.lang ?? DEFAULT_LOCALE;
+
   return (
     <footer className="py-12 md:py-16 lg:py-20 border-t border-white/10 bg-[#020202] relative z-10">
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
@@ -15,14 +29,14 @@ const Footer = () => {
             <br />
             {FOOTER_CTA.sub}
           </h4>
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="text-base md:text-lg lg:text-xl font-light border-b border-gray-600 pb-1 text-gray-400 hover:text-white hover:border-white transition-all break-all"
+          <Link
+            href={getContactHref(lang)}
+            className="inline-flex min-h-11 items-center rounded-full border border-white/20 px-5 py-3 text-xs font-mono uppercase tracking-[0.18em] text-gray-300 transition-all hover:bg-white hover:text-black"
             tabIndex={0}
-            aria-label="Send email to contact"
+            aria-label="Open contact form"
           >
-            {CONTACT_EMAIL}
-          </a>
+            {NAV_CONTACT_LABEL}
+          </Link>
         </div>
 
         <div className="text-left md:text-right w-full md:w-auto">

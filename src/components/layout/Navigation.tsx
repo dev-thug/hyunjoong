@@ -3,7 +3,7 @@
 import {
   getNavLinks,
   NAV_CONTACT_LABEL,
-  CONTACT_EMAIL,
+  getContactHref,
   BRAND,
 } from "@/constants";
 import { Menu, X } from "lucide-react";
@@ -24,6 +24,7 @@ const Navigation = ({
   lang,
 }: NavigationProps) => {
   const navLinks = getNavLinks(lang);
+  const contactHref = getContactHref(lang);
   const handleKeyDown = (event: React.KeyboardEvent, action: () => void) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -71,14 +72,14 @@ const Navigation = ({
                 <span className="absolute -bottom-2 left-0 w-0 h-px bg-white transition-all duration-300 group-hover:w-full" />
               </Link>
             ))}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
+            <Link
+              href={contactHref}
               className="px-5 py-2 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all duration-300"
               tabIndex={0}
-              aria-label="Send email to contact"
+              aria-label="Open contact form"
             >
               {NAV_CONTACT_LABEL}
-            </a>
+            </Link>
             <LanguageSwitcher isScrolled={isScrolled} />
           </div>
 
@@ -113,15 +114,15 @@ const Navigation = ({
               {link.label}
             </Link>
           ))}
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
+          <Link
+            href={contactHref}
             onClick={handleCloseMobileMenu}
             onKeyDown={(e) => handleKeyDown(e, handleCloseMobileMenu)}
             className="text-3xl font-light"
             tabIndex={0}
           >
             {NAV_CONTACT_LABEL}
-          </a>
+          </Link>
           <div className="pt-4">
             <LanguageSwitcher isScrolled={true} />
           </div>

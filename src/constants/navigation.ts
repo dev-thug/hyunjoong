@@ -19,10 +19,7 @@ export const getNavLinks = (lang: string): readonly NavLink[] =>
 
 export const NAV_CONTACT_LABEL = NAV_LABELS.contact;
 
-/**
- * 연락처 이메일
- */
-export const CONTACT_EMAIL = "de0978@gmail.com";
+export const getContactHref = (lang: string): string => `/${lang}/contact`;
 
 /**
  * 소셜 미디어 링크
