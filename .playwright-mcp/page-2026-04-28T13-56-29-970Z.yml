@@ -1,0 +1,58 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "Go to home page" [ref=e4] [cursor=pointer]:
+        - /url: /ko
+        - text: HYUNJOONG.KIM
+      - generic [ref=e5]:
+        - link "Portfolio" [ref=e6] [cursor=pointer]:
+          - /url: /ko/projects
+          - text: Portfolio
+        - link "Intelligence" [ref=e7] [cursor=pointer]:
+          - /url: /ko/blog
+          - text: Intelligence
+        - link "Profile" [ref=e8] [cursor=pointer]:
+          - /url: /ko/profile
+          - text: Profile
+        - link "Open contact form" [ref=e9] [cursor=pointer]:
+          - /url: /ko/contact
+          - text: Contact
+        - button "Switch to English" [ref=e10]:
+          - img [ref=e11]
+          - generic [ref=e14]: English
+  - main [ref=e15]:
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - generic [ref=e19]:
+          - generic [ref=e20]: Contact
+          - heading "프로젝트 이야기를 들려주세요" [level=1] [ref=e22]:
+            - generic [ref=e23]: 프로젝트 이야기를
+            - generic [ref=e24]: 들려주세요
+          - paragraph [ref=e25]: 이름, 연락처, 문의 내용을 남겨주시면 확인 후 이메일로 답변드리겠습니다.
+        - generic [ref=e26]:
+          - paragraph [ref=e27]: 응답
+          - paragraph [ref=e28]: 보통 1-2영업일 내에 답변드립니다.
+      - region "프로젝트 이야기를 들려주세요" [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - generic [ref=e32]:
+              - generic [ref=e33]: 이름
+              - textbox "이름" [ref=e34]:
+                - /placeholder: 홍길동
+              - paragraph [ref=e35]
+            - generic [ref=e36]:
+              - generic [ref=e37]: 연락처
+              - textbox "연락처" [ref=e38]:
+                - /placeholder: 이메일, 전화번호, LinkedIn 등
+              - paragraph [ref=e39]
+            - generic [ref=e40]:
+              - generic [ref=e41]: 문의 내용
+              - textbox "문의 내용" [ref=e42]:
+                - /placeholder: 프로젝트 배경, 필요한 역할, 일정 등을 편하게 적어주세요.
+              - paragraph [ref=e43]
+          - generic [ref=e44]:
+            - paragraph [ref=e56]: 문의가 전송되었습니다. 확인 후 연락드리겠습니다.
+            - button "문의 보내기" [ref=e45]
+  - button "Open Next.js Dev Tools" [ref=e51] [cursor=pointer]:
+    - img [ref=e52]
+  - alert [ref=e55]
