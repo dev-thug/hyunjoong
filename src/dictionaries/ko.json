@@ -1,4 +1,10 @@
 {
+  "nav": {
+    "portfolio": "포트폴리오",
+    "intelligence": "인텔리전스",
+    "profile": "프로필",
+    "contact": "연락"
+  },
   "hero": {
     "title_beyond": "BEYOND",
     "title_code": "CODE",
@@ -9,12 +15,14 @@
     "intelligence_subtitle": "비즈니스 인텔리전스",
     "meta_title": "김현중 | 풀스택 개발자 포트폴리오",
     "meta_description": "풀스택 개발자 김현중의 포트폴리오. 서버리스·풀스택 개발, 비즈니스 임팩트를 담은 프로젝트와 기술 블로그.",
-    "meta_title_template": "%s | 풀스택 개발자 포트폴리오"
+    "meta_title_template": "%s | 풀스택 개발자 포트폴리오",
+    "open_for_ventures": "새로운 협업을 환영합니다"
   },
   "about": {
     "philosophy_label": "철학",
     "description": "AI가 코드를 작성하는 시대에 엔지니어의 가치는 실행에서 아키텍처로 이동합니다. 저는 확장 가능한 서버리스 인프라를 기반으로, 오버헤드를 줄이면서 비즈니스 임팩트를 높이는 풀스택 개발을 전문으로 합니다.",
     "stack_label": "핵심 스택",
+    "stack_value": "NodeJS / Serverless",
     "focus_label": "집중 분야",
     "focus_value": "성능 / 전환율"
   },
@@ -25,10 +33,15 @@
     "meta_description": "풀스택·서버리스 개발과 비즈니스 임팩트를 담은 프로젝트 포트폴리오. 기술 케이스 스터디와 실전 프로젝트 모음.",
     "page_subtitle": "풀스택·서버리스 개발과 비즈니스 임팩트를 담은 프로젝트 모음입니다.",
     "back_to_portfolio": "포트폴리오로 돌아가기",
-    "back_to_portfolio_aria": "포트폴리오 목록으로 돌아가기"
-  },
-  "brand": {
-    "location": "DESIGNED IN SEOUL"
+    "back_to_portfolio_aria": "포트폴리오 목록으로 돌아가기",
+    "view_project": "프로젝트 보기",
+    "overview_heading": "프로젝트 개요",
+    "previous": "이전 프로젝트",
+    "next": "다음 프로젝트",
+    "visit_service": "서비스 방문",
+    "visit_service_aria": "{title} 서비스 방문 (새 탭에서 열림)",
+    "case_study": "케이스 스터디",
+    "view_project_aria": "{title} 프로젝트 보기"
   },
   "blog": {
     "page_title": "Blog",
@@ -49,20 +62,30 @@
     "last": "마지막",
     "search_aria": "블로그 글 검색",
     "search_placeholder": "제목, 요약, 키워드로 검색",
-    "search_button": "검색",
     "clear_search": "초기화",
     "results_count": "검색 결과 {count}개",
     "no_search_results": "검색 결과가 없습니다. 다른 검색어를 입력해 보세요.",
     "toc_title": "목차",
     "toc_toggle": "목차 보기",
-    "toc_close": "목차 닫기",
-    "not_available_title": "한국어 번역이 없는 포스트입니다",
-    "not_available_description": "이 포스트는 {lang}로만 제공됩니다. 아래 버튼을 통해 해당 언어로 읽으실 수 있습니다.",
-    "read_in_language": "{lang}로 읽기"
+    "toc_close": "목차 닫기"
   },
   "profile": {
     "meta_title": "Profile",
-    "meta_description": "풀스택 아키텍트. 서버리스 아키텍처, 비즈니스 인텔리전스, 확장 가능한 시스템을 전문으로 합니다."
+    "meta_description": "풀스택 아키텍트. 서버리스 아키텍처, 비즈니스 인텔리전스, 확장 가능한 시스템을 전문으로 합니다.",
+    "about_heading": "소개",
+    "intro_para_1": "저는 서울을 기반으로 활동하는 풀스택 개발자로, 서버리스 아키텍처와 고성능 웹 애플리케이션을 전문으로 합니다. 비즈니스 임팩트에 집중하여, 단순히 동작하는 것을 넘어 확장되고, 전환을 이끌며, 측정 가능한 결과를 만들어내는 시스템을 구축합니다.",
+    "intro_para_2": "저의 접근 방식은 깊이 있는 기술 전문성과 전략적 사고를 결합하는 것입니다. AI가 코드를 작성하는 시대에 진정한 가치는 아키텍처 결정, 시스템 설계, 그리고 비즈니스 컨텍스트에 대한 이해에 있습니다.",
+    "tech_stack_heading": "기술 스택",
+    "experience_heading": "경력",
+    "cta_title": "함께 일해요",
+    "cta_subtitle": "새로운 도전과 협업을 환영합니다",
+    "get_in_touch_cta": "연락하기",
+    "open_contact_form_aria": "연락 양식 열기",
+    "job_title": "풀스택 & AWS 클라우드 개발자",
+    "intro_heading_prefix": "목적과 함께 ",
+    "intro_heading_emphasis": "확장되는 시스템",
+    "intro_heading_suffix": "을 만듭니다",
+    "visit_company_website_aria": "{company} 웹사이트 방문"
   },
   "contact": {
     "meta_title": "Contact",
@@ -88,7 +111,8 @@
     "submit": "문의 보내기",
     "submitting": "전송 중...",
     "success": "문의가 전송되었습니다. 확인 후 연락드리겠습니다.",
-    "error": "문의 전송 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요."
+    "error": "문의 전송 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+    "timeout_error": "요청 시간이 초과되었습니다. 다시 시도해 주세요."
   },
   "notFound": {
     "title": "404",

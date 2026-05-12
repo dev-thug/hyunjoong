@@ -14,6 +14,11 @@ interface GiscusProps {
 export default function Giscus({ lang }: GiscusProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const isWidgetLoadedRef = useRef(false);
+  const langRef = useRef(lang);
+
+  useEffect(() => {
+    langRef.current = lang;
+  }, [lang]);
 
   const createGiscusWidget = useCallback(() => {
     const giscusDiv = containerRef.current;
@@ -22,6 +27,7 @@ export default function Giscus({ lang }: GiscusProps) {
     const repo = process.env.NEXT_PUBLIC_GISCUS_REPO;
     const repoId = process.env.NEXT_PUBLIC_GISCUS_REPO_ID;
     const categoryId = process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID;
+    const category = process.env.NEXT_PUBLIC_GISCUS_CATEGORY || 'Announcements';
 
     if (!repo || !repoId || !categoryId) {
       console.warn('Giscus: Missing required environment variables');
@@ -38,7 +44,7 @@ export default function Giscus({ lang }: GiscusProps) {
     script.crossOrigin = 'anonymous';
     script.setAttribute('data-repo', repo);
     script.setAttribute('data-repo-id', repoId);
-    script.setAttribute('data-category', 'Announcements');
+    script.setAttribute('data-category', category);
     script.setAttribute('data-category-id', categoryId);
     script.setAttribute('data-mapping', 'pathname');
     script.setAttribute('data-strict', '0');
@@ -46,13 +52,13 @@ export default function Giscus({ lang }: GiscusProps) {
     script.setAttribute('data-emit-metadata', '0');
     script.setAttribute('data-input-position', 'bottom');
     script.setAttribute('data-theme', 'dark');
-    script.setAttribute('data-lang', lang);
+    script.setAttribute('data-lang', langRef.current);
     script.setAttribute('data-loading', 'lazy');
     script.setAttribute('data-initialized', 'true');
 
     giscusDiv.appendChild(script);
     isWidgetLoadedRef.current = true;
-  }, [lang]);
+  }, []);
 
   useEffect(() => {
     const giscusDiv = containerRef.current;

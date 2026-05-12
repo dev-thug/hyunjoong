@@ -1,9 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import {
-  CONTACT_FIELD_LIMITS,
-  validateContactPayload,
-} from "./validation";
+import { CONTACT_FIELD_LIMITS } from "./field-limits";
+import { validateContactPayload } from "./validation";
 
 test("accepts valid contact form payloads", () => {
   const result = validateContactPayload({

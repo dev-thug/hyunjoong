@@ -1,64 +1,20 @@
-"use client";
-
-import { useState, useEffect, useRef, useCallback } from "react";
-import Navigation from "@/components/layout/Navigation";
-import { SCROLL_THRESHOLD } from "@/constants";
+import { getDictionary } from "@/get-dictionary";
+import type { Locale } from "@/i18n-config";
+import GlobalNavigationClient from "./GlobalNavigationClient";
 
 interface GlobalNavigationWrapperProps {
-  readonly lang: string;
+  readonly lang: Locale;
 }
 
 /**
- * 전역 네비게이션 래퍼
- * 모든 페이지에서 동일한 네비게이션과 이벤트 효과 제공
+ * 전역 네비게이션 래퍼 (서버 컴포넌트)
+ * 사전(dictionary)을 로드해 클라이언트 네비게이션 상태 컴포넌트에 전달한다.
  */
-const GlobalNavigationWrapper = ({ lang }: GlobalNavigationWrapperProps) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const rafIdRef = useRef<number | null>(null);
-  const prevIsScrolledRef = useRef(false);
-
-  useEffect(() => {
-    const updateScrolledState = () => {
-      rafIdRef.current = null;
-      const nextIsScrolled = window.scrollY > SCROLL_THRESHOLD;
-      if (nextIsScrolled === prevIsScrolledRef.current) {
-        return;
-      }
-      prevIsScrolledRef.current = nextIsScrolled;
-      setIsScrolled(nextIsScrolled);
-    };
-
-    const handleScroll = () => {
-      if (rafIdRef.current !== null) {
-        return;
-      }
-      rafIdRef.current = window.requestAnimationFrame(updateScrolledState);
-    };
-
-    updateScrolledState();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafIdRef.current !== null) {
-        window.cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, []);
-
-  const handleToggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen((prev) => !prev);
-  }, []);
-
-  return (
-    <Navigation
-      isScrolled={isScrolled}
-      isMobileMenuOpen={isMobileMenuOpen}
-      onToggleMobileMenu={handleToggleMobileMenu}
-      lang={lang}
-    />
-  );
+const GlobalNavigationWrapper = async ({
+  lang,
+}: GlobalNavigationWrapperProps) => {
+  const dict = await getDictionary(lang);
+  return <GlobalNavigationClient lang={lang} navLabels={dict.nav} />;
 };
 
 export default GlobalNavigationWrapper;

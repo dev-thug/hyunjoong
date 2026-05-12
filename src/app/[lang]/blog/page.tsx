@@ -3,7 +3,7 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { buildBlogListingMetadata } from "@/lib/metadata/blog-listing";
+import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 import { BLOG_POSTS_PAGE_SIZE, getPostsPage } from "@/lib/posts";
 import { parseSearchQuery } from "@/lib/search-query";
 
@@ -15,11 +15,13 @@ export async function generateMetadata({
   searchParams: Promise<{ q?: string | string[] }>;
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
+  // Note: searchParams forces dynamic rendering — accepted trade-off
+  // for server-side search filtering via getPostsPage(query).
   const { q } = await searchParams;
   const query = parseSearchQuery(q);
   const dict = await getDictionary(lang);
 
-  return buildBlogListingMetadata({
+  return buildLocalizedPageMetadata({
     lang,
     title: dict.blog.page_title,
     description: dict.blog.page_description,
@@ -37,6 +39,8 @@ export default async function BlogPage({
   params: Promise<{ lang: string }>;
   searchParams: Promise<{ q?: string | string[] }>;
 }) {
+  // Note: searchParams forces dynamic rendering — accepted trade-off
+  // for server-side search filtering via getPostsPage(query).
   const { lang } = (await params) as { lang: Locale };
   const { q } = await searchParams;
   const query = parseSearchQuery(q);

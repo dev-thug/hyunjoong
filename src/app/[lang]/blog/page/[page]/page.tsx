@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import { i18n, type Locale } from "@/i18n-config";
-import { buildBlogListingMetadata } from "@/lib/metadata/blog-listing";
-import {
-  BLOG_POSTS_PAGE_SIZE,
-  getAllPosts,
-  getPostsPage,
-  paginatePosts,
-} from "@/lib/posts";
-import { parseSearchQuery } from "@/lib/search-query";
+import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
+import { BLOG_POSTS_PAGE_SIZE, getAllPosts, getPostsPage } from "@/lib/posts";
 
 const PAGE_PARAM_PATTERN = /^[1-9]\d*$/;
 
@@ -32,6 +26,8 @@ const parsePageParam = (pageParam: string): number | null => {
   return parsedPage;
 };
 
+// `?q=` search submits to /blog only; paginated routes have no search UI,
+// so this file omits `searchParams` to remain fully statically generated.
 export async function generateMetadata({
   params,
 }: {
@@ -42,11 +38,10 @@ export async function generateMetadata({
   const parsedPage = parsePageParam(page);
   const canonicalPath =
     parsedPage !== null && parsedPage >= 2 ? `/blog/page/${parsedPage}` : "/blog";
-  return buildBlogListingMetadata({
+  return buildLocalizedPageMetadata({
     lang,
     title: dict.blog.page_title,
     description: dict.blog.page_description,
-    noIndex: true,
     canonicalPath,
   });
 }
@@ -57,7 +52,10 @@ export const generateStaticParams = async (): Promise<
   const pagedRoutes = await Promise.all(
     i18n.locales.map(async (lang) => {
       const posts = await getAllPosts(lang);
-      const { totalPages } = paginatePosts(posts, 1, BLOG_POSTS_PAGE_SIZE);
+      const totalPages = Math.max(
+        1,
+        Math.ceil(posts.length / BLOG_POSTS_PAGE_SIZE)
+      );
       const pages: { lang: string; page: string }[] = [];
 
       for (let page = 2; page <= totalPages; page += 1) {
@@ -73,22 +71,22 @@ export const generateStaticParams = async (): Promise<
 
 export default async function BlogPageByPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ lang: string; page: string }>;
-  searchParams: Promise<{ q?: string | string[] }>;
 }) {
   const { lang, page } = (await params) as { lang: Locale; page: string };
-  const { q } = await searchParams;
-  const query = parseSearchQuery(q);
   const parsedPage = parsePageParam(page);
-  if (parsedPage === null || parsedPage < 2) {
+  if (parsedPage === null) {
     notFound();
+  }
+  // Canonicalize /blog/page/1 → /blog so the listing has a single URL.
+  if (parsedPage === 1) {
+    redirect(`/${lang}/blog`);
   }
 
   const [dict, paginatedPosts] = await Promise.all([
     getDictionary(lang),
-    getPostsPage(lang, parsedPage, BLOG_POSTS_PAGE_SIZE, query),
+    getPostsPage(lang, parsedPage, BLOG_POSTS_PAGE_SIZE),
   ]);
   if (parsedPage > paginatedPosts.totalPages) {
     notFound();
@@ -106,7 +104,6 @@ export default async function BlogPageByPage({
       <BlogSearchClient
         posts={paginatedPosts.items}
         lang={lang}
-        query={query}
         currentPage={parsedPage}
         totalPages={paginatedPosts.totalPages}
         totalItems={paginatedPosts.totalItems}

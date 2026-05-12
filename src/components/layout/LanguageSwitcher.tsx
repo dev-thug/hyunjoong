@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { Locale } from "@/i18n-config";
+import { i18n, type Locale } from "@/i18n-config";
 import { Globe } from "lucide-react";
 
 const TARGET_LANGUAGE_LABEL: Record<Locale, string> = {
@@ -13,37 +13,47 @@ interface LanguageSwitcherProps {
   readonly isScrolled?: boolean;
 }
 
+const isLocale = (value: string): value is Locale =>
+  (i18n.locales as readonly string[]).includes(value);
+
 const LanguageSwitcher = ({ isScrolled = false }: LanguageSwitcherProps) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const currentLocale = pathname.split("/")[1] as Locale;
+  const firstSegment = pathname.split("/")[1] ?? "";
+  const currentLocale: Locale = isLocale(firstSegment)
+    ? firstSegment
+    : i18n.defaultLocale;
   const targetLocale: Locale = currentLocale === "ko" ? "en" : "ko";
   const targetLabel = TARGET_LANGUAGE_LABEL[targetLocale];
 
   const handleLanguageChange = () => {
     const segments = pathname.split("/");
-    segments[1] = targetLocale;
-    const newPath = segments.join("/");
-    router.push(newPath);
-  };
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleLanguageChange();
+    let newPath: string;
+    if (isLocale(segments[1] ?? "")) {
+      segments[1] = targetLocale;
+      newPath = segments.join("/") || `/${targetLocale}`;
+    } else {
+      // No locale segment in current path; build a fresh prefixed path.
+      const rest = pathname.replace(/^\/+/, "");
+      newPath = rest ? `/${targetLocale}/${rest}` : `/${targetLocale}`;
     }
+
+    if (typeof document !== "undefined") {
+      document.cookie = `NEXT_LOCALE=${targetLocale}; path=/; max-age=31536000; samesite=lax`;
+    }
+
+    router.push(newPath);
   };
 
   return (
     <button
+      type="button"
       onClick={handleLanguageChange}
-      onKeyDown={handleKeyDown}
       className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 group hover:bg-white/10 ${
         isScrolled ? "text-gray-200" : "text-gray-400"
       } hover:text-white`}
       aria-label={`Switch to ${targetLabel}`}
-      tabIndex={0}
     >
       <Globe
         size={14}

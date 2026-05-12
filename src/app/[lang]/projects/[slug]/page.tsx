@@ -14,7 +14,7 @@ import type { Locale } from "@/i18n-config";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
 import { getSiteBaseUrl, SITE_NAME, toAbsoluteSiteUrl } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
-import { NOT_FOUND_METADATA_TITLE } from "@/lib/metadata/constants";
+import { NOT_FOUND_METADATA_TITLE } from "@/lib/site-config";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -62,15 +62,18 @@ export async function generateMetadata({
  */
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { lang, slug } = (await params) as { lang: Locale; slug: string };
-  const [project, dict, allProjects] = await Promise.all([
+  const [project, dict] = await Promise.all([
     getProjectBySlug(slug, lang),
     getDictionary(lang),
-    getAllProjects(lang),
   ]);
 
   if (!project) {
     notFound();
   }
+
+  // Defer prev/next list fetch until after the 404 guard so missing pages
+  // don't pay for reading every project MDX file.
+  const allProjects = await getAllProjects(lang);
 
   const baseUrl = getSiteBaseUrl();
   const projectUrl = `${baseUrl}/${lang}/projects/${slug}`;
@@ -196,9 +199,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-3 w-full py-4 px-6 rounded-xl border-2 border-white/25 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none transition-all duration-200 touch-action-manipulation mb-12"
-          aria-label={`Visit ${project.title} service (opens in new tab)`}
+          aria-label={dict.projects.visit_service_aria.replace("{title}", project.title)}
         >
-          <span className="text-base font-bold">Visit Service</span>
+          <span className="text-base font-bold">{dict.projects.visit_service}</span>
           <ExternalLink size={20} aria-hidden="true" className="shrink-0" />
         </a>
       )}
@@ -212,7 +215,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           id="overview-heading"
           className="text-2xl font-light text-white mb-6"
         >
-          Project Overview
+          {dict.projects.overview_heading}
         </h2>
         <div className="text-gray-400 leading-relaxed text-lg">
           {project.description}
@@ -242,11 +245,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <Link
               href={`/${lang}/projects/${prevProject.slug}`}
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors duration-200"
-              aria-label={`Previous project: ${prevProject.title}`}
+              aria-label={`${dict.projects.previous}: ${prevProject.title}`}
             >
               <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
                 <ArrowLeft size={12} aria-hidden="true" />
-                Previous
+                {dict.projects.previous}
               </span>
               <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors duration-200 line-clamp-1">
                 {prevProject.title}
@@ -260,10 +263,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             <Link
               href={`/${lang}/projects/${nextProject.slug}`}
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors duration-200 text-right"
-              aria-label={`Next project: ${nextProject.title}`}
+              aria-label={`${dict.projects.next}: ${nextProject.title}`}
             >
               <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center justify-end gap-2">
-                Next
+                {dict.projects.next}
                 <ArrowRight size={12} aria-hidden="true" />
               </span>
               <span className="block text-white mt-2 group-hover:text-gray-300 transition-colors duration-200 line-clamp-1">

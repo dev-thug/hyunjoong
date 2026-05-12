@@ -1,7 +1,9 @@
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
 import HomeLayoutWrapper from "@/components/layout/HomeLayoutWrapper";
 import HeroSection from "@/components/sections/HeroSection";
+import AboutSection from "@/components/sections/AboutSection";
+import ProjectsSection from "@/components/sections/ProjectsSection";
+import BlogSection from "@/components/sections/BlogSection";
 import { type Locale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
 import {
@@ -11,15 +13,6 @@ import {
   toAbsoluteSiteUrl,
 } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
-
-// 초기 로딩에 필수적이지 않은 하단 섹션들을 dynamic import로 분리하여 번들 크기 최적화
-const AboutSection = dynamic(
-  () => import("@/components/sections/AboutSection")
-);
-const ProjectsSection = dynamic(
-  () => import("@/components/sections/ProjectsSection")
-);
-const BlogSection = dynamic(() => import("@/components/sections/BlogSection"));
 
 /**
  * 홈 페이지 (서버 컴포넌트)
@@ -70,15 +63,18 @@ export default async function Home({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLdStringify(websiteSchema) }}
       />
-      <HomeLayoutWrapper>
+      <HomeLayoutWrapper lang={lang}>
         {/* LCP 요소: 즉시 렌더링 */}
         <HeroSection dict={dict} />
 
-        {/* 하단 섹션들: 필요한 시점에 로드 */}
         <AboutSection dict={dict} />
-        <ProjectsSection dict={dict} lang={lang} />
 
-        {/* 서버 컴포넌트 스트리밍: 데이터 읽기 중에도 상단 콘텐츠 즉시 노출 가능 */}
+        {/* 서버 컴포넌트 스트리밍: 파일 I/O 중에도 상단 콘텐츠가 먼저 노출됩니다. */}
+        <Suspense
+          fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
+        >
+          <ProjectsSection dict={dict} lang={lang} />
+        </Suspense>
         <Suspense
           fallback={<div className="h-96 w-full animate-pulse bg-white/5" />}
         >

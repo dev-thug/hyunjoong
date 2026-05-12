@@ -1,3 +1,8 @@
+// NOTE: This in-process rate limiter is reset on every serverless cold start.
+// On Vercel, replace with Vercel KV / Upstash Redis for an effective distributed counter.
+// Tracked as a known-limitation; current implementation provides best-effort throttling
+// against bursts within a single warm instance.
+
 export const CONTACT_RATE_LIMIT = {
   maxRequests: 5,
   windowMs: 60 * 60 * 1000,

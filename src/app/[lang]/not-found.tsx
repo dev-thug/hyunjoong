@@ -9,19 +9,47 @@ import { headers } from "next/headers";
  * 404 Not Found Page
  * Matches the existing design system (Dark mode, Montserrat/Inter fonts, Lucide icons).
  */
+function pickLocaleFromPath(path: string | null | undefined): Locale | undefined {
+  if (!path) return undefined;
+  // Normalize: strip protocol/host if present, then take the first non-empty segment.
+  const pathOnly = path.replace(/^[a-z]+:\/\/[^/]+/i, "");
+  const segments = pathOnly.split("?")[0].split("#")[0].split("/").filter(Boolean);
+  const first = segments[0];
+  if (first && (i18n.locales as readonly string[]).includes(first)) {
+    return first as Locale;
+  }
+  return undefined;
+}
+
 export default async function NotFound() {
   const headersList = await headers();
-  //referer를 통해 이전 페이지의 언어를 감지하거나, 요청된 경로에서 언어를 추론합니다.
-  const referer = headersList.get("referer") || "";
-  
-  // URL 경로에서 지원되는 로케일(ko, en 등)을 찾아 언어를 결정합니다.
+
+  // In Next.js 16, prefer the request pathname headers that Next sets internally.
+  // Fall back to Referer only as a last resort, defaulting to the configured locale.
   let lang: Locale = i18n.defaultLocale;
-  const localeInPath = referer.split("/").find(part => 
-    (i18n.locales as readonly string[]).includes(part)
-  ) as Locale | undefined;
-  
-  if (localeInPath) {
-    lang = localeInPath;
+  let matched = false;
+
+  const candidatePaths = [
+    headersList.get("x-invoke-path"),
+    headersList.get("x-pathname"),
+    headersList.get("next-url"),
+    headersList.get("x-matched-path"),
+  ];
+
+  for (const candidate of candidatePaths) {
+    const found = pickLocaleFromPath(candidate);
+    if (found) {
+      lang = found;
+      matched = true;
+      break;
+    }
+  }
+
+  if (!matched) {
+    const refererLocale = pickLocaleFromPath(headersList.get("referer"));
+    if (refererLocale) {
+      lang = refererLocale;
+    }
   }
 
   // getDictionary는 이미 cache() 처리되어 있어 성능 저하 없이 호출 가능합니다.

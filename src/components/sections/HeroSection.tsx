@@ -44,9 +44,9 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
         <div className="flex flex-col gap-4 md:gap-6 md:grid md:grid-cols-12 items-stretch md:items-end relative z-10">
           {/* Manifesto Text */}
           <div className="md:col-span-5 glass-panel p-5 md:p-8 rounded-xl md:rounded-2xl bg-noise backdrop-blur-3xl border border-white/5 hover:border-white/10 transition-colors duration-500 animate-fade-up delay-800">
-            <h3 className="text-base md:text-lg font-light mb-3 md:mb-4 text-white font-montserrat">
+            <h2 className="text-base md:text-lg font-light mb-3 md:mb-4 text-white font-montserrat">
               {dict.hero.role_title}
-            </h3>
+            </h2>
             <p className="text-xs md:text-sm text-gray-400 font-light leading-relaxed">
               {dict.hero.role_description}
             </p>
@@ -61,7 +61,7 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
               </span>
               <span className="text-[10px] md:text-[10px] font-mono uppercase tracking-[0.15em] md:tracking-[0.2em] text-gray-300">
-                Open for New Ventures
+                {dict.hero.open_for_ventures}
               </span>
             </div>
 

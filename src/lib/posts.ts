@@ -1,7 +1,15 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { cache } from "react";
-import type { PostMetadata, PostCategory } from "@/types/blog";
+import type { Post, PostCategory } from "@/types/blog";
+import {
+  extractMetadataBlock,
+  getContentIdentifiers,
+  parseBoolean,
+  parseQuotedString,
+  parseStringArray,
+  type ContentLang,
+} from "@/lib/content-utils";
 
 /**
  * 블로그 포스트 디렉토리 경로
@@ -10,7 +18,7 @@ const POSTS_DIRECTORY = path.join(process.cwd(), "src/content/posts");
 export const BLOG_POSTS_PAGE_SIZE = 6;
 
 export interface PaginatedPostsResult {
-  items: PostMetadata[];
+  items: Post[];
   currentPage: number;
   totalPages: number;
   totalItems: number;
@@ -49,36 +57,14 @@ const POST_SLUG_REGEX = /^[a-z0-9-]+$/;
 const POST_LANG_REGEX = /^(ko|en)$/;
 
 /**
- * 파일명에서 슬러그와 언어 정보를 추출
- * 예: "nextjs-architecture.ko.mdx" -> { slug: "nextjs-architecture", lang: "ko" }
- */
-const parseFileName = (
-  fileName: string
-): { slug: string; lang: string } | null => {
-  const match = fileName.match(/^(.+)\.(.+)\.(mdx|md)$/);
-  if (!match) return null;
-  return {
-    slug: match[1],
-    lang: match[2],
-  };
-};
-
-/**
  * 모든 MDX 파일의 { slug, lang } 목록 반환 (비동기)
+ *
+ * 파일명 파싱은 `content-utils.ts`의 `parseContentFileName`을 사용하므로
+ * 'ko' / 'en' 이외의 언어 세그먼트가 포함된 파일은 자동으로 제외된다.
  */
 export const getPostIdentifiers = cache(
   async (): Promise<{ slug: string; lang: string }[]> => {
-    try {
-      const files = await fs.readdir(POSTS_DIRECTORY);
-      return files
-        .map(parseFileName)
-        .filter(
-          (item): item is { slug: string; lang: string } => item !== null
-        );
-    } catch (error) {
-      console.error("Error reading posts directory:", error);
-      return [];
-    }
+    return getContentIdentifiers(POSTS_DIRECTORY, "posts");
   }
 );
 
@@ -88,53 +74,23 @@ export const getPostIdentifiers = cache(
 const parseMetadataFromContent = (
   content: string
 ): ParsedPostMetadata | null => {
-  const metadataMatch = content.match(
-    /export\s+const\s+metadata\s*=\s*\{([\s\S]*?)\};/
-  );
+  const metadataBlock = extractMetadataBlock(content);
 
-  if (!metadataMatch) {
+  if (metadataBlock === null) {
     return null;
   }
 
-  const metadataBlock = metadataMatch[1];
-  const parseStringField = (key: string): string | undefined => {
-    const match = metadataBlock.match(
-      new RegExp(`${key}:\\s*"((?:[^"\\\\]|\\\\.)*)"`)
-    );
-    if (!match) {
-      return undefined;
-    }
-    return match[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\");
-  };
-  const parseBooleanField = (key: string): boolean | undefined => {
-    const match = metadataBlock.match(new RegExp(`${key}:\\s*(true|false)`));
-    if (!match) {
-      return undefined;
-    }
-    return match[1] === "true";
-  };
-  const parseStringArrayField = (key: string): string[] | undefined => {
-    const match = metadataBlock.match(new RegExp(`${key}:\\s*\\[([\\s\\S]*?)\\]`));
-    if (!match) {
-      return undefined;
-    }
-    const values = [...match[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)]
-      .map((value) => value[1].replace(/\\"/g, '"').replace(/\\\\/g, "\\"))
-      .map((value) => value.trim())
-      .filter(Boolean);
-    return values;
-  };
-
   return {
-    title: parseStringField("title"),
-    excerpt: parseStringField("excerpt"),
-    category: parseStringField("category"),
-    date: parseStringField("date"),
-    readTime: parseStringField("readTime"),
-    lang: parseStringField("lang"),
+    title: parseQuotedString(metadataBlock, "title"),
+    excerpt: parseQuotedString(metadataBlock, "excerpt"),
+    category: parseQuotedString(metadataBlock, "category"),
+    date: parseQuotedString(metadataBlock, "date"),
+    readTime: parseQuotedString(metadataBlock, "readTime"),
+    lang: parseQuotedString(metadataBlock, "lang"),
     keywords:
-      parseStringArrayField("keywords") ?? parseStringField("keywords"),
-    hidden: parseBooleanField("hidden"),
+      parseStringArray(metadataBlock, "keywords") ??
+      parseQuotedString(metadataBlock, "keywords"),
+    hidden: parseBoolean(metadataBlock, "hidden"),
   };
 };
 
@@ -179,7 +135,7 @@ const isSafePostLang = (value: string): boolean => POST_LANG_REGEX.test(value);
  * 슬러그와 언어로 특정 포스트 메타데이터 가져오기 (비동기)
  */
 export const getPostBySlug = cache(
-  async (slug: string, lang: string): Promise<PostMetadata | null> => {
+  async (slug: string, lang: string): Promise<Post | null> => {
     if (!isSafePostSlug(slug) || !isSafePostLang(lang)) {
       return null;
     }
@@ -219,9 +175,12 @@ export const getPostBySlug = cache(
     const keywords = normalizeKeywords(metadata.keywords);
     const hidden = metadata.hidden === true;
 
+    // metadata.lang은 위에서 isSafePostLang로 검증되었으므로 'ko' | 'en'으로 좁힐 수 있다.
+    const narrowedLang = metadata.lang as ContentLang;
+
     return {
       slug,
-      lang: metadata.lang || lang,
+      lang: narrowedLang,
       title: metadata.title,
       excerpt: metadata.excerpt,
       category: metadata.category,
@@ -265,7 +224,7 @@ export const getAllPosts = cache(
   async (
     lang?: string,
     options: { includeHidden?: boolean } = DEFAULT_GET_ALL_POSTS_OPTIONS
-  ): Promise<PostMetadata[]> => {
+  ): Promise<Post[]> => {
     if (lang !== undefined && !isSafePostLang(lang)) {
       return [];
     }
@@ -282,16 +241,20 @@ export const getAllPosts = cache(
     const posts = await Promise.all(postPromises);
 
     const resolved = posts
-      .filter((post): post is PostMetadata => post !== null)
+      .filter((post): post is Post => post !== null)
       .filter((post) => options.includeHidden === true || !post.hidden)
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a, b) => {
+        const dt = new Date(b.date).getTime() - new Date(a.date).getTime();
+        // 같은 날짜의 포스트는 슬러그 알파벳 순으로 결정적으로 정렬한다.
+        return dt !== 0 ? dt : a.slug.localeCompare(b.slug);
+      });
 
     return resolved;
   }
 );
 
 export const paginatePosts = (
-  posts: PostMetadata[],
+  posts: Post[],
   page: number,
   pageSize: number
 ): PaginatedPostsResult => {
@@ -320,7 +283,7 @@ const normalizeSearchQuery = (searchQuery?: string): string =>
   (searchQuery ?? "").trim().toLowerCase();
 
 const isPostMatchingSearchQuery = (
-  post: PostMetadata,
+  post: Post,
   normalizedSearchQuery: string
 ): boolean => {
   if (!normalizedSearchQuery) {
@@ -342,9 +305,9 @@ const isPostMatchingSearchQuery = (
 };
 
 export const filterPostsBySearchQuery = (
-  posts: PostMetadata[],
+  posts: Post[],
   searchQuery?: string
-): PostMetadata[] => {
+): Post[] => {
   const normalizedSearchQuery = normalizeSearchQuery(searchQuery);
 
   if (!normalizedSearchQuery) {
@@ -381,13 +344,27 @@ export const getPostsPage = async (
 };
 
 /**
- * generateStaticParams용 슬러그 파라미터 목록
+ * generateStaticParams용 슬러그 파라미터 목록.
+ *
+ * `hidden: true`로 표시된 포스트는 정적 경로에서 제외하여
+ * 검색 엔진/사이트맵 노출과 일관성을 유지한다.
  */
 export const generatePostParams = async (): Promise<
   { slug: string; lang: string }[]
 > => {
   const identifiers = await getPostIdentifiers();
-  return identifiers.map(({ slug, lang }) => ({ slug, lang }));
+  const candidates = await Promise.all(
+    identifiers.map(async ({ slug, lang }) => {
+      const post = await getPostBySlug(slug, lang);
+      if (post === null || post.hidden === true) {
+        return null;
+      }
+      return { slug, lang };
+    })
+  );
+  return candidates.filter(
+    (entry): entry is { slug: string; lang: string } => entry !== null
+  );
 };
 
 export const getAvailablePostLocales = cache(

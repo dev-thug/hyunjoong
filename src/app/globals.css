@@ -13,6 +13,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  /* Intentionally re-exposes the Next.js font CSS variable as a Tailwind v4 design token */
   --font-montserrat: var(--font-montserrat);
 }
 
@@ -101,15 +102,6 @@ body {
   }
 }
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(200%);
-  }
-}
-
 /* Honor user motion preferences */
 @media (prefers-reduced-motion: reduce) {
   .animate-reveal,
@@ -119,7 +111,9 @@ body {
     transform: none;
     filter: none;
   }
-  
+
+  .animate-reveal { will-change: auto; }
+
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -266,4 +260,17 @@ body {
 
 .hljs-link {
   text-decoration: underline;
+}
+
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+  }
+  .glass-panel, .heading-decorative-bg {
+    background: transparent !important;
+  }
+  .heading-decorative, .heading-decorative-bg {
+    color: #000000 !important;
+  }
 }

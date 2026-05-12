@@ -52,7 +52,7 @@ const ImageGallery = ({
     <figure className="my-8">
       <div className={`grid ${COLUMN_CLASSES[columns]} ${GAP_CLASSES[gap]}`}>
         {images.map((image, index) => (
-          <div key={`${image.src}-${index}`} className="relative">
+          <figure key={`${image.src}-${index}`} className="relative m-0">
             <div className="overflow-hidden rounded-xl bg-zinc-900/50">
               <Image
                 src={image.src}
@@ -64,11 +64,11 @@ const ImageGallery = ({
               />
             </div>
             {image.caption && (
-              <p className="mt-2 text-xs text-zinc-500 text-center leading-relaxed">
+              <figcaption className="mt-2 text-xs text-zinc-500 text-center leading-relaxed">
                 {image.caption}
-              </p>
+              </figcaption>
             )}
-          </div>
+          </figure>
         ))}
       </div>
       {caption && (

@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, Copy } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface CodeBlockProps {
   children: React.ReactNode;
@@ -13,6 +13,16 @@ interface CodeBlockProps {
  */
 const CodeBlock = ({ children }: CodeBlockProps) => {
   const [isCopied, setIsCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    },
+    []
+  );
 
   // 언어 정보 추출 (MDX에서 전달되는 className에서 language-xxx 추출)
   const getLanguage = () => {
@@ -47,14 +57,25 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
     return '';
   };
 
+  const canCopy =
+    typeof navigator !== 'undefined' &&
+    typeof navigator.clipboard?.writeText === 'function';
+
   const handleCopy = async () => {
+    if (!canCopy) return;
     const text = extractText(children);
     if (!text) return;
 
     try {
       await navigator.clipboard.writeText(text);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => {
+        setIsCopied(false);
+        timerRef.current = null;
+      }, 2000);
     } catch (err) {
       console.error('Failed to copy text:', err);
     }
@@ -78,7 +99,8 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
         <button
           type="button"
           onClick={handleCopy}
-          className="flex items-center gap-1.5 px-2 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:outline-none transition-all duration-200"
+          disabled={!canCopy}
+          className="flex items-center gap-1.5 px-2 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:outline-none transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-zinc-400"
           aria-label={isCopied ? 'Copied' : 'Copy code'}
         >
           {isCopied ? (
@@ -99,6 +121,11 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
       <pre className="p-5 overflow-x-auto font-mono text-[13.5px] leading-[1.6] text-zinc-300 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
         {children}
       </pre>
+
+      {/* Screen reader announcement for copy success */}
+      <span role="status" aria-live="polite" className="sr-only">
+        {isCopied ? 'Copied to clipboard' : ''}
+      </span>
     </div>
   );
 };

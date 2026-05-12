@@ -1,36 +1,26 @@
-"use client";
-
 import { type ReactNode } from "react";
-import dynamic from "next/dynamic";
 import Footer from "@/components/layout/Footer";
-
-// WebGL 컴포넌트를 SSR에서 제외하고 지연 로드하여 초기 로딩 성능 개선
-const LiquidBackground = dynamic(
-  () => import("@/components/LiquidBackground"),
-  {
-    ssr: false,
-  }
-);
+import LiquidBackgroundLoader from "@/components/layout/LiquidBackgroundLoader";
+import type { Locale } from "@/i18n-config";
 
 interface HomeLayoutWrapperProps {
   readonly children: ReactNode;
+  readonly lang: Locale;
 }
 
 /**
- * 홈 페이지 클라이언트 래퍼
- * LiquidBackground와 Footer만 관리
- * 네비게이션은 전역 레이아웃에서 관리됨
+ * 홈 페이지 서버 래퍼
+ * LiquidBackground(클라이언트 로더)와 Footer만 관리한다.
+ * 네비게이션은 전역 레이아웃에서 관리된다.
  */
-const HomeLayoutWrapper = ({ children }: HomeLayoutWrapperProps) => {
-  return (
-    <div className="relative min-h-screen text-white selection:bg-white selection:text-black">
-      <LiquidBackground />
+const HomeLayoutWrapper = ({ children, lang }: HomeLayoutWrapperProps) => (
+  <div className="relative min-h-screen text-white selection:bg-white selection:text-black">
+    <LiquidBackgroundLoader />
 
-      {children}
+    {children}
 
-      <Footer />
-    </div>
-  );
-};
+    <Footer lang={lang} />
+  </div>
+);
 
 export default HomeLayoutWrapper;

@@ -76,7 +76,7 @@ const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
       ref={containerRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
-      className={`relative inline-block cursor-none select-none ${className}`}
+      className={`relative inline-block select-none ${className}`}
       style={{ "--spot-x": "0px", "--spot-y": "0px", "--spot-opacity": 0 } as CSSProperties}
     >
       <span className="relative z-10 text-gray-500 transition-colors duration-300">
@@ -84,13 +84,15 @@ const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
       </span>
 
       <span
+        aria-hidden="true"
         className="absolute top-0 left-0 z-20 text-white pointer-events-none"
         style={overlayStyle}
       >
         {children}
       </span>
-      
+
       <span
+        aria-hidden="true"
         className="absolute top-0 left-0 z-20 text-transparent pointer-events-none"
         style={outlineStyle}
       >

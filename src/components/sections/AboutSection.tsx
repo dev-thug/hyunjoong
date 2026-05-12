@@ -14,7 +14,7 @@ const AboutSection = ({ dict }: AboutSectionProps) => {
     >
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 lg:gap-20">
         <div>
-          <span className="block text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
+          <span className="text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
             <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
             {dict.about.philosophy_label}
           </span>
@@ -36,7 +36,7 @@ const AboutSection = ({ dict }: AboutSectionProps) => {
                 {dict.about.stack_label}
               </span>
               <span className="text-sm md:text-base lg:text-lg text-white">
-                NodeJS / Serverless
+                {dict.about.stack_value}
               </span>
             </div>
             <div>

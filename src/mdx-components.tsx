@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types";
+import Image from "next/image";
 import CodeBlock from "@/components/mdx/CodeBlock";
 import BlogImage from "@/components/mdx/BlogImage";
 import ImageGallery from "@/components/mdx/ImageGallery";
@@ -26,21 +27,31 @@ const extractTextContent = (value: unknown): string => {
 /**
  * MDX 컴포넌트 스타일링 정의
  * 마크다운 요소들을 커스텀 React 컴포넌트로 매핑
+ *
+ * Heading-ID dedup counter is module-level. `useMDXComponents` is called
+ * by the MDX runtime per render; allocating a fresh Map per call discards
+ * earlier counts and re-runs allocation on every render. The counter is
+ * reset at the start of each call so each document render starts clean.
  */
+const headingIdCounts = new Map<string, number>();
+const getHeadingId = (children: unknown): string => {
+  const rawText = extractTextContent(children).trim();
+  const baseId = toHeadingId(rawText);
+  const nextCount = (headingIdCounts.get(baseId) ?? 0) + 1;
+  headingIdCounts.set(baseId, nextCount);
+  return nextCount === 1 ? baseId : `${baseId}-${nextCount}`;
+};
+
 export function useMDXComponents(components: MDXComponents): MDXComponents {
-  const headingIdCounts = new Map<string, number>();
-  const getHeadingId = (children: unknown): string => {
-    const rawText = extractTextContent(children).trim();
-    const baseId = toHeadingId(rawText);
-    const nextCount = (headingIdCounts.get(baseId) ?? 0) + 1;
-    headingIdCounts.set(baseId, nextCount);
-    return nextCount === 1 ? baseId : `${baseId}-${nextCount}`;
-  };
+  headingIdCounts.clear();
 
   return {
     // 헤딩 스타일
     h1: ({ children }) => (
-      <h1 className="text-3xl md:text-4xl font-bold font-montserrat first:mt-0 mt-12 mb-6 text-zinc-100 tracking-tight leading-tight scroll-mt-20 text-balance">
+      <h1
+        id={getHeadingId(children)}
+        className="text-3xl md:text-4xl font-bold font-montserrat first:mt-0 mt-12 mb-6 text-zinc-100 tracking-tight leading-tight scroll-mt-20 text-balance"
+      >
         {children}
       </h1>
     ),
@@ -116,18 +127,25 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     em: ({ children }) => <em className="italic text-zinc-200">{children}</em>,
     // 이미지 스타일 (기본 마크다운 이미지)
-    img: ({ src, alt, ...props }) => (
-      <span className="block my-8">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={src}
-          alt={alt ?? ""}
-          className="mx-auto rounded-xl shadow-lg shadow-black/20 max-w-full h-auto"
-          loading="lazy"
-          {...props}
-        />
-      </span>
-    ),
+    // 크기/캡션이 필요하면 BlogImage 컴포넌트를 사용하세요.
+    img: ({ src, alt }) => {
+      if (typeof src !== "string" || src.length === 0) {
+        return null;
+      }
+      return (
+        <span className="block my-8">
+          <Image
+            src={src}
+            alt={alt ?? ""}
+            width={1200}
+            height={675}
+            className="mx-auto rounded-xl shadow-lg shadow-black/20 max-w-full h-auto"
+            sizes="(max-width: 768px) 100vw, 768px"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </span>
+      );
+    },
     // 커스텀 이미지 컴포넌트 (크기 조절, 캡션 등 지원)
     BlogImage,
     // 이미지 갤러리 컴포넌트 (여러 이미지 그리드 표시)

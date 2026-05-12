@@ -1,11 +1,6 @@
-export const CONTACT_FIELD_LIMITS = {
-  nameMinLength: 2,
-  nameMaxLength: 80,
-  contactMinLength: 3,
-  contactMaxLength: 120,
-  messageMinLength: 10,
-  messageMaxLength: 2000,
-} as const;
+import { CONTACT_FIELD_LIMITS } from "./field-limits";
+
+export { CONTACT_FIELD_LIMITS };
 
 export interface ContactPayload {
   readonly name: string;

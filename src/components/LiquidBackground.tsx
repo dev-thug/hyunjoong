@@ -16,7 +16,7 @@ const LiquidBackground = () => {
     const gl = canvas.getContext('webgl');
     if (!gl) return;
 
-    let animationFrameId: number;
+    let animationFrameId = 0;
     let time = 0;
     
     const mouse = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 };
@@ -150,25 +150,77 @@ const LiquidBackground = () => {
     window.addEventListener('mousemove', handleMouseMove);
     handleResize();
 
+    const renderStaticFrame = () => {
+      gl.uniform1f(timeLocation, 0);
+      gl.uniform2f(mouseLocation, mouse.x, mouse.y);
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    };
+
     const render = (timestamp: number) => {
       time = timestamp * LIQUID_BACKGROUND.TIME_MULTIPLIER;
-      
+
       mouse.x += (mouse.targetX - mouse.x) * LIQUID_BACKGROUND.MOUSE_LERP;
       mouse.y += (mouse.targetY - mouse.y) * LIQUID_BACKGROUND.MOUSE_LERP;
 
       gl.uniform1f(timeLocation, time);
       gl.uniform2f(mouseLocation, mouse.x, mouse.y);
-      
+
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       animationFrameId = requestAnimationFrame(render);
     };
 
-    render(0);
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const startAnimation = () => {
+      if (animationFrameId) return;
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    const stopAnimation = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = 0;
+      }
+      renderStaticFrame();
+    };
+
+    const handleReducedMotionChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        stopAnimation();
+      } else {
+        startAnimation();
+      }
+    };
+
+    if (mediaQuery.matches) {
+      renderStaticFrame();
+    } else {
+      render(0);
+    }
+
+    mediaQuery.addEventListener('change', handleReducedMotionChange);
+
+    // Pause the rAF loop while the tab is backgrounded so we don't burn GPU.
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopAnimation();
+      } else if (!mediaQuery.matches) {
+        startAnimation();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
+      mediaQuery.removeEventListener('change', handleReducedMotionChange);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       cancelAnimationFrame(animationFrameId);
+      // Release WebGL resources so Strict Mode double-mount / HMR doesn't leak.
+      if (vertexShader) gl.deleteShader(vertexShader);
+      if (fragmentShader) gl.deleteShader(fragmentShader);
+      if (program) gl.deleteProgram(program);
+      if (buffer) gl.deleteBuffer(buffer);
     };
   }, []);
 

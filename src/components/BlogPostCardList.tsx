@@ -1,13 +1,14 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import type { PostMetadata } from "@/types";
+import type { Post } from "@/types";
 
 interface BlogPostCardListProps {
-  readonly posts: PostMetadata[];
+  readonly posts: Post[];
   readonly lang: string;
   readonly readPostAriaTemplate: string;
   readonly readMoreLabel: string;
+  readonly startIndex?: number;
 }
 
 const getCategoryBadgeClass = (category: string): string => {
@@ -27,6 +28,7 @@ const BlogPostCardList = ({
   lang,
   readPostAriaTemplate,
   readMoreLabel,
+  startIndex = 0,
 }: BlogPostCardListProps) => {
   return (
     <div className="space-y-6">
@@ -41,7 +43,7 @@ const BlogPostCardList = ({
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <span className="text-xs font-mono text-gray-600">
-                {String(idx + 1).padStart(2, "0")}
+                {String(idx + startIndex + 1).padStart(2, "0")}
               </span>
               <span
                 className={`text-xs font-mono uppercase tracking-wider px-2 py-1 rounded border ${getCategoryBadgeClass(

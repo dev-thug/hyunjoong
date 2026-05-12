@@ -5,6 +5,10 @@ import { getSiteBaseUrl } from "@/lib/site-config";
  * Robots.txt configuration for search engine crawling
  */
 export default function robots(): MetadataRoute.Robots {
+  if (process.env.VERCEL_ENV !== "production") {
+    return { rules: [{ userAgent: "*", disallow: "/" }] };
+  }
+
   const baseUrl = getSiteBaseUrl();
   return {
     rules: [

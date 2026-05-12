@@ -1,3 +1,8 @@
+// Hard cap on parsed search queries. Anything longer is unlikely to be a
+// real query and bloats downstream cache keys / URL params. Truncated
+// after trim+normalization.
+const MAX_QUERY_LENGTH = 200;
+
 export const parseSearchQuery = (
   value: string | string[] | undefined
 ): string | undefined => {
@@ -9,6 +14,6 @@ export const parseSearchQuery = (
     return undefined;
   }
 
-  const normalized = value.trim();
+  const normalized = value.trim().slice(0, MAX_QUERY_LENGTH);
   return normalized.length > 0 ? normalized : undefined;
 };

@@ -1,25 +1,19 @@
-"use client";
-
 import { Github, Linkedin, Twitter } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import {
-  SOCIAL_LINKS,
-  BRAND,
-  NAV_CONTACT_LABEL,
-  getContactHref,
-} from "@/constants";
+import { SOCIAL_LINKS, BRAND, getContactHref } from "@/constants";
+import { getDictionary } from "@/get-dictionary";
+import type { Locale } from "@/i18n-config";
 
 const SOCIAL_ICONS = [Github, Linkedin, Twitter] as const;
 
 const FOOTER_CTA = { main: "LET'S", sub: "TALK." } as const;
 
-const DEFAULT_LOCALE = "ko";
+interface FooterProps {
+  readonly lang: Locale;
+}
 
-const Footer = () => {
-  const params = useParams<{ lang?: string }>();
-  const lang = params.lang ?? DEFAULT_LOCALE;
-
+const Footer = async ({ lang }: FooterProps) => {
+  const dict = await getDictionary(lang);
   return (
     <footer className="py-12 md:py-16 lg:py-20 border-t border-white/10 bg-[#020202] relative z-10">
       <div className="w-full max-w-[1400px] mx-auto px-4 md:px-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 md:gap-12">
@@ -32,10 +26,9 @@ const Footer = () => {
           <Link
             href={getContactHref(lang)}
             className="inline-flex min-h-11 items-center rounded-full border border-white/20 px-5 py-3 text-xs font-mono uppercase tracking-[0.18em] text-gray-300 transition-all hover:bg-white hover:text-black"
-            tabIndex={0}
-            aria-label="Open contact form"
+            aria-label={dict.profile.open_contact_form_aria}
           >
-            {NAV_CONTACT_LABEL}
+            {dict.nav.contact}
           </Link>
         </div>
 
@@ -50,7 +43,6 @@ const Footer = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
-                  tabIndex={0}
                   aria-label={link.ariaLabel}
                 >
                   <Icon size={18} />
@@ -60,7 +52,7 @@ const Footer = () => {
           </div>
           <div className="text-[10px] text-white font-mono flex justify-between md:justify-end gap-4 md:gap-8">
             <span>
-              © {BRAND.COPYRIGHT_YEAR} {BRAND.NAME}
+              © {BRAND.getCurrentYear()} {BRAND.NAME}
             </span>
             <span>{BRAND.LOCATION}</span>
           </div>

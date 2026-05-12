@@ -1,3 +1,4 @@
+import type { ComponentType } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
@@ -19,12 +20,8 @@ import {
   getSiteBaseUrl,
   toAbsoluteSiteUrl,
 } from "@/lib/site-config";
-import {
-  buildSitePerson,
-  buildSitePublisher,
-  safeJsonLdStringify,
-} from "@/lib/json-ld";
-import { NOT_FOUND_METADATA_TITLE } from "@/lib/metadata/constants";
+import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
+import { NOT_FOUND_METADATA_TITLE } from "@/lib/site-config";
 import { extractTocItems } from "@/lib/toc";
 
 interface BlogPostPageProps {
@@ -133,7 +130,7 @@ export default async function BlogPostPage({
     redirect(`/${availableLang}/blog/${slug}${queryString}`);
   }
 
-  const allPosts = await getAllPosts(lang, { includeHidden: true });
+  const allPosts = await getAllPosts(lang);
   const postSource = await getPostSourceBySlug(slug, lang);
   const tocItems = postSource ? extractTocItems(postSource) : [];
 
@@ -143,9 +140,14 @@ export default async function BlogPostPage({
   const nextPost = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 
   // MDX 컴포넌트 동적 import (가용한 언어 버전을 사용)
-  const { default: PostContent } = await import(
-    `@/content/posts/${slug}.${lang}.mdx`
-  );
+  let PostContent: ComponentType;
+  try {
+    ({ default: PostContent } = await import(
+      `@/content/posts/${slug}.${lang}.mdx`
+    ));
+  } catch {
+    notFound();
+  }
 
   const baseUrl = getSiteBaseUrl();
   const articleUrl = `${baseUrl}/${post.lang}/blog/${slug}`;
@@ -157,9 +159,10 @@ export default async function BlogPostPage({
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
+    dateModified: post.date,
     url: articleUrl,
     author: buildSitePerson(baseUrl),
-    publisher: buildSitePublisher(baseUrl, ogImageUrl),
+    publisher: buildSitePerson(baseUrl),
     image: ogImageUrl,
     articleSection: post.category,
     ...(post.keywords?.length ? { keywords: post.keywords } : {}),

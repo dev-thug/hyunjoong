@@ -10,8 +10,26 @@ import {
 type DetailSection = "blog" | "projects";
 type OpenGraphType = "article" | "website";
 
+/**
+ * Standard Open Graph image dimensions. 1200 x 630 is the spec used by
+ * Facebook, LinkedIn, Twitter/X (summary_large_image), and Slack unfurls.
+ * Declaring width/height lets crawlers reserve layout space without a HEAD
+ * round-trip to the image and silences validator warnings.
+ */
+const OG_IMAGE_WIDTH = 1200;
+const OG_IMAGE_HEIGHT = 630;
+
 interface BuildContentDetailMetadataOptions {
   lang: Locale;
+  /**
+   * Locale used to build the canonical URL. In every current call site this
+   * equals `lang`, but the parameter is kept as a separate input so a future
+   * caller can canonicalize a page to a different locale (for example, a
+   * post only translated for one locale that should canonicalize there
+   * regardless of the viewer's locale). If you find yourself always passing
+   * `lang`, that's expected — do not collapse the API without auditing
+   * every consumer.
+   */
   canonicalLang: Locale;
   slug: string;
   section: DetailSection;
@@ -77,6 +95,8 @@ export const buildContentDetailMetadata = ({
         {
           url: image,
           alt: SITE_NAME,
+          width: OG_IMAGE_WIDTH,
+          height: OG_IMAGE_HEIGHT,
         },
       ],
     },
@@ -86,6 +106,9 @@ export const buildContentDetailMetadata = ({
       description,
       images: [image],
     },
+    // Defensive: parent layout already sets metadataBase, but pinning it here
+    // guarantees absolute URLs even if this helper is invoked from a route
+    // that bypasses the root layout (e.g. a future opengraph-image.tsx).
     metadataBase: new URL(toAbsoluteSiteUrl("/")),
   };
 };

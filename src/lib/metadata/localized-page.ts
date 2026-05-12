@@ -4,32 +4,49 @@ import {
   DEFAULT_OG_IMAGE,
   SITE_NAME,
   getSiteBaseUrl,
+  toAbsoluteSiteUrl,
 } from "@/lib/site-config";
+
+type OpenGraphType = "website" | "profile" | "article";
 
 interface BuildLocalizedPageMetadataOptions {
   lang: Locale;
-  path: string;
   title: string;
   description: string;
-  openGraphType?: "website" | "profile";
+  /**
+   * Path under the locale segment (e.g. `/blog`, `/projects`).
+   * Either `path` or `canonicalPath` must be provided; `canonicalPath`
+   * is kept as an alias for backward compatibility with the
+   * deprecated `buildBlogListingMetadata` helper.
+   */
+  path?: string;
+  /** @deprecated Use `path`. Retained for backward compatibility. */
+  canonicalPath?: string;
+  openGraphType?: OpenGraphType;
+  noIndex?: boolean;
 }
 
 export const buildLocalizedPageMetadata = ({
   lang,
-  path,
   title,
   description,
+  path,
+  canonicalPath,
   openGraphType = "website",
+  noIndex = false,
 }: BuildLocalizedPageMetadataOptions): Metadata => {
   const baseUrl = getSiteBaseUrl();
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  const rawPath = path ?? canonicalPath ?? "/blog";
+  const normalizedPath = rawPath.startsWith("/") ? rawPath : `/${rawPath}`;
   const canonical = `${baseUrl}/${lang}${normalizedPath}`;
   const koUrl = `${baseUrl}/ko${normalizedPath}`;
   const enUrl = `${baseUrl}/en${normalizedPath}`;
+  const locale = lang === "ko" ? "ko_KR" : "en_US";
 
   return {
     title,
     description,
+    ...(noIndex ? { robots: { index: false, follow: true } as const } : {}),
     alternates: {
       canonical,
       languages: {
@@ -44,7 +61,7 @@ export const buildLocalizedPageMetadata = ({
       url: canonical,
       siteName: SITE_NAME,
       type: openGraphType,
-      locale: lang === "ko" ? "ko_KR" : "en_US",
+      locale,
       images: [
         {
           url: DEFAULT_OG_IMAGE,
@@ -58,5 +75,6 @@ export const buildLocalizedPageMetadata = ({
       description,
       images: [DEFAULT_OG_IMAGE],
     },
+    metadataBase: new URL(toAbsoluteSiteUrl("/")),
   };
 };

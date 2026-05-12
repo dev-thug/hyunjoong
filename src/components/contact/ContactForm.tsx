@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { CONTACT_FIELD_LIMITS } from "@/lib/contact/validation";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import { CONTACT_FIELD_LIMITS } from "@/lib/contact/field-limits";
 import {
   CONTACT_FORM_INITIAL_STATE,
   createContactFieldErrorId,
@@ -29,6 +29,7 @@ interface ContactDictionary {
   readonly submitting: string;
   readonly success: string;
   readonly error: string;
+  readonly timeout_error: string;
 }
 
 interface ContactFormProps {
@@ -50,10 +51,10 @@ interface ContactFormValues {
 }
 
 const INPUT_CLASS_NAME =
-  "min-h-12 w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-white/30 focus:bg-white/[0.06]";
+  "min-h-12 w-full rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus-visible:border-white/30 focus-visible:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950";
 
 const TEXTAREA_CLASS_NAME =
-  "min-h-40 w-full resize-y rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-white/30 focus:bg-white/[0.06]";
+  "min-h-40 w-full resize-y rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus-visible:border-white/30 focus-visible:bg-white/[0.06] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950";
 
 const createFieldErrorClassName = (hasError: boolean): string => {
   return hasError ? "mt-2 text-xs text-red-300" : "sr-only";
@@ -107,6 +108,13 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
     CONTACT_FORM_INITIAL_STATE
   );
   const isSubmitting = formState.status === "submitting";
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -132,6 +140,13 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
       fieldErrors: {},
     });
 
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+    }, 15000);
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -139,6 +154,7 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ ...values, locale: lang }),
+        signal: controller.signal,
       });
       const result = (await response.json()) as ContactApiResponse;
 
@@ -157,12 +173,20 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
         message: dict.success,
         fieldErrors: {},
       });
-    } catch {
+    } catch (error) {
+      const isTimeoutError =
+        error instanceof DOMException && error.name === "AbortError";
+
       setFormState({
         status: "error",
-        message: dict.error,
+        message: isTimeoutError ? dict.timeout_error : dict.error,
         fieldErrors: {},
       });
+    } finally {
+      window.clearTimeout(timeoutId);
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
     }
   };
 
@@ -202,7 +226,7 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
             maxLength={CONTACT_FIELD_LIMITS.nameMaxLength}
             placeholder={dict.fields.name_placeholder}
             className={INPUT_CLASS_NAME}
-            aria-invalid={Boolean(formState.fieldErrors.name)}
+            aria-invalid={formState.fieldErrors.name ? "true" : undefined}
             aria-describedby={getContactFieldAriaDescribedBy(
               "name",
               formState.fieldErrors
@@ -229,7 +253,7 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
             maxLength={CONTACT_FIELD_LIMITS.contactMaxLength}
             placeholder={dict.fields.contact_placeholder}
             className={INPUT_CLASS_NAME}
-            aria-invalid={Boolean(formState.fieldErrors.contact)}
+            aria-invalid={formState.fieldErrors.contact ? "true" : undefined}
             aria-describedby={getContactFieldAriaDescribedBy(
               "contact",
               formState.fieldErrors
@@ -254,7 +278,7 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
             maxLength={CONTACT_FIELD_LIMITS.messageMaxLength}
             placeholder={dict.fields.message_placeholder}
             className={TEXTAREA_CLASS_NAME}
-            aria-invalid={Boolean(formState.fieldErrors.message)}
+            aria-invalid={formState.fieldErrors.message ? "true" : undefined}
             aria-describedby={getContactFieldAriaDescribedBy(
               "message",
               formState.fieldErrors
@@ -265,14 +289,17 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
           {renderFieldError("message")}
         </div>
 
-        <div className="hidden" aria-hidden="true">
-          <label htmlFor="company">Company</label>
+        <div className="hidden">
+          <label htmlFor="company" aria-hidden="true">
+            Company
+          </label>
           <input
             id="company"
             name="company"
             type="text"
             tabIndex={-1}
             autoComplete="off"
+            aria-hidden="true"
           />
         </div>
       </div>

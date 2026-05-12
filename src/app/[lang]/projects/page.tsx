@@ -58,7 +58,7 @@ export default async function ProjectsPage({
             key={project.id}
             href={`/${lang}/projects/${project.slug}`}
             className="group block p-8 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-all duration-300"
-            aria-label={`View project: ${project.title}`}
+            aria-label={dict.projects.view_project_aria.replace("{title}", project.title)}
           >
             <div className="flex flex-col md:flex-row gap-8">
               {/* 이미지 */}
@@ -107,7 +107,7 @@ export default async function ProjectsPage({
                   </div>
 
                   <span className="inline-flex items-center gap-2 text-sm text-gray-500 group-hover:text-white transition-colors">
-                    View Project
+                    {dict.projects.view_project}
                     <ArrowRight
                       size={14}
                       className="group-hover:translate-x-1 transition-transform"

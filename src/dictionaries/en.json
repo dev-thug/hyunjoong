@@ -1,4 +1,10 @@
 {
+  "nav": {
+    "portfolio": "Portfolio",
+    "intelligence": "Intelligence",
+    "profile": "Profile",
+    "contact": "Contact"
+  },
   "hero": {
     "title_beyond": "BEYOND",
     "title_code": "CODE",
@@ -9,13 +15,14 @@
     "intelligence_subtitle": "Business Intelligence",
     "meta_title": "Hyunjoong Kim | Full-Stack Developer Portfolio",
     "meta_description": "Full-stack developer Hyunjoong Kim's portfolio. Projects and blog on serverless, full-stack development, and business impact.",
-    "meta_title_template": "%s | Full-Stack Developer Portfolio"
+    "meta_title_template": "%s | Full-Stack Developer Portfolio",
+    "open_for_ventures": "Open for New Ventures"
   },
   "about": {
     "philosophy_label": "The Philosophy",
     "description": "In an era where AI writes code, an engineer's value shifts from execution to architecture. I specialize in full-stack development built on scalable serverless infrastructure—keeping overhead low while maximizing business impact.",
-    "intro_with_portfolio": "This developer portfolio showcases serverless and full-stack development projects, focused on minimizing overhead while maximizing business impact and technical insights.",
     "stack_label": "Core Stack",
+    "stack_value": "NodeJS / Serverless",
     "focus_label": "Focus",
     "focus_value": "Performance / Conversion"
   },
@@ -26,10 +33,15 @@
     "meta_description": "Portfolio of full-stack development projects: serverless architecture, business impact, and technical case studies.",
     "page_subtitle": "Selected projects showcasing technical excellence and business impact.",
     "back_to_portfolio": "Back to Portfolio",
-    "back_to_portfolio_aria": "Go back to portfolio list"
-  },
-  "brand": {
-    "location": "DESIGNED IN SEOUL"
+    "back_to_portfolio_aria": "Go back to portfolio list",
+    "view_project": "View Project",
+    "overview_heading": "Project Overview",
+    "previous": "Previous Project",
+    "next": "Next Project",
+    "visit_service": "Visit Service",
+    "visit_service_aria": "Visit {title} service (opens in new tab)",
+    "case_study": "Case Study",
+    "view_project_aria": "View project: {title}"
   },
   "blog": {
     "page_title": "Blog",
@@ -50,20 +62,30 @@
     "last": "Last",
     "search_aria": "Search blog posts",
     "search_placeholder": "Search by title, excerpt, or keywords",
-    "search_button": "Search",
     "clear_search": "Clear",
     "results_count": "{count} results",
     "no_search_results": "No search results found. Try a different keyword.",
     "toc_title": "Table of contents",
     "toc_toggle": "Show contents",
-    "toc_close": "Hide contents",
-    "not_available_title": "Post not available in English",
-    "not_available_description": "This post is only available in {lang}. You can read it in that language below.",
-    "read_in_language": "Read in {lang}"
+    "toc_close": "Hide contents"
   },
   "profile": {
     "meta_title": "Profile",
-    "meta_description": "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems."
+    "meta_description": "Full-stack Architect specializing in serverless architecture, business intelligence, and scalable systems.",
+    "about_heading": "About Me",
+    "intro_para_1": "I'm a Full-stack developer based in Seoul, specializing in serverless architecture and high-performance web applications. With a focus on business impact, I build systems that not only work—but scale, convert, and deliver measurable results.",
+    "intro_para_2": "My approach combines deep technical expertise with strategic thinking. In an era where AI writes code, the real value lies in architecture decisions, system design, and understanding the business context.",
+    "tech_stack_heading": "Tech Stack",
+    "experience_heading": "Experience",
+    "cta_title": "Let's work together",
+    "cta_subtitle": "Open for new ventures and collaborations",
+    "get_in_touch_cta": "Get in Touch",
+    "open_contact_form_aria": "Open contact form",
+    "job_title": "Full-stack & AWS Cloud Developer",
+    "intro_heading_prefix": "Building systems that ",
+    "intro_heading_emphasis": "scale with purpose",
+    "intro_heading_suffix": "",
+    "visit_company_website_aria": "Visit {company} website"
   },
   "contact": {
     "meta_title": "Contact",
@@ -89,7 +111,8 @@
     "submit": "Send inquiry",
     "submitting": "Sending...",
     "success": "Your inquiry has been sent. I will get back to you after reviewing it.",
-    "error": "Something went wrong while sending your inquiry. Please try again soon."
+    "error": "Something went wrong while sending your inquiry. Please try again soon.",
+    "timeout_error": "The request timed out. Please try again."
   },
   "notFound": {
     "title": "404",

@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 export type TocItem = {
   id: string;
   text: string;
@@ -40,7 +42,7 @@ export const toHeadingId = (value: string): string => {
   return normalized || "section";
 };
 
-export const extractTocItems = (source: string): TocItem[] => {
+export const extractTocItems = cache((source: string): TocItem[] => {
   const lines = source.split(/\r?\n/);
   const tocItems: TocItem[] = [];
   const idCounts = new Map<string, number>();
@@ -51,14 +53,20 @@ export const extractTocItems = (source: string): TocItem[] => {
     const fenceMatch = line.match(FENCE_START_REGEX);
     if (fenceMatch) {
       const fenceToken = fenceMatch[1];
-      const marker = fenceToken[0];
 
       if (!activeFenceMarker) {
-        activeFenceMarker = marker;
+        // Store the full opening fence token (e.g. "````") so a shorter
+        // closing run of the same marker character does not prematurely
+        // close the block. CommonMark requires the closing fence to use
+        // the same character and be at least as long as the opening.
+        activeFenceMarker = fenceToken;
         continue;
       }
 
-      if (activeFenceMarker === marker) {
+      if (
+        fenceToken[0] === activeFenceMarker[0] &&
+        fenceToken.length >= activeFenceMarker.length
+      ) {
         activeFenceMarker = null;
         continue;
       }
@@ -88,4 +96,4 @@ export const extractTocItems = (source: string): TocItem[] => {
   }
 
   return tocItems;
-};
+});

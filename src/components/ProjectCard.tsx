@@ -7,14 +7,22 @@ interface ProjectCardProps {
   project: Project;
   index: number;
   lang: string;
+  caseStudyLabel: string;
+  viewProjectAriaTemplate: string;
 }
 
-const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
+const ProjectCard = ({
+  project,
+  index,
+  lang,
+  caseStudyLabel,
+  viewProjectAriaTemplate,
+}: ProjectCardProps) => {
   return (
     <Link
       href={`/${lang}/projects/${project.slug}`}
       className="group relative w-full border-t border-white/10 pt-6 md:pt-12 pb-12 md:pb-24 transition-all duration-700 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/20 outline-none block cursor-pointer"
-      aria-label={`View project: ${project.title}`}
+      aria-label={viewProjectAriaTemplate.replace("{title}", project.title)}
     >
       <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
         {/* 콘텐츠 영역 */}
@@ -80,7 +88,7 @@ const ProjectCard = ({ project, index, lang }: ProjectCardProps) => {
           <div className="hidden md:block absolute top-0 right-0 p-0 overflow-hidden">
             <div className="glass-panel bg-noise border-t-0 border-r-0 border-white/20 rounded-bl-2xl lg:rounded-bl-3xl p-4 lg:p-6 translate-x-full -translate-y-full group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500 delay-100 flex flex-col items-center gap-2">
               <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-white writing-vertical">
-                Case Study
+                {caseStudyLabel}
               </span>
               <div className="bg-white text-black p-2 lg:p-3 rounded-full mt-2">
                 <ArrowUpRight size={16} className="lg:w-[18px] lg:h-[18px]" />

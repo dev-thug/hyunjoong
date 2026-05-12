@@ -6,7 +6,7 @@ import {
   SITE_NAME,
   getSiteBaseUrl,
 } from "@/lib/site-config";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Montserrat } from "next/font/google";
 import "../globals.css";
 
@@ -27,6 +27,12 @@ const montserrat = Montserrat({
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }));
 }
+
+export const viewport: Viewport = {
+  themeColor: "#050505",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export async function generateMetadata({
   params,
@@ -69,6 +75,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
+      type: "website",
       siteName: SITE_NAME,
       title: dict.hero.meta_title,
       description: dict.hero.meta_description,
@@ -77,6 +84,8 @@ export async function generateMetadata({
         {
           url: DEFAULT_OG_IMAGE,
           alt: SITE_NAME,
+          width: 1200,
+          height: 630,
         },
       ],
     },

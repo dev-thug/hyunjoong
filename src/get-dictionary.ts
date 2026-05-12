@@ -8,5 +8,8 @@ const dictionaries = {
 };
 
 export const getDictionary = cache(async (locale: Locale) => {
-  return dictionaries[locale]?.() ?? dictionaries.ko();
+  if (!(locale in dictionaries)) {
+    throw new Error(`Unsupported locale: ${locale}`);
+  }
+  return dictionaries[locale]();
 });

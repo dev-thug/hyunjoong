@@ -38,7 +38,7 @@ const isRequestTooLarge = (request: Request): boolean => {
   const contentLength = request.headers.get("content-length");
 
   if (!contentLength) {
-    return true;
+    return false;
   }
 
   const parsedContentLength = Number(contentLength);
@@ -77,7 +77,7 @@ export const POST = async (request: Request): Promise<Response> => {
     if (!contactRateLimiter.isAllowed(requestIdentifier)) {
       return jsonResponse(
         { ok: false, message: messages.rateLimited },
-        { status: 429 }
+        { status: 429, headers: { "Retry-After": "3600" } }
       );
     }
 

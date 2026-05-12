@@ -1,3 +1,10 @@
+// No test runner is configured for this project. These tests use the
+// built-in `node:test` module. To execute manually (Node 22+):
+//
+//   node --experimental-strip-types --test src/lib/toc.test.ts
+//
+// There is no `npm test` script — see CLAUDE.md.
+
 import assert from "node:assert/strict";
 import test from "node:test";
 import { extractTocItems } from "./toc";
