@@ -160,8 +160,7 @@ export default function RootLayout({
     <html lang="ko" className="scroll-smooth" suppressHydrationWarning>
       <head>
         <StructuredData />
-        {/* PWA manifest for browsers that prefer link tag */}
-        <link rel="manifest" href="/site.webmanifest" />
+        {/* PWA manifest is now served automatically via app/manifest.ts (Next.js App Router) */}
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         {/* Google AdSense - 소유권 검증을 위해 필수 */}
