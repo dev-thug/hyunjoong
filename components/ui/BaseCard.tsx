@@ -57,14 +57,20 @@ export default function BaseCard({
 
   const needsInlineStyle = !paddingClass || !gapClass || Object.keys(customStyle).length > 0 || margin !== "0";
 
-  const baseStyle: CSSProperties = needsInlineStyle
-    ? {
-        padding: !paddingClass && (typeof padding === "number" ? `${padding}px` : padding),
-        margin: typeof margin === "number" ? `${margin}px` : margin,
-        gap: !gapClass && (typeof gap === "number" ? `${gap}px` : gap),
-        ...customStyle,
-      }
-    : {};
+  const baseStyle: CSSProperties = {};
+
+  if (needsInlineStyle) {
+    if (!paddingClass && padding) {
+      baseStyle.padding = typeof padding === "number" ? `${padding}px` : padding;
+    }
+    if (margin && margin !== "0") {
+      baseStyle.margin = typeof margin === "number" ? `${margin}px` : margin;
+    }
+    if (!gapClass && gap) {
+      baseStyle.gap = typeof gap === "number" ? `${gap}px` : gap;
+    }
+    Object.assign(baseStyle, customStyle);
+  }
 
   const cardClasses = `
     group relative h-full
