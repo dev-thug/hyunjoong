@@ -32,12 +32,32 @@ export default function BaseCard({
   customStyle = {},
   onClick,
 }: BaseCardProps) {
-  const baseStyle: CSSProperties = {
-    padding: typeof padding === "number" ? `${padding}px` : padding,
-    margin: typeof margin === "number" ? `${margin}px` : margin,
-    gap: typeof gap === "number" ? `${gap}px` : gap,
-    ...customStyle,
+  // Minimal improvement: prefer CSS token-driven classes for the most common values.
+  // Falls back to inline style only for custom/legacy numeric values.
+  const getPaddingClass = (p: string | number) => {
+    if (p === "32px" || p === 32) return "p-(--space-8)";
+    if (p === "48px" || p === 48) return "p-(--space-12)";
+    return "";
   };
+  const getGapClass = (g: string | number) => {
+    if (g === "16px" || g === 16) return "gap-(--space-4)";
+    if (g === "32px" || g === 32) return "gap-(--space-8)";
+    return "";
+  };
+
+  const paddingClass = getPaddingClass(padding);
+  const gapClass = getGapClass(gap);
+
+  const needsInlineStyle = !paddingClass || !gapClass || Object.keys(customStyle).length > 0 || margin !== "0";
+
+  const baseStyle: CSSProperties = needsInlineStyle
+    ? {
+        padding: !paddingClass && (typeof padding === "number" ? `${padding}px` : padding),
+        margin: typeof margin === "number" ? `${margin}px` : margin,
+        gap: !gapClass && (typeof gap === "number" ? `${gap}px` : gap),
+        ...customStyle,
+      }
+    : {};
 
   const cardClasses = `
     group relative h-full
@@ -50,6 +70,8 @@ export default function BaseCard({
     shadow-apple hover:shadow-apple-lg
     transition-all duration-500
     flex flex-col
+    ${paddingClass}
+    ${gapClass}
     ${className}
   `.trim();
 
@@ -65,7 +87,7 @@ export default function BaseCard({
       viewport={{ once: true }}
       className={cardClasses}
       whileHover={hoverEffect ? { y: -8, scale: 1.02 } : {}}
-      style={baseStyle}
+      style={Object.keys(baseStyle).length > 0 ? baseStyle : undefined}
       onClick={onClick}
     >
       {children}
