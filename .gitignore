@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# PWA / Service Worker build artifacts (from next-pwa, Serwist, Workbox, etc.)
+**/sw.js
+**/sw.js.map
+**/workbox-*.js

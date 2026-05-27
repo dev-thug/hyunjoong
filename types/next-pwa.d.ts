@@ -1,19 +1,4 @@
-declare module "next-pwa" {
-  import type { NextConfig } from "next";
-
-  type NextPWAOptions = {
-    dest?: string;
-    register?: boolean;
-    skipWaiting?: boolean;
-    disable?: boolean;
-    // Allow any extra options to avoid over-constraining
-    [key: string]: unknown;
-  };
-
-  type WithPWA = (config: NextConfig) => NextConfig;
-
-  /**
-   * next-pwa default export: a function that accepts PWA options and returns a Next config enhancer
-   */
-  export default function nextPWA(options?: NextPWAOptions): WithPWA;
-}
+// OBSOLETE: next-pwa removed (build failure fix, 2026-05).
+// PWA installability is provided by app/manifest.ts + app/layout.tsx (icons, appleWebApp, themeColor).
+// This file can be safely deleted.
+// If re-adding PWA SW in future, prefer @serwist/next over next-pwa v5.

@@ -1,14 +1,4 @@
 import type { NextConfig } from "next";
-import nextPWA from "next-pwa";
-
-const withPWA = nextPWA({
-  dest: "public",
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
-  // Turbopack과의 호환성을 위한 설정
-  buildExcludes: [/middleware-manifest\.json$/],
-});
 
 const ContentSecurityPolicy = [
   "default-src 'self'", // 기본은 same-origin
@@ -22,6 +12,11 @@ const ContentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "object-src 'none'",
+  // CSP violation reporting (replaces previous example.com placeholder):
+  // - report-uri: legacy but widely supported (works with Report-Only)
+  // - report-to: modern directive (requires Reporting-Endpoints header below)
+  "report-uri /api/csp-report",
+  "report-to csp-violation",
 ].join("; ");
 
 const nextConfig: NextConfig = {
@@ -51,10 +46,18 @@ const nextConfig: NextConfig = {
           //       value: ContentSecurityPolicy,
           //   - This ensures zero impact on AdSense, GA4, PWA, inline scripts, etc. Site behavior identical.
           //   - Violations (currently none due to permissive policy; will appear in console when policy tightened later)
-          //     are reported to browser DevTools + the report-uri below (placeholder, no endpoint created).
+          //     are reported via the dedicated /api/csp-report endpoint (minimal safe handler).
+          //   - Uses both report-uri (broad compat) + report-to (modern) for maximum coverage.
+          //   - Reporting-Endpoints header enables report-to; endpoint performs validation + sanitized logging only.
           {
             key: "Content-Security-Policy-Report-Only",
-            value: ContentSecurityPolicy + "; report-uri https://csp-report.example.com/report",
+            value: ContentSecurityPolicy,
+          },
+          {
+            // Modern companion to report-to directive in the CSP above.
+            // Format: name="url" (quotes required around the path).
+            key: "Reporting-Endpoints",
+            value: 'csp-violation="/api/csp-report"',
           },
           {
             key: "Referrer-Policy",
@@ -74,4 +77,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withPWA(nextConfig);
+export default nextConfig;
