@@ -16,6 +16,7 @@
 ```bash
 NEXT_PUBLIC_SITE_URL=https://hyunjoong.kim
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX  # optional, for AdSense
 ```
 
 2. 빌드/실행

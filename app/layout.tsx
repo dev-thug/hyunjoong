@@ -4,7 +4,8 @@ import "./globals.css";
 import StructuredData from "@/components/StructuredData";
 import Script from "next/script";
 import { GoogleAnalytics as GA } from "@next/third-parties/google";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -125,13 +126,8 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code",
-    yandex: "your-yandex-verification-code",
-    other: {
-      "naver-site-verification": "your-naver-verification-code",
-    },
-  },
+  // verification codes intentionally omitted (were placeholder values).
+  // Add real verification IDs via env vars + generateMetadata if needed for Search Console etc.
   appleWebApp: {
     capable: true,
     title: "김현중 풀스택 개발자 포트폴리오",
@@ -163,16 +159,20 @@ export default function RootLayout({
         {/* PWA manifest is now served automatically via app/manifest.ts (Next.js App Router) */}
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
-        {/* Google AdSense - 소유권 검증을 위해 필수 */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4295120214669813"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        <GA gaId={process.env.NEXT_PUBLIC_GA_ID ?? "G-Q62SLZCHKP"} />
-        <Analytics/>
-        {children}
+        {/* Google AdSense loader - only included when NEXT_PUBLIC_ADSENSE_CLIENT is set.
+            Prevents hardcoded sensitive AdSense publisher ID in source. */}
+        {process.env.NEXT_PUBLIC_ADSENSE_CLIENT && (
+          <Script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT}`}
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+          />
+        )}
+        {/* GA4 via official integration - only when NEXT_PUBLIC_GA_ID set (no hardcoded fallback) */}
+        {process.env.NEXT_PUBLIC_GA_ID && <GA gaId={process.env.NEXT_PUBLIC_GA_ID} />}
+        <Analytics />
+        <ErrorBoundary>{children}</ErrorBoundary>
       </body>
     </html>
   );

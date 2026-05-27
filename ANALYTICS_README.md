@@ -6,8 +6,8 @@
 
 ### 1. Google Analytics 4 (GA4)
 
-- **최신 Next.js 방식**: `next/script`를 사용한 최적화된 GA4 구현
-- **추적 ID**: `G-Q62SLZCHKP`
+- **최신 Next.js 방식**: `@next/third-parties/google` 사용
+- **추적 ID**: `NEXT_PUBLIC_GA_ID` 환경 변수에서 로드 (하드코딩된 fallback ID 제거)
 - **스크롤 추적**: 25%, 50%, 75%, 90% 마일스톤 자동 추적
 - **이벤트 추적**: 프로젝트 클릭, 외부 링크, 다운로드 등
 
@@ -51,13 +51,8 @@ app/
 
 ### 2. Google Search Console 설정
 
-`app/layout.tsx`에서 Google 인증 코드를 추가하세요:
-
-```typescript
-verification: {
-  google: "your-google-verification-code",
-}
-```
+`app/layout.tsx`의 metadata.verification 은 placeholder 값 때문에 제거되었습니다.
+실제 Search Console 검증 코드가 필요하면 NEXT_PUBLIC_* env 또는 generateMetadata를 사용하세요.
 
 ## 📊 GA4 이벤트 추적
 

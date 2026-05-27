@@ -5,7 +5,6 @@ import {
   Mail,
   Github,
   Linkedin,
-  Phone,
   Coffee,
   Rocket,
   Code,
@@ -42,14 +41,8 @@ const contactInfo = [
     gradient: "from-blue-500 to-blue-700",
     description: "전문적인 네트워킹",
   },
-  {
-    icon: <Phone className="w-6 h-6" />,
-    label: "전화번호",
-    value: "+82 10-0000-0000",
-    href: "tel:+821000000000",
-    gradient: "from-green-500 to-emerald-600",
-    description: "긴급시 연락",
-  },
+  // Phone entry removed: previously contained fake placeholder "+82 10-0000-0000".
+  // Real personal phone numbers must never be hardcoded. Contact via email only.
 ];
 
 const currentFocus = [

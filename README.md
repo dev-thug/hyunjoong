@@ -196,7 +196,7 @@ portfolio/
 
 ```bash
 # 1. 저장소 클론
-git clone https://github.com/your-username/portfolio.git
+git clone https://github.com/dev-thug/portfolio.git
 cd portfolio
 
 # 2. 의존성 설치
@@ -673,7 +673,7 @@ copies or substantial portions of the Software.
 
 _Apple의 디자인 철학에서 영감을 받아 제작되었습니다._
 
-[![GitHub stars](https://img.shields.io/github/stars/your-username/portfolio?style=social)](https://github.com/dev-thug/portfolio)
-[![GitHub forks](https://img.shields.io/github/forks/your-username/portfolio?style=social)](https://github.com/dev-thug/portfolio)
+[![GitHub stars](https://img.shields.io/github/stars/dev-thug/portfolio?style=social)](https://github.com/dev-thug/portfolio)
+[![GitHub forks](https://img.shields.io/github/forks/dev-thug/portfolio?style=social)](https://github.com/dev-thug/portfolio)
 
 </div>

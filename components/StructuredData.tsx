@@ -15,7 +15,7 @@ export default function StructuredData() {
       addressRegion: "Seoul",
     },
     email: "de0978@gmail.com",
-    telephone: "+82-10-0000-0000",
+    // telephone intentionally omitted (previously fake placeholder value)
     knowsAbout: [
       "풀스택 개발",
       "풀스택 웹 개발",

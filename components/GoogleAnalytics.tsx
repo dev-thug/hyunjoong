@@ -1,8 +1,9 @@
 "use client";
 
 // 클라이언트 유틸 전용. 스크립트 주입은 @next/third-parties/google 사용
+// GA_ID is sourced ONLY from env var (no hardcoded fallback ID for security/privacy).
 
-export const GA_ID = process.env.NEXT_PUBLIC_GA_ID ?? "G-Q62SLZCHKP";
+export const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 declare global {
   interface Window {
@@ -26,14 +27,15 @@ export const trackEvent = (
   }
 };
 
-// 페이지 뷰 추적
+// 페이지 뷰 추적 (only if GA_ID configured via env)
 export const trackPageView = (url: string, title: string) => {
-  if (typeof window !== "undefined" && window.gtag) {
-    window.gtag("config", GA_ID, {
-      page_title: title,
-      page_location: url,
-    });
+  if (!GA_ID || typeof window === "undefined" || !window.gtag) {
+    return;
   }
+  window.gtag("config", GA_ID, {
+    page_title: title,
+    page_location: url,
+  });
 };
 
 // 프로젝트 클릭 추적
