@@ -35,12 +35,19 @@ export default function BaseCard({
   // Minimal improvement: prefer CSS token-driven classes for the most common values.
   // Falls back to inline style only for custom/legacy numeric values.
   const getPaddingClass = (p: string | number) => {
+    if (p === "8px" || p === 8) return "p-(--space-2)";
+    if (p === "16px" || p === 16) return "p-(--space-4)";
+    if (p === "24px" || p === 24) return "p-(--space-6)";
     if (p === "32px" || p === 32) return "p-(--space-8)";
     if (p === "48px" || p === 48) return "p-(--space-12)";
     return "";
   };
   const getGapClass = (g: string | number) => {
+    if (g === "4px" || g === 4) return "gap-(--space-1)";
+    if (g === "8px" || g === 8) return "gap-(--space-2)";
+    if (g === "12px" || g === 12) return "gap-(--space-3)";
     if (g === "16px" || g === 16) return "gap-(--space-4)";
+    if (g === "24px" || g === 24) return "gap-(--space-6)";
     if (g === "32px" || g === 32) return "gap-(--space-8)";
     return "";
   };

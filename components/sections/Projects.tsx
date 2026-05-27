@@ -122,11 +122,7 @@ export default function Projects() {
       id="projects"
       backgroundClass="bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-black"
     >
-      <div
-        style={{
-          marginBottom: "96px",
-        }}
-      >
+      <div className="mb-(--space-24)">
         <SectionHeader
           title="Featured"
           subtitle="Projects"
@@ -144,13 +140,7 @@ export default function Projects() {
       </div>
 
       {/* Projects Grid */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "96px",
-        }}
-      >
+      <div className="flex flex-col gap-(--space-24)">
         {projects.map((project, index) => (
           <ProjectCard
             key={project.title}

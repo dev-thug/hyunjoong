@@ -19,36 +19,13 @@ export default function ProjectHighlights({
       transition={{ duration: 0.8, delay }}
       viewport={{ once: true }}
     >
-      <div
-        className="flex flex-col"
-        style={{
-          gap: "16px",
-        }}
-      >
-        <h4
-          className="font-semibold text-gray-900 dark:text-white"
-          style={{
-            fontSize: "1.125rem",
-            lineHeight: "1.75rem",
-          }}
-        >
+      <div className="flex flex-col gap-(--space-4)">
+        <h4 className="font-semibold text-gray-900 dark:text-white text-[var(--text-lg)] leading-[var(--text-lg--line-height)]">
           주요 성과
         </h4>
-        <ul
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-          }}
-        >
+        <ul className="flex flex-col gap-(--space-3)">
           {highlights.map((highlight, index) => (
-            <li
-              key={index}
-              className="flex items-start"
-              style={{
-                gap: "12px",
-              }}
-            >
+            <li key={index} className="flex items-start gap-(--space-3)">
               <ArrowRight
                 className="text-blue-600 dark:text-blue-400 flex-shrink-0"
                 style={{
@@ -57,13 +34,7 @@ export default function ProjectHighlights({
                   marginTop: "2px",
                 }}
               />
-              <span
-                className="text-gray-600 dark:text-gray-300"
-                style={{
-                  fontSize: "1rem",
-                  lineHeight: "1.5rem",
-                }}
-              >
+              <span className="text-gray-600 dark:text-gray-300 text-[var(--text-base)] leading-[var(--text-base--line-height)]">
                 {highlight}
               </span>
             </li>

@@ -103,75 +103,32 @@ export default function ProjectCard({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, margin: "-50px" }}
-      className={`grid lg:grid-cols-2 items-center ${
+      className={`grid lg:grid-cols-2 items-center gap-(--space-16) ${
         isReversed ? "lg:grid-flow-col-dense" : ""
       }`}
-      style={{
-        gap: "64px",
-      }}
     >
       {/* Content */}
       <motion.div
         className={`${isReversed ? "lg:col-start-2" : ""}`}
         variants={prefersReduce ? reducedItemVariants : itemVariants}
       >
-        <div
-          className="flex flex-col"
-          style={{
-            gap: "32px",
-          }}
-        >
+        <div className="flex flex-col gap-(--space-8)">
           {/* Header */}
           <motion.div variants={prefersReduce ? reducedItemVariants : itemVariants}>
-            <div
-              className="flex flex-col"
-              style={{
-                gap: "16px",
-              }}
-            >
+            <div className="flex flex-col gap-(--space-4)">
               {featured && (
-                <span
-                  className="inline-block text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-full self-start font-medium"
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: "0.875rem",
-                    lineHeight: "1.25rem",
-                  }}
-                >
+                <span className="inline-block text-blue-600 bg-blue-100 dark:bg-blue-900 dark:text-blue-300 rounded-full self-start font-medium px-(--space-4) py-(--space-2) text-[var(--text-sm)] leading-[var(--text-sm--line-height)]">
                   ⭐ Featured Project
                 </span>
               )}
-              <div
-                className="flex flex-col"
-                style={{
-                  gap: "24px",
-                }}
-              >
-                <h3
-                  className="font-bold text-gray-900 dark:text-white leading-tight"
-                  style={{
-                    fontSize: "2.25rem",
-                    lineHeight: "2.5rem",
-                  }}
-                >
+              <div className="flex flex-col gap-(--space-6)">
+                <h3 className="font-bold text-gray-900 dark:text-white leading-tight text-[var(--text-4xl)] leading-[var(--text-4xl--line-height)]">
                   {title}
                 </h3>
-                <p
-                  className="font-light text-gray-600 dark:text-gray-300"
-                  style={{
-                    fontSize: "1.25rem",
-                    lineHeight: "1.75rem",
-                  }}
-                >
+                <p className="font-light text-gray-600 dark:text-gray-300 text-[var(--text-xl)] leading-[var(--text-xl--line-height)]">
                   {subtitle}
                 </p>
-                <p
-                  className="text-gray-600 dark:text-gray-300 leading-relaxed"
-                  style={{
-                    fontSize: "1.125rem",
-                    lineHeight: "1.75rem",
-                  }}
-                >
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-[var(--text-lg)] leading-[var(--text-lg--line-height)]">
                   {description}
                 </p>
               </div>
@@ -180,10 +137,7 @@ export default function ProjectCard({
 
           {/* Metrics */}
           <motion.div
-            className="grid grid-cols-3"
-            style={{
-              gap: "24px",
-            }}
+            className="grid grid-cols-3 gap-(--space-6)"
             variants={prefersReduce ? reducedItemVariants : itemVariants}
           >
             {metrics.map((metric, metricIndex) => (
@@ -232,10 +186,7 @@ export default function ProjectCard({
           {/* Action Buttons */}
           {demo && (
             <motion.div
-              className="flex"
-              style={{
-                gap: "16px",
-              }}
+              className="flex gap-(--space-4)"
               variants={prefersReduce ? reducedItemVariants : itemVariants}
             >
               <motion.a
@@ -246,13 +197,9 @@ export default function ProjectCard({
                   trackProjectClick(title, "demo");
                   trackExternalLink(demo, `${title} Demo`);
                 }}
-                className="group flex items-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-apple-lg"
+                className="group flex items-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-full font-semibold hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow-apple-lg px-(--space-4) py-(--space-8) gap-(--space-3)"
                 whileHover={prefersReduce ? {} : { scale: 1.05, y: -2 }}
                 whileTap={prefersReduce ? {} : { scale: 0.95 }}
-                style={{
-                  padding: "16px 32px",
-                  gap: "12px",
-                }}
               >
                 <ExternalLink
                   style={{

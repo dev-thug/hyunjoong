@@ -26,37 +26,17 @@ export default function ProjectMetricCard({
       viewport={{ once: true }}
       className="text-center"
     >
-      <div
-        className="flex flex-col items-center"
-        style={{
-          gap: "12px",
-        }}
-      >
+      <div className="flex flex-col items-center gap-(--space-3)">
         <div
           className={`inline-flex items-center justify-center bg-gradient-to-r ${gradient} text-white rounded-2xl`}
-          style={{
-            width: "48px",
-            height: "48px",
-          }}
+          style={{ width: "48px", height: "48px" }}
         >
           {icon}
         </div>
-        <div
-          className="font-bold text-gray-900 dark:text-white"
-          style={{
-            fontSize: "1.5rem",
-            lineHeight: "2rem",
-          }}
-        >
+        <div className="font-bold text-gray-900 dark:text-white text-[var(--text-2xl)] leading-[var(--text-2xl--line-height)]">
           {value}
         </div>
-        <div
-          className="text-gray-600 dark:text-gray-300"
-          style={{
-            fontSize: "0.875rem",
-            lineHeight: "1.25rem",
-          }}
-        >
+        <div className="text-gray-600 dark:text-gray-300 text-[var(--text-sm)] leading-[var(--text-sm--line-height)]">
           {label}
         </div>
       </div>

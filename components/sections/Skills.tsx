@@ -178,12 +178,7 @@ export default function Skills() {
             />
 
             {/* Skills Cards */}
-            <div
-              className="grid md:grid-cols-3"
-              style={{
-                gap: "32px",
-              }}
-            >
+            <div className="grid md:grid-cols-3 gap-(--space-8)">
               {category.skills.map((skill, skillIndex) => (
                 <SkillCard
                   key={skill.name}
@@ -211,13 +206,7 @@ export default function Skills() {
           marginTop: "60px",
         }}
       >
-        <div
-          className="inline-flex items-center bg-gray-100 dark:bg-gray-800 rounded-full"
-          style={{
-            gap: "12px",
-            padding: "16px 32px",
-          }}
-        >
+        <div className="inline-flex items-center bg-gray-100 dark:bg-gray-800 rounded-full gap-(--space-3) px-(--space-4) py-(--space-8)">
           <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           <span className="text-gray-700 dark:text-gray-300 font-medium">
             지속적인 학습과 기술 발전을 추구합니다
