@@ -42,9 +42,19 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [
+          // TASK 1 (Report-Only rollout - safest first step only):
+          //   - Switched from enforcing "Content-Security-Policy" to "Content-Security-Policy-Report-Only".
+          //   - Policy value is *exactly* the original (no changes, no tightening, no nonces).
+          //   - All other security headers (Referrer-Policy, X-Content-Type-Options, X-Frame-Options) untouched.
+          //   - Revert to old behavior: delete the Report-Only block below and restore the original 2 lines:
+          //       key: "Content-Security-Policy",
+          //       value: ContentSecurityPolicy,
+          //   - This ensures zero impact on AdSense, GA4, PWA, inline scripts, etc. Site behavior identical.
+          //   - Violations (currently none due to permissive policy; will appear in console when policy tightened later)
+          //     are reported to browser DevTools + the report-uri below (placeholder, no endpoint created).
           {
-            key: "Content-Security-Policy",
-            value: ContentSecurityPolicy,
+            key: "Content-Security-Policy-Report-Only",
+            value: ContentSecurityPolicy + "; report-uri https://csp-report.example.com/report",
           },
           {
             key: "Referrer-Policy",
