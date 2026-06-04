@@ -1,0 +1,246 @@
+export const metadata = {
+  title: "How to Design Agent Runbooks for AI-Native Development Teams",
+  excerpt: "A practical guide to goals, permissions, verification, and escalation rules for teams adopting coding agents such as Claude Code and Codex.",
+  category: "Engineering",
+  date: "2026-06-05",
+  readTime: "9 min",
+  lang: "en",
+  keywords: "ai agents, claude code, codex, aiax, ai native development, agent runbook, developer workflow",
+};
+
+The most common failure in AI coding agent adoption is not model quality. It is missing operations. If a team has not defined who can delegate which tasks, which files and tools the agent may touch, when it must stop, and how its output will be verified, even a strong model will fail to earn trust.
+
+That is why AI Transformation, or AIAx, in a software organization needs an **agent runbook** before it needs a larger prompt library. A runbook is the standard operating procedure for delegating work to an agent. Just as humans use onboarding documents to understand how a team works, agents need goals, inputs, constraints, verification criteria, and failure behavior.
+
+This post outlines a runbook structure that teams can apply to Claude Code, OpenAI Codex, or internal automation agents. The point is not to promote a specific tool. The point is to make agent work safe, repeatable, and reviewable.
+
+## Why a runbook beats a prompt
+
+A prompt is a sentence for one request. A runbook is a system for completing recurring work safely.
+
+Compare these two instructions.
+
+```text
+Weak request:
+Fix this bug.
+
+Runbook-style request:
+Goal: Fix the bug where the retry button stays disabled after a failed payment.
+Scope: Only modify src/app/checkout, src/lib/payments, and related tests.
+Do not change: API schemas, database migrations, or pricing policy.
+Verification: npm run lint, npm run build, and the failed-payment unit test must pass.
+Escalation: If external payment provider behavior is unclear, stop before changing code and report findings.
+```
+
+The second version tells the agent which decisions it may make and which decisions it must not make. This matters especially for tools such as Claude Code that can inspect a repository, run terminal commands, and edit files. Anthropic's Claude Code documentation describes project and user settings as well as hooks that can run around tool execution. References: [Claude Code settings](https://code.claude.com/docs/en/settings), [Claude Code hooks](https://code.claude.com/docs/en/hooks).
+
+OpenAI Codex is also designed around delegating software engineering tasks in natural language and working inside codebases. The official Codex page frames it around coding task delegation and codebase work. Reference: [OpenAI Codex](https://developers.openai.com/codex).
+
+As these tools become more capable, the team's job is not to write ever longer prompts. The team's job is to design better operating boundaries.
+
+## The 7 parts of an effective agent runbook
+
+The most useful runbooks I have seen use seven blocks.
+
+### 1. Task type
+
+Start by classifying the work the agent is allowed to do.
+
+- Read-only investigation: logs, code, and documentation analysis
+- Small edits: UI copy, type errors, lint failures, single bugs
+- Feature implementation: API, UI, state management, and tests
+- Operations tasks: deployment checks, CI recovery, release notes
+- High-risk tasks: auth, payments, permissions, data deletion, migrations
+
+Not all work should be delegated the same way. Read-only investigation can usually be automated with low risk. Payment logic needs explicit human approval points.
+
+### 2. Input contract
+
+Standardize what you give to the agent.
+
+```text
+Task name:
+Goal:
+Context:
+Files allowed to change:
+Files forbidden to change:
+References:
+Success criteria:
+Verification commands:
+Report format:
+```
+
+This format is simple, but it is powerful. `Files forbidden to change` and `Success criteria` prevent many unnecessary or overly broad edits.
+
+### 3. Permission boundary
+
+Just because an agent can use a tool does not mean it should always be allowed to use it.
+
+A three-level permission model is easy to operate.
+
+| Level | Allowed work | Examples |
+| --- | --- | --- |
+| Read | Read-only actions | Code search, log inspection, document summaries |
+| Write | Limited file edits | Component changes, test additions, MDX writing |
+| Execute | Command execution and delivery tasks | lint, build, CI checks, PR creation |
+
+A good default is to start at Read. Promote only repeatable, proven workflows to Write and Execute.
+
+### 4. Verification criteria
+
+Agent output should be verified by execution, not by claims.
+
+Minimum standards should look like this.
+
+- Code changes: lint, typecheck, build, or relevant tests
+- Documentation changes: links, titles, metadata, renderability
+- Operations changes: real command output, deployment state, rollback path
+- Data changes: sample inputs and outputs, before-and-after diff, recovery plan
+
+Putting verification commands into the runbook nudges the agent to check its own work before saying it is done.
+
+### 5. Escalation rules
+
+A good agent is not one that automates everything. A good agent knows when to stop.
+
+Escalation rules should be concrete.
+
+- Requirements conflict.
+- Auth, payments, personal data, data deletion, or permission logic must change.
+- Tests pass but user experience changes.
+- External API documentation and observed behavior disagree.
+- The build failure appears unrelated to the current change.
+- The same approach has failed three times.
+
+These rules keep the agent from expanding its authority in uncertain situations.
+
+### 6. Output format
+
+The runbook should also define the final report.
+
+```text
+Summary:
+Files changed:
+Verification results:
+Remaining risks:
+Items for human review:
+```
+
+This reduces reviewer load. `Remaining risks` is especially important. When an agent clearly states what it did not verify, the team can make a faster and safer decision.
+
+### 7. Feedback loop
+
+A runbook is not a static document. It should absorb failure cases.
+
+If the agent repeatedly makes mistakes like these, add them to the runbook.
+
+- It edits UI without tests.
+- It creates new utilities instead of following existing conventions.
+- It does not check documentation links.
+- It hides type errors with `any`.
+- It assumes CI is broken because of the environment.
+
+This is the core of AIAx. The goal is not merely to adopt AI. The goal is to reshape the team's operating system so AI can work reliably inside it.
+
+## Example: a bug-fix runbook for coding agents
+
+Here is a template you can copy and adapt.
+
+```text
+Role:
+You are the bug-fix agent for this repository. You handle small defects from root cause analysis through fix and verification.
+
+Goal:
+Explain the bug with a reproducible cause and fix it with the smallest safe change.
+
+Input:
+- Bug description
+- Expected behavior
+- Actual behavior
+- Related file, screen, or route
+- Reproduction steps
+
+Procedure:
+1. Read the relevant code and existing tests before editing.
+2. Summarize the root cause in one paragraph.
+3. Propose the edit scope.
+4. Apply the smallest change that resolves the cause.
+5. Add or strengthen tests for the behavior.
+6. Run lint, typecheck, build, or the specified test command.
+7. Report results and remaining risks.
+
+Forbidden:
+- Unrelated refactoring
+- API contract changes
+- Database schema changes
+- Auth, payment, or permission policy changes
+- Reporting failed verification as success
+
+Escalation:
+- If reproduction is impossible, do not patch blindly. Report findings.
+- If an external service is likely involved, check docs and logs, then stop.
+- If the same verification fails three times, stop automatic fixing.
+```
+
+Even this lightweight runbook improves output quality. The key is not to give the model more freedom. The key is to write down the sequence a strong developer would already follow.
+
+## Applying this to Claude Code or Codex
+
+The tools differ, but the operating principles are similar.
+
+### Claude Code
+
+If your team uses Claude Code, project-level settings and repeated commands are worth standardizing. The official settings and hooks documentation shows how teams can separate user and project configuration and run custom logic around tool execution. In practice, this can help block risky shell commands or trigger checks after a task.
+
+Practical tips:
+
+- Document agent working rules at the repository root.
+- Turn recurring workflows into slash commands or team templates.
+- Use hooks as safety rails, but do not rely on hooks as the only verification layer.
+- Require the final report to include commands run and their outputs.
+
+### Codex
+
+For Codex-style agents, keep each task small. If one instruction includes design, implementation, tests, deployment, and documentation, debugging failures becomes hard.
+
+A better split is:
+
+- Investigation task: report causes and options without changing code
+- Implementation task: apply only the approved option
+- Verification task: run tests and builds, then report results
+- Cleanup task: draft PR text, release notes, or operations notes
+
+This lets humans focus on high-leverage decisions while agents handle repeatable execution.
+
+## Operational metrics: is the agent actually helping?
+
+Agent adoption is easy to overestimate if you only look at demos. Track monthly operating metrics instead.
+
+- Number of PRs drafted by agents
+- Percentage of agent-written code humans rewrote
+- First-pass CI success rate
+- Review comments caused by requirement misunderstanding
+- Average bug-fix lead time
+- Time from escalation to resolution
+- Regression bugs introduced by agent work
+
+The right metric is not whether the team uses agents more often. The right metric is whether rework decreases while quality stays stable.
+
+## A safe rollout sequence
+
+Do not delegate all development work on day one. Use this rollout path.
+
+1. **Documentation and code investigation**: analysis only, no edits.
+2. **Test strengthening**: make existing behavior explicit.
+3. **Small bug fixes**: single-file or single-feature scope.
+4. **CI failure recovery**: log-driven fixes with narrow permissions.
+5. **Feature implementation support**: delegate small tasks from a human design.
+6. **Operations automation**: automate only when verification and rollback are defined.
+
+This sequence builds trust. Teams trust agents not because they always succeed, but because their failure modes are controlled.
+
+## Closing thought
+
+AI-native development does not mean developers disappear. It means the operating model of development changes. Strong teams do not throw vague tasks at agents. They classify work, define input contracts, restrict permissions, run verification, and write explicit stop conditions.
+
+A prompt is the starting point. A runbook is the operating system. If your team is serious about AIAx, create one agent runbook today and apply it to a small recurring task. As the runbook improves, the agent becomes less of a demo and more of a real productivity system.
