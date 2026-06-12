@@ -58,6 +58,23 @@ done
 echo "=== kanban.db ==="
 if [[ -f "$ROOT/.hermes/kanban.db" ]]; then ok "kanban.db"; else bad "kanban.db"; fi
 
+echo "=== browser + computer_use deps ==="
+if command -v agent-browser >/dev/null 2>&1; then ok "agent-browser installed"; else bad "agent-browser missing"; fi
+if command -v cua-driver >/dev/null 2>&1; then ok "cua-driver installed"; else bad "cua-driver missing"; fi
+if hermes doctor 2>&1 | grep -q '✓ browser$'; then ok "doctor browser"; else bad "doctor browser"; fi
+if hermes doctor 2>&1 | grep -q '✓ computer_use'; then ok "doctor computer_use"; else bad "doctor computer_use"; fi
+
+echo "=== platform_toolsets include browser/computer_use ==="
+for p in default cfo cmo; do
+  cfg="$ROOT/.hermes/config.yaml"
+  [[ "$p" != "default" ]] && cfg="$ROOT/.hermes/profiles/$p/config.yaml"
+  if grep -q 'browser' "$cfg" && grep -q 'computer_use' "$cfg"; then
+    ok "toolsets $p has browser+computer_use"
+  else
+    bad "toolsets $p missing browser/computer_use"
+  fi
+done
+
 echo ""
 echo "Results: $PASS passed, $FAIL failed"
 [[ "$FAIL" -eq 0 ]]

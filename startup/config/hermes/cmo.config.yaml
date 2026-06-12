@@ -12,6 +12,9 @@ kanban:
 platform_toolsets:
   telegram:
     - web
+    - browser
+    - computer_use
+    - vision
     - terminal
     - file
     - skills
