@@ -1,0 +1,21 @@
+model:
+  provider: openai-codex
+  default: gpt-5.5
+agent:
+  reasoning_effort: xhigh
+fallback_model:
+  provider: openai-codex
+  model: gpt-5.3-codex-spark
+GATEWAY_ALLOW_ALL_USERS: true
+kanban:
+  dispatch_in_gateway: false
+platform_toolsets:
+  telegram:
+    - web
+    - terminal
+    - file
+    - skills
+    - todo
+    - memory
+    - kanban
+    - send_message
