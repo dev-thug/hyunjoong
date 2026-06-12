@@ -77,6 +77,18 @@ for d in finance finance/analytics finance/budget finance/cashflow marketing; do
   if [[ -d "$ROOT/workspace/$d" ]]; then ok "workspace/$d"; else bad "workspace/$d"; fi
 done
 
+echo "=== finmgr telegram gateway ==="
+if [[ -f "$ROOT/.hermes/profiles/finmgr/.env" ]] && grep -q '^TELEGRAM_BOT_TOKEN=' "$ROOT/.hermes/profiles/finmgr/.env" 2>/dev/null; then
+  ok "finmgr telegram token configured"
+  if HERMES_HOME="$ROOT/.hermes/profiles/finmgr" hermes -p finmgr gateway status 2>&1 | grep -q 'Gateway service is loaded'; then
+    ok "finmgr gateway service loaded"
+  else
+    bad "finmgr gateway service not loaded"
+  fi
+else
+  bad "finmgr telegram token missing"
+fi
+
 echo "=== kanban.db ==="
 if [[ -f "$ROOT/.hermes/kanban.db" ]]; then ok "kanban.db"; else bad "kanban.db"; fi
 
