@@ -81,13 +81,15 @@ startup/
 
 ### 3.2 Telegram 봇 매핑
 
-| 역할 | Hermes Profile | Telegram Bot | 상태 |
-|---|---|---|---|
-| Mini (오케스트레이터) | `default` | @HyunjoongKim_bot | **운영 중** |
-| CFO | `cfo` | BotFather 신규 생성 (예: @SpecifyCFO_bot) | 미구현 |
-| CMO | `cmo` | BotFather 신규 생성 (예: @SpecifyCMO_bot) | 미구현 |
+| 역할 | Hermes Profile | Telegram Bot | Bot Token | 상태 |
+|---|---|---|---|---|
+| Mini (오케스트레이터) | `default` | @HyunjoongKim_bot | `startup/.hermes/.env` (기존) | **운영 중** |
+| CFO | `cfo` | BotFather 발급 완료 | `8606620637:AAGjxWByAmeFzNfVC6Crlf3C-Rami5D4oZ8` | 토큰 ✅ / 프로필·게이트웨이 ❌ |
+| CMO | `cmo` | BotFather 발급 완료 | `8826215828:AAFRNw6SQVIlarEsGtAKEYo7IOuAZiQ19Uk` | 토큰 ✅ / 프로필·게이트웨이 ❌ |
 
 각 프로필 `.env`에 **서로 다른** `TELEGRAM_BOT_TOKEN`만 둔다. `auth.json`(Codex OAuth)은 `--clone` 시 default에서 복사.
+
+> **보안:** Bot Token은 비밀값이다. 구현 시 `.env`에만 저장하고 git에는 커밋하지 않는다. 본 스펙에 기록된 값은 구현·검증용 참조이며, 유출 시 BotFather에서 즉시 revoke·재발급한다.
 
 ### 3.3 게이트웨이 토폴로지
 
@@ -364,7 +366,25 @@ kanban:
 | 변수 | Mini | CFO | CMO |
 |---|---|---|---|
 | `HERMES_HOME` | `startup/.hermes` | `startup/.hermes/profiles/cfo` | `startup/.hermes/profiles/cmo` |
-| `TELEGRAM_BOT_TOKEN` | 기존 토큰 | 신규 | 신규 |
+| `TELEGRAM_BOT_TOKEN` | 기존 (`.hermes/.env`) | 아래 §7.5 | 아래 §7.5 |
+
+### 7.5 Telegram Bot Token (발급 완료)
+
+구현 시 각 프로필 `.env`에 다음 한 줄을 설정한다.
+
+**CFO** — `startup/.hermes/profiles/cfo/.env`:
+
+```bash
+TELEGRAM_BOT_TOKEN=8606620637:AAGjxWByAmeFzNfVC6Crlf3C-Rami5D4oZ8
+```
+
+**CMO** — `startup/.hermes/profiles/cmo/.env`:
+
+```bash
+TELEGRAM_BOT_TOKEN=8826215828:AAFRNw6SQVIlarEsGtAKEYo7IOuAZiQ19Uk
+```
+
+Mini 토큰은 기존 `startup/.hermes/.env`를 그대로 사용한다. 세 토큰은 서로 달라야 하며, 프로필 간 공유하지 않는다.
 
 게이트웨이 실행 예:
 
@@ -417,7 +437,7 @@ hermes gateway run                                    # CMO
 
 1. `workspace/finance`, `workspace/marketing` 디렉터리 생성
 2. `hermes profile create cfo --clone` / `hermes profile create cmo --clone`
-3. BotFather에서 CFO·CMO 봇 생성, 각 `.env`에 토큰 설정
+3. CFO·CMO `.env`에 §7.5 토큰 설정 (BotFather 발급 완료)
 4. CFO/CMO `config.yaml`에 `kanban.dispatch_in_gateway: false`
 5. Mini `SOUL.md` 오케스트레이터 문구로 갱신
 6. CFO/CMO `SOUL.md` 작성
@@ -519,7 +539,9 @@ Mini: `kanban-orchestrator` 번들 확인 (profile create 시 자동).
 | Mini Telegram @HyunjoongKim_bot | ✅ |
 | `kanban.db` | ✅ (init됨) |
 | Profiles cfo, cmo | ❌ |
-| CFO/CMO Telegram 봇 | ❌ |
+| CFO Telegram Bot Token | ✅ (§7.5) |
+| CMO Telegram Bot Token | ✅ (§7.5) |
+| CFO/CMO 프로필·게이트웨이 연결 | ❌ |
 | 스킬 프로필별 설치 | ❌ |
 | SOUL 커스터마이즈 | ❌ (default 템플릿만) |
 | 3-gateway 운영 | ❌ (Mini만) |
