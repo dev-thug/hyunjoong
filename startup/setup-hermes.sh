@@ -19,14 +19,14 @@ case "$cmd" in
   gateways)
     export HERMES_HOME="$ROOT/.hermes"
     hermes gateway start
-    for p in cfo cmo finmgr; do
+    for p in cfo cmo finmgr coo; do
       if [[ -d "$ROOT/.hermes/profiles/$p" ]]; then
         env_file="$ROOT/.hermes/profiles/$p/.env"
         if [[ -f "$env_file" ]] && grep -q '^TELEGRAM_BOT_TOKEN=' "$env_file" 2>/dev/null; then
           export HERMES_HOME="$ROOT/.hermes/profiles/$p"
           hermes gateway start
-        elif [[ "$p" == "finmgr" ]]; then
-          echo "Skip finmgr gateway (no TELEGRAM_BOT_TOKEN — Kanban worker only)"
+        else
+          echo "Skip $p gateway (no TELEGRAM_BOT_TOKEN)"
         fi
       fi
     done
@@ -35,7 +35,7 @@ case "$cmd" in
   apply-config)
     cp "$ROOT/config/hermes/default.config.yaml" "$ROOT/.hermes/config.yaml"
     cp "$ROOT/config/hermes/default.SOUL.md" "$ROOT/.hermes/SOUL.md"
-    for p in cfo cmo finmgr; do
+    for p in cfo cmo finmgr coo; do
       if [[ -d "$ROOT/.hermes/profiles/$p" ]] && [[ -f "$ROOT/config/hermes/$p.config.yaml" ]]; then
         cp "$ROOT/config/hermes/$p.config.yaml" "$ROOT/.hermes/profiles/$p/config.yaml"
         cp "$ROOT/config/hermes/$p.SOUL.md" "$ROOT/.hermes/profiles/$p/SOUL.md"
@@ -47,6 +47,9 @@ case "$cmd" in
     "$ROOT/scripts/install-cfo-cmo-skills.sh" "$@"
     if [[ -d "$ROOT/.hermes/profiles/finmgr" ]]; then
       "$ROOT/scripts/install-finmgr-skills.sh" "$@"
+    fi
+    if [[ -d "$ROOT/.hermes/profiles/coo" ]]; then
+      "$ROOT/scripts/install-coo-skills.sh" "$@"
     fi
     ;;
   verify)         "$ROOT/scripts/verify-multi-agent.sh" "$@" ;;
@@ -64,9 +67,9 @@ Commands:
   model               Configure model provider
   gateway [setup|status|start]
   profiles            List Hermes profiles
-  gateways            Start Mini + CFO + CMO + FinMgr gateways
+  gateways            Start Mini + specialist gateways (token required)
   apply-config        Copy config/SOUL templates to .hermes runtime
-  install-skills      Install CFO/CMO/FinMgr skills
+  install-skills      Install CFO/CMO/FinMgr/COO skills
   verify              Run multi-agent verification script
   chat                Start Hermes CLI
   env                 Print environment variables

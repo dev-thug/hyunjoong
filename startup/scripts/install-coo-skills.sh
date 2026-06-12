@@ -5,9 +5,14 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export HERMES_HOME="${HERMES_HOME:-$ROOT/.hermes}"
 export PATH="$ROOT/hermes-agent/.venv/bin:${HOME}/.local/bin:$PATH"
 
-PROFILE="finmgr"
+PROFILE="coo"
 SKILLS_SRC="$ROOT/config/hermes/skills"
 SKILLS_DST="$HERMES_HOME/profiles/$PROFILE/skills"
+
+CUSTOM_SKILLS=(
+  ops-execution
+  process-sop-mgmt
+)
 
 install_hub() {
   local skill="$1"
@@ -15,12 +20,7 @@ install_hub() {
   hermes -p "$PROFILE" skills install --yes "$skill" || echo "WARN: failed $skill (may retry later)"
 }
 
-CUSTOM_SKILLS=(
-  finance-data-analysis
-  budget-cashflow-mgmt
-)
-
-echo "==> [$PROFILE] syncing custom FinMgr skills"
+echo "==> [$PROFILE] syncing custom COO skills"
 mkdir -p "$SKILLS_DST"
 for name in "${CUSTOM_SKILLS[@]}"; do
   src="$SKILLS_SRC/$name"
@@ -31,16 +31,16 @@ for name in "${CUSTOM_SKILLS[@]}"; do
 done
 
 HUB_SKILLS=(
+  anthropics/skills/docx
+  anthropics/skills/internal-comms
+  anthropics/skills/doc-coauthoring
   anthropics/skills/xlsx
-  openai/skills/jupyter-notebook
   openai/skills/define-goal
 )
 
 OFFICIAL_SKILLS=(
-  official/finance/excel-author
-  official/finance/3-statement-model
-  official/finance/stocks
-  official/finance/comps-analysis
+  official/software-development/code-wiki
+  official/software-development/subagent-driven-development
 )
 
 for skill in "${HUB_SKILLS[@]}"; do
@@ -51,4 +51,4 @@ for skill in "${OFFICIAL_SKILLS[@]}"; do
   install_hub "$skill"
 done
 
-echo "Done. Verify: hermes -p $PROFILE skills list | grep -E 'finance-data|budget-cashflow|xlsx|jupyter'"
+echo "Done. Verify: hermes -p $PROFILE skills list | grep -E 'ops-execution|process-sop|docx|define-goal|code-wiki'"

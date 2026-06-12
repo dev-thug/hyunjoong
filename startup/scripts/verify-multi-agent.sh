@@ -11,8 +11,8 @@ FAIL=0
 ok()   { echo "✅ $1"; PASS=$((PASS+1)); }
 bad()  { echo "❌ $1"; FAIL=$((FAIL+1)); }
 
-PROFILES=(default cfo cmo finmgr)
-NAMED=(cfo cmo finmgr)
+PROFILES=(default cfo cmo finmgr coo)
+NAMED=(cfo cmo finmgr coo)
 
 echo "=== V1: hermes doctor ==="
 for p in "${PROFILES[@]}"; do
@@ -34,7 +34,7 @@ done
 echo "=== V6: notion/figma blocklist ==="
 BLOCKED='notion|figma'
 for p in "${PROFILES[@]}"; do
-  [[ "$p" == "finmgr" && ! -d "$ROOT/.hermes/profiles/finmgr" ]] && continue
+  [[ ! -d "$ROOT/.hermes/profiles/$p" && "$p" != "default" ]] && continue
   if hermes -p "$p" skills list 2>/dev/null | grep -qiE "$BLOCKED"; then
     bad "blocked skill in $p"
   else
@@ -52,6 +52,7 @@ checks = [
     ("cfo", root/"profiles/cfo/config.yaml", False),
     ("cmo", root/"profiles/cmo/config.yaml", False),
     ("finmgr", root/"profiles/finmgr/config.yaml", False),
+    ("coo", root/"profiles/coo/config.yaml", False),
 ]
 for name, path, want in checks:
     if not path.exists():
@@ -72,22 +73,41 @@ else
   bad "finmgr profile not created"
 fi
 
+echo "=== coo custom + ops skills ==="
+if [[ -d "$ROOT/.hermes/profiles/coo" ]]; then
+  CLIST="$(hermes -p coo skills list 2>/dev/null || true)"
+  for s in ops-execution process-sop-mgmt docx define-goal code-wiki internal-comms; do
+    if echo "$CLIST" | grep -qi "$s"; then ok "coo skill $s"; else bad "coo skill $s"; fi
+  done
+else
+  bad "coo profile not created"
+fi
+
 echo "=== workspace dirs ==="
-for d in finance finance/analytics finance/budget finance/cashflow marketing; do
+for d in finance finance/analytics finance/budget finance/cashflow marketing \
+         operations operations/sops operations/runbooks operations/meetings \
+         operations/okrs operations/projects operations/reports; do
   if [[ -d "$ROOT/workspace/$d" ]]; then ok "workspace/$d"; else bad "workspace/$d"; fi
 done
 
-echo "=== finmgr telegram gateway ==="
-if [[ -f "$ROOT/.hermes/profiles/finmgr/.env" ]] && grep -q '^TELEGRAM_BOT_TOKEN=' "$ROOT/.hermes/profiles/finmgr/.env" 2>/dev/null; then
-  ok "finmgr telegram token configured"
-  if HERMES_HOME="$ROOT/.hermes/profiles/finmgr" hermes -p finmgr gateway status 2>&1 | grep -q 'Gateway service is loaded'; then
-    ok "finmgr gateway service loaded"
+check_gateway() {
+  local profile="$1"
+  local env_file="$ROOT/.hermes/profiles/$profile/.env"
+  if [[ -f "$env_file" ]] && grep -q '^TELEGRAM_BOT_TOKEN=' "$env_file" 2>/dev/null; then
+    ok "$profile telegram token configured"
+    if HERMES_HOME="$ROOT/.hermes/profiles/$profile" hermes -p "$profile" gateway status 2>&1 | grep -q 'Gateway service is loaded'; then
+      ok "$profile gateway service loaded"
+    else
+      bad "$profile gateway service not loaded"
+    fi
   else
-    bad "finmgr gateway service not loaded"
+    bad "$profile telegram token missing"
   fi
-else
-  bad "finmgr telegram token missing"
-fi
+}
+
+echo "=== telegram gateways (finmgr, coo) ==="
+check_gateway finmgr
+check_gateway coo
 
 echo "=== kanban.db ==="
 if [[ -f "$ROOT/.hermes/kanban.db" ]]; then ok "kanban.db"; else bad "kanban.db"; fi
@@ -99,7 +119,7 @@ if hermes doctor 2>&1 | grep -q '✓ browser$'; then ok "doctor browser"; else b
 if hermes doctor 2>&1 | grep -q '✓ computer_use'; then ok "doctor computer_use"; else bad "doctor computer_use"; fi
 
 echo "=== platform_toolsets include browser/computer_use ==="
-for p in default cfo cmo finmgr; do
+for p in "${PROFILES[@]}"; do
   [[ "$p" != "default" && ! -d "$ROOT/.hermes/profiles/$p" ]] && continue
   cfg="$ROOT/.hermes/config.yaml"
   [[ "$p" != "default" ]] && cfg="$ROOT/.hermes/profiles/$p/config.yaml"
