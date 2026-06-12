@@ -11,7 +11,7 @@ install() {
   local skill
   for skill in "$@"; do
     echo "==> [$profile] installing $skill"
-    hermes -p "$profile" skills install "$skill"
+    hermes -p "$profile" skills install --yes "$skill"
   done
 }
 

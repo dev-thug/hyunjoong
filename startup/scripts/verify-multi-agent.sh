@@ -17,7 +17,7 @@ if hermes -p cfo doctor >/dev/null 2>&1; then ok "doctor cfo"; else bad "doctor 
 if hermes -p cmo doctor >/dev/null 2>&1; then ok "doctor cmo"; else bad "doctor cmo"; fi
 
 echo "=== V2: profile list ==="
-if hermes profile list 2>&1 | rg -q '\bcfo\b' && hermes profile list 2>&1 | rg -q '\bcmo\b'; then
+if hermes profile list 2>&1 | grep -qE '\bcfo\b' && hermes profile list 2>&1 | grep -qE '\bcmo\b'; then
   ok "profiles cfo+cmo"
 else
   bad "profiles cfo+cmo"
@@ -26,7 +26,7 @@ fi
 echo "=== V6: notion/figma blocklist ==="
 BLOCKED='notion|figma'
 for p in default cfo cmo; do
-  if hermes -p "$p" skills list 2>/dev/null | rg -qi "$BLOCKED"; then
+  if hermes -p "$p" skills list 2>/dev/null | grep -qiE "$BLOCKED"; then
     bad "blocked skill in $p"
   else
     ok "no blocked skills in $p"
