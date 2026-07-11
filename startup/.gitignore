@@ -1,9 +1,0 @@
-# Hermes runtime (sessions, tokens, sqlite, logs)
-.hermes/
-
-# Agent deliverables (may contain business data)
-workspace/
-
-# Local env overrides
-.env
-.env.*
