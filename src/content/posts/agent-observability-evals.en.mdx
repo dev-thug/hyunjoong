@@ -1,0 +1,159 @@
+export const metadata = {
+  title: "Designing Agent Observability: Leave Improvement Loops, Not Just Logs",
+  excerpt: "When coding agents become part of team operations, prompts are not enough. This guide shows how to connect traces, decision logs, evals, and regression checks into an improvement loop for AI-native development.",
+  category: "Engineering",
+  date: "2026-06-08",
+  readTime: "8 min",
+  lang: "en",
+  keywords: "ai agents, observability, evals, codex, claude code, aiax, ai transformation, agent workflow",
+};
+
+In the first stage of AI agent adoption, teams usually ask which model writes better code. Once agents move beyond personal experiments and several developers or operators start delegating work to them, the question changes.
+
+> Why did the agent read that file, run that command, and choose that implementation?
+
+If the team cannot answer that question, AIAx, or AI Transformation, becomes black-box automation rather than a productivity system. If the team records the execution path well, even failed agent runs become assets. The next run can use a better prompt, narrower permissions, stronger tests, or a more precise delegation packet.
+
+This post is a practical guide to observability and evaluation for teams operating AI agents as part of engineering work.
+
+## Logs and observability are not the same thing
+
+Many teams assume that saving agent logs is enough: terminal output, chat history, Git diffs, and CI results. Those are useful, but raw logs do not automatically create an improvement loop.
+
+Agent observability should answer these questions.
+
+| Question | Data you need | Improvement action |
+| --- | --- | --- |
+| Did the agent understand the goal? | Initial instruction, plan, questions, assumptions | Improve the delegation template |
+| Which context affected the result? | Files read, search results, documentation links | Standardize context packets |
+| Where did risky behavior happen? | Commands, file writes, network calls | Adjust permission policy |
+| Where do failures repeat? | Build failures, lint failures, review comments | Add evals and regression tests |
+| Why did a human intervene? | Approval or rejection records, manual fix commits | Separate automatable judgment from human judgment |
+
+The OpenAI Agents SDK tracing documentation describes agent runs in terms of traces and spans, including default tracing, custom tracing processors, and handling sensitive data. Reference: [OpenAI Agents SDK Tracing](https://openai.github.io/openai-agents-python/tracing/). The important idea is not that every team must use one SDK. It is that an agent run should be treated as structured events, not one long string of output.
+
+## Split every agent run into five spans
+
+You do not need a complex APM stack on day one. Start by recording every agent task in five sections.
+
+1. **Intent span**: the delegated goal and success criteria
+2. **Context span**: files, documents, issues, PRs, and API responses the agent used
+3. **Decision span**: the plan, tradeoffs, and rejected options
+4. **Action span**: file changes, commands, and external tool calls
+5. **Verification span**: lint, tests, build, review, and deployment results
+
+A coding-agent run record can start as something this small.
+
+```json
+{
+  "taskId": "agent-2026-06-08-001",
+  "intent": {
+    "goal": "Show a retry CTA when payment fails",
+    "successCriteria": ["Add failed-state UI", "No regression in the success flow"]
+  },
+  "context": {
+    "filesRead": ["src/app/billing/page.tsx", "src/lib/payments.ts"],
+    "docs": ["internal://billing-state-machine"]
+  },
+  "decisions": [
+    {
+      "choice": "Keep the server action and split only the client component",
+      "reason": "Avoid duplicating payment-state lookup logic"
+    }
+  ],
+  "actions": {
+    "filesChanged": ["src/components/billing/PaymentRetryPanel.tsx"],
+    "commands": ["npm run lint", "npm run build"]
+  },
+  "verification": {
+    "lint": "pass",
+    "build": "pass",
+    "humanReview": "One copy change requested"
+  }
+}
+```
+
+This structure is enough to answer operational questions later: which task types fail most often, which documents improve success rate, and which commands should always require human approval.
+
+## Evals are workflow regression tests, not just model scores
+
+AI evals can fail when teams make them too abstract too early. You do not need a large benchmark to begin. Convert the work you repeatedly delegate to agents into small regression checks.
+
+| Work type | Useful eval question | Easy to automate? |
+| --- | --- | --- |
+| Bug fix | Does the reproduction script fail before the fix and pass after it? | High |
+| Refactor | Are public APIs and key snapshots preserved? | High |
+| Documentation | Are required metadata and internal links valid? | High |
+| UI change | Are accessibility roles, labels, and keyboard flow preserved? | Medium |
+| Operations response | Did the agent avoid forbidden runbook commands? | Medium |
+
+OpenAI's developer docs include a cookbook entry about building an agent improvement loop with traces, evals, and Codex. Reference: [Build an Agent Improvement Loop with Traces, Evals, and Codex](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop). The practical takeaway is not to score an agent once and move on. It is to find failure patterns in traces, lock them into evals, and feed that back into the next run.
+
+## A minimum schema for agent observability
+
+At the beginning, one file is better than a database nobody maintains. Require every agent task to leave a run record with these fields.
+
+```ts
+type AgentRunRecord = {
+  id: string;
+  createdAt: string;
+  actor: "human" | "scheduled-job" | "coding-agent";
+  tool: "claude-code" | "codex" | "custom-agent" | "other";
+  repo: string;
+  branch: string;
+  taskType: "bugfix" | "feature" | "refactor" | "content" | "ops";
+  goal: string;
+  filesRead: string[];
+  filesChanged: string[];
+  commandsRun: string[];
+  externalSources: string[];
+  approvals: Array<{ action: string; result: "approved" | "rejected" }>;
+  verification: Array<{ name: string; result: "pass" | "fail" | "skipped"; note?: string }>;
+  outcome: "merged" | "draft" | "blocked" | "reverted";
+  reviewerNotes: string[];
+};
+```
+
+This schema is not perfect, but it is practical. If you consistently collect `taskType`, `filesChanged`, `commandsRun`, `verification`, and `outcome`, agent operating bottlenecks become visible.
+
+## Applying this to Claude Code and Codex
+
+The exact features differ by tool, but the operating model is the same.
+
+- **With Claude Code**, use permission approvals, hooks, and pre/post task summaries as observability inputs. Anthropic's hooks documentation describes hook events such as `PreToolUse`, which can connect decisions before a tool call runs. Reference: [Claude Code Hooks Reference](https://docs.anthropic.com/en/docs/claude-code/hooks). Preventing risky execution before it happens is stronger than merely logging it afterward.
+- **With Codex CLI**, record run data around non-interactive execution, approval/security settings, and CI or GitHub Action integration points. The official CLI documentation includes operational topics such as permissions, hooks, `AGENTS.md`, and non-interactive mode. Reference: [OpenAI Codex CLI](https://developers.openai.com/codex/cli).
+- **With custom agents**, put the trace id in logs, PR descriptions, and CI job names. Human-visible GitHub artifacts should connect to internal traces; otherwise root-cause analysis becomes slow.
+
+The real question is not which tool is better. Whatever tool you use, run records, evals, reviews, and CI need to speak the same language.
+
+## Seven metrics to put on the operating dashboard
+
+An agent dashboard that only shows token usage is not enough. Track these signals together.
+
+1. **Completion rate**: percentage of started tasks that reach merge or deployment
+2. **Human intervention rate**: percentage that require approval, re-prompting, or manual edits
+3. **Verification failure rate**: lint, test, build, and security-check failures
+4. **Repeated failure types**: the same error pattern appearing across multiple days
+5. **Average change surface**: files touched, diff size, and impacted domains per task
+6. **Review comment density**: review comments per 100 changed lines
+7. **Revert rate**: merges that lead to revert, hotfix, or incident follow-up
+
+These metrics are not meant to surveil agents. They are operational signals that tell you where to automate more and where to tighten control.
+
+## A checklist you can apply this week
+
+Start with this sequence.
+
+- [ ] Attach a `taskId` to every agent task.
+- [ ] Require PR bodies to include goal, changed files, verification results, and remaining risks.
+- [ ] Collect 10 failed agent runs and classify recurring failure types.
+- [ ] Turn the three most common failures into evals or CI checks.
+- [ ] Move risky commands and risky file changes into pre-execution approval.
+- [ ] Turn successful prompts and context packets into reusable templates.
+- [ ] Run a weekly agent operations review to update permissions, evals, and documentation.
+
+## Observability does not slow the team down
+
+Adding observability can look like overhead. In practice, the opposite is true. Without records, every failure lives only in human memory and the same mistakes repeat. With records, failures become policies, tests, and templates.
+
+The goal of AIAx is not to make humans watch AI tools forever. It is to build an operating system where people can safely delegate more work. That starts not with longer prompts, but with traces and evals the team can read, learn from, and improve.

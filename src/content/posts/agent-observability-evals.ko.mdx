@@ -1,0 +1,161 @@
+export const metadata = {
+  title: "AI 에이전트 관측성 설계: 로그가 아니라 개선 루프를 남겨라",
+  excerpt: "코딩 에이전트를 팀 단위로 운영하려면 프롬프트보다 관측성과 평가 루프가 먼저다. Trace, decision log, eval, 회귀 테스트를 묶어 에이전트 업무를 개선 가능한 시스템으로 만드는 방법을 정리한다.",
+  category: "Engineering",
+  date: "2026-06-08",
+  readTime: "8 min",
+  lang: "ko",
+  keywords: "ai agents, observability, evals, codex, claude code, aiax, ai transformation, agent workflow",
+};
+
+AI 에이전트 도입 초기에 팀은 보통 "어떤 모델이 더 잘 코딩하는가"를 묻습니다. 하지만 하루에 한두 번 쓰는 개인 도구를 넘어, 여러 개발자와 운영자가 에이전트에게 일을 맡기기 시작하면 질문이 바뀝니다.
+
+> 에이전트가 왜 그 파일을 읽었고, 왜 그 명령을 실행했으며, 어떤 근거로 이 변경을 만들었는가?
+
+이 질문에 답하지 못하면 AIAx, 즉 AI Transformation은 생산성 프로젝트가 아니라 블랙박스 자동화가 됩니다. 반대로 에이전트의 실행 흔적을 잘 남기면 실패한 작업도 자산이 됩니다. 다음번에는 더 좋은 프롬프트, 더 좁은 권한, 더 강한 테스트, 더 정확한 위임 패킷으로 바꿀 수 있기 때문입니다.
+
+이 글은 AI 에이전트를 팀 운영 시스템으로 만들기 위한 관측성(observability)과 평가(evaluation) 설계법을 다룹니다.
+
+## 로그와 관측성은 다르다
+
+많은 팀이 에이전트 로그를 저장하면 충분하다고 생각합니다. 터미널 출력, 채팅 기록, Git diff, CI 결과를 모아두는 식입니다. 이것도 필요하지만, 로그만으로는 개선 루프가 만들어지지 않습니다.
+
+관측성은 다음 질문에 답할 수 있어야 합니다.
+
+| 질문 | 필요한 데이터 | 개선 액션 |
+| --- | --- | --- |
+| 에이전트가 작업 목표를 제대로 이해했는가? | 최초 지시, 계획, 질문, 가정 | 위임 템플릿 수정 |
+| 어떤 컨텍스트가 결과에 영향을 줬는가? | 읽은 파일, 검색 결과, 문서 링크 | 컨텍스트 패킷 표준화 |
+| 위험한 행동이 어디서 발생했는가? | 명령 실행, 파일 쓰기, 네트워크 호출 | 권한 정책 수정 |
+| 실패가 반복되는 지점은 어디인가? | 빌드 실패, lint 실패, 리뷰 코멘트 | eval과 회귀 테스트 추가 |
+| 사람이 개입한 이유는 무엇인가? | 승인/거절 기록, 수정 커밋 | 자동화 가능한 판단 분리 |
+
+OpenAI Agents SDK는 tracing 문서에서 agent run을 trace와 span으로 나누어 볼 수 있고, 기본 tracing, custom tracing processor, 민감 데이터 처리 같은 개념을 설명합니다. 참고: [OpenAI Agents SDK Tracing](https://openai.github.io/openai-agents-python/tracing/). 중요한 포인트는 특정 SDK를 쓰느냐가 아니라, 에이전트 실행을 "하나의 긴 문자열"이 아니라 구조화된 사건의 묶음으로 본다는 점입니다.
+
+## 에이전트 실행을 5개의 span으로 나누기
+
+실무에서는 처음부터 복잡한 APM을 붙이지 않아도 됩니다. 먼저 모든 에이전트 작업을 다섯 구간으로 나누어 기록하세요.
+
+1. **Intent span**: 사람이 맡긴 일과 성공 조건
+2. **Context span**: 에이전트가 읽은 파일, 문서, 이슈, PR, API 응답
+3. **Decision span**: 에이전트가 세운 계획, 선택지, 포기한 선택지
+4. **Action span**: 파일 변경, 명령 실행, 외부 도구 호출
+5. **Verification span**: lint, test, build, 리뷰 결과, 배포 결과
+
+예를 들어 코딩 에이전트 작업 기록은 다음 정도면 충분히 시작할 수 있습니다.
+
+```json
+{
+  "taskId": "agent-2026-06-08-001",
+  "intent": {
+    "goal": "결제 실패 시 사용자에게 재시도 CTA를 보여준다",
+    "successCriteria": ["실패 상태 UI 추가", "기존 성공 플로우 회귀 없음"]
+  },
+  "context": {
+    "filesRead": ["src/app/billing/page.tsx", "src/lib/payments.ts"],
+    "docs": ["internal://billing-state-machine"]
+  },
+  "decisions": [
+    {
+      "choice": "서버 액션은 유지하고 클라이언트 컴포넌트만 분리",
+      "reason": "결제 상태 조회 로직을 중복하지 않기 위해"
+    }
+  ],
+  "actions": {
+    "filesChanged": ["src/components/billing/PaymentRetryPanel.tsx"],
+    "commands": ["npm run lint", "npm run build"]
+  },
+  "verification": {
+    "lint": "pass",
+    "build": "pass",
+    "humanReview": "copy 수정 요청 1건"
+  }
+}
+```
+
+이 정도 구조만 있어도 나중에 "어떤 작업 유형에서 실패가 잦은가", "어떤 문서를 주면 성공률이 높아지는가", "어떤 명령은 항상 사람 승인이 필요한가"를 분석할 수 있습니다.
+
+## Eval은 모델 점수가 아니라 업무 회귀 테스트다
+
+AI eval을 너무 거창하게 시작하면 실패합니다. 처음부터 대규모 벤치마크를 만들 필요는 없습니다. 팀이 반복적으로 에이전트에게 맡기는 업무를 작은 회귀 테스트로 바꾸면 됩니다.
+
+예시는 다음과 같습니다.
+
+| 업무 유형 | 좋은 eval 질문 | 자동 판정 가능 여부 |
+| --- | --- | --- |
+| 버그 수정 | 재현 스크립트가 수정 전 실패하고 수정 후 성공하는가? | 높음 |
+| 리팩터링 | 공개 API와 주요 스냅샷이 유지되는가? | 높음 |
+| 문서 작성 | 필수 메타데이터와 내부 링크가 유효한가? | 높음 |
+| UI 변경 | 접근성 role, label, keyboard flow가 유지되는가? | 중간 |
+| 운영 대응 | 런북의 금지 명령을 실행하지 않았는가? | 중간 |
+
+OpenAI 개발자 문서에는 Codex와 trace, eval을 연결해 에이전트 개선 루프를 만드는 cookbook 항목이 소개되어 있습니다. 참고: [Build an Agent Improvement Loop with Traces, Evals, and Codex](https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop). 여기서 실무자가 가져갈 핵심은 "에이전트 결과를 한 번 평가하고 끝"이 아니라, trace에서 실패 패턴을 찾고 eval로 고정한 뒤 다음 실행에 반영하는 루프입니다.
+
+## 좋은 에이전트 관측성의 최소 스키마
+
+처음에는 데이터베이스보다 파일 하나가 낫습니다. 모든 에이전트 작업이 종료될 때 다음 필드를 남기게 하세요.
+
+```ts
+type AgentRunRecord = {
+  id: string;
+  createdAt: string;
+  actor: "human" | "scheduled-job" | "coding-agent";
+  tool: "claude-code" | "codex" | "custom-agent" | "other";
+  repo: string;
+  branch: string;
+  taskType: "bugfix" | "feature" | "refactor" | "content" | "ops";
+  goal: string;
+  filesRead: string[];
+  filesChanged: string[];
+  commandsRun: string[];
+  externalSources: string[];
+  approvals: Array<{ action: string; result: "approved" | "rejected" }>;
+  verification: Array<{ name: string; result: "pass" | "fail" | "skipped"; note?: string }>;
+  outcome: "merged" | "draft" | "blocked" | "reverted";
+  reviewerNotes: string[];
+};
+```
+
+이 스키마는 완벽하지 않습니다. 하지만 팀이 실제로 운영에 쓰기에는 충분합니다. 특히 `taskType`, `filesChanged`, `commandsRun`, `verification`, `outcome`만 꾸준히 쌓아도 에이전트 운영의 병목이 보이기 시작합니다.
+
+## Claude Code와 Codex를 쓸 때의 적용 방식
+
+도구마다 세부 기능은 다르지만 운영 원칙은 같습니다.
+
+- **Claude Code**를 쓴다면 권한 승인, 훅, 작업 전후 요약을 관측성의 입력으로 삼습니다. Anthropic 문서는 Claude Code hooks에서 `PreToolUse` 같은 훅으로 도구 실행 전 판단을 연결할 수 있다고 설명합니다. 참고: [Claude Code Hooks Reference](https://docs.anthropic.com/en/docs/claude-code/hooks). 실행 전 차단은 실행 후 로그보다 강한 통제입니다.
+- **Codex CLI**를 쓴다면 non-interactive 실행, approval/security 설정, CI나 GitHub Action 연결 지점을 기준으로 run record를 남깁니다. 공식 CLI 문서는 권한, hooks, `AGENTS.md`, non-interactive mode 같은 운영 항목을 제공합니다. 참고: [OpenAI Codex CLI](https://developers.openai.com/codex/cli).
+- **직접 만든 에이전트**라면 trace id를 모든 로그와 PR 설명, CI job name에 넣으세요. 사람이 보는 GitHub 화면과 내부 trace가 연결되어야 원인 분석이 빨라집니다.
+
+중요한 것은 "어느 도구가 더 좋은가"가 아닙니다. 어떤 도구를 쓰더라도 run record, eval, review, CI가 같은 언어로 연결되어야 합니다.
+
+## 운영 대시보드에서 봐야 할 7가지 지표
+
+에이전트 대시보드는 토큰 사용량 그래프만 보여주면 부족합니다. 다음 지표를 함께 보세요.
+
+1. **작업 완료율**: 시작된 작업 중 merge 또는 배포까지 간 비율
+2. **사람 개입률**: 승인, 재지시, 수동 수정이 필요했던 비율
+3. **검증 실패율**: lint, test, build, security check 실패 비율
+4. **반복 실패 유형**: 같은 에러가 며칠 이상 반복되는지
+5. **평균 변경 범위**: 작업당 파일 수, diff 크기, 영향 영역
+6. **리뷰 코멘트 밀도**: diff 100줄당 리뷰 코멘트 수
+7. **되돌림 비율**: merge 후 revert, hotfix, 장애 연결 비율
+
+이 지표는 에이전트를 평가하기 위한 감시 도구가 아닙니다. 어디를 자동화하고 어디를 더 엄격하게 통제해야 하는지 알려주는 운영 신호입니다.
+
+## 팀에 바로 적용하는 체크리스트
+
+이번 주에 시작한다면 다음 순서가 현실적입니다.
+
+- [ ] 모든 에이전트 작업에 `taskId`를 붙인다.
+- [ ] PR 본문에 목표, 변경 파일, 검증 결과, 남은 리스크를 의무화한다.
+- [ ] 실패한 작업 10개를 모아 반복 실패 유형을 분류한다.
+- [ ] 가장 흔한 실패 3개를 eval 또는 CI check로 만든다.
+- [ ] 위험 명령과 위험 파일 변경은 실행 전 승인 대상으로 분리한다.
+- [ ] 성공한 작업의 입력 프롬프트와 컨텍스트 패킷을 템플릿화한다.
+- [ ] 매주 한 번 "에이전트 운영 회고"를 열어 권한, eval, 문서를 업데이트한다.
+
+## 관측성은 속도를 늦추지 않는다
+
+관측성을 추가하면 에이전트 도입 속도가 느려질 것처럼 보입니다. 실제로는 반대입니다. 기록이 없으면 모든 실패가 사람의 기억에만 남고, 같은 실수가 반복됩니다. 기록이 있으면 실패가 정책, 테스트, 템플릿으로 변환됩니다.
+
+AIAx의 목표는 사람이 AI를 계속 감시하게 만드는 것이 아닙니다. 사람이 안심하고 더 많은 일을 위임할 수 있는 운영 체계를 만드는 것입니다. 그 출발점은 더 긴 프롬프트가 아니라, 나중에 다시 읽고 개선할 수 있는 trace와 eval입니다.

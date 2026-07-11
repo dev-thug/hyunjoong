@@ -1,0 +1,380 @@
+export const metadata = {
+  title: "Delegation Packets for AI-Native Teams: The Small Spec Coding Agents Need",
+  excerpt: "Claude Code, Codex, and other coding agents do not need longer prompts as much as they need better delegation packets. This practical guide shows how to define outcome, scope, permissions, verification, and stop conditions before handing work to an agent.",
+  category: "Engineering",
+  date: "2026-06-06",
+  readTime: "10 min",
+  lang: "en",
+  keywords: "ai agents, claude code, codex, aiax, ai transformation, agent workflow, delegation packet, ai native development",
+};
+
+# Delegation Packets for AI-Native Teams: The Small Spec Coding Agents Need
+
+Teams adopting AI coding agents tend to fail in a familiar way. The problem is not always model quality. More often, humans delegate work too loosely.
+
+> "Fix this bug."  
+> "Build this feature."  
+> "Also test it."
+
+That instruction is weak even for a human teammate. It is worse for an agent that can read files, edit code, run commands, and produce a pull request. Tools such as Claude Code and OpenAI Codex are useful precisely because they can operate across the development workflow. Anthropic documents settings, permissions, and hooks for Claude Code, while OpenAI describes Codex as a cloud-based software engineering agent. As these tools become more capable, teams need fewer vague prompts and more **delegation packets**.
+
+A delegation packet is a compact work spec you hand to an agent with the task. It does not have to be a long PRD. But it should define the outcome, scope, non-goals, permissions, verification steps, and stop conditions.
+
+This is one of the most practical building blocks for AIAx, or AI Transformation, inside engineering organizations: converting work into a format that AI systems can execute safely.
+
+## Why packets beat prompts
+
+A prompt is a conversation. A packet is a contract.
+
+A prompt often ends here:
+
+```md
+Fix the redirect bug after login.
+```
+
+A delegation packet starts here:
+
+```md
+Task: Fix the bug where the next parameter is lost after login
+Outcome: After /login?next=/billing succeeds, the user lands on /billing
+Scope: Only edit src/app/[lang]/login, src/lib/auth, and related tests
+Do not touch: payment logic, OAuth provider settings, DB schema
+Verify: npm run lint, npm run build, three manual redirect scenarios
+Stop if: fixing this requires changing auth provider configuration
+```
+
+The difference is huge. An agent needs to know not only what to do, but also what not to do. Coding agents can make several file changes from a single wrong assumption. Scope and stop conditions are quality controls.
+
+## The 7 fields of a useful delegation packet
+
+In practice, seven fields are enough.
+
+### 1. Outcome: write the success state in one sentence
+
+Agents need success criteria more than task names.
+
+Weak:
+
+```md
+Improve signup
+```
+
+Better:
+
+```md
+A new user verifies email, lands on the dashboard, and cannot access billing before verification.
+```
+
+The outcome becomes the basis for testing and review. Implementation details can vary. The outcome should not.
+
+### 2. Context: explain why this matters now
+
+An agent can inspect code, but it does not automatically understand product context. Give it the minimum useful background:
+
+- How the problem appears to users
+- Whether it is related to a recent release or incident
+- Whether this is a quick patch or a structural improvement
+- Whether performance, cost, or security matters most
+
+Example:
+
+```md
+Context:
+Signup completion dropped on mobile after the last release. The likely cause is that the locale prefix disappears after email verification, causing a 404. This task should fix redirect preservation, not redesign the auth flow.
+```
+
+That short paragraph reduces unnecessary refactoring.
+
+### 3. Scope: constrain the files and layers the agent may change
+
+The strongest safety mechanism is scope.
+
+```md
+Scope:
+- src/app/[lang]/auth/**
+- src/lib/redirect.ts
+- src/content/docs/auth-flow.mdx
+- Related tests may be added
+```
+
+Treat scope as an allowlist, not a suggestion. Claude Code settings, permissions, and hooks can reinforce these policies at the tool level. Anthropic's Claude Code hooks documentation explains that hooks can run shell commands at specific lifecycle events, which means a team can connect packet rules to review scripts or guardrails.
+
+### 4. Non-goals: state what must not change
+
+Without non-goals, agents often expand the work with good intentions.
+
+```md
+Non-goals:
+- Do not replace the OAuth provider
+- Do not change the DB schema
+- Do not refactor design system components
+- Do not change the existing Korean/English routing structure
+```
+
+A human reviewer may immediately distrust those changes. An agent may think they are a cleaner solution. In AIAx, the boundary of automation matters as much as the amount of automation.
+
+### 5. Permissions: separate read, write, execute, and publish
+
+Giving every task the same permissions creates operational risk.
+
+| Permission | Allowed examples | Forbidden examples |
+| --- | --- | --- |
+| Read | inspect files, check logs, read docs | print secrets |
+| Write | edit specified files, add tests | change schema, payment, permission policy |
+| Execute | lint, build, unit tests | deploy, migrate, write to external APIs |
+| Publish | create PR, commit | force-push main, change production settings |
+
+Agents such as Codex can work on tasks in cloud environments and help parallelize engineering work. That can raise throughput, but without permission boundaries, several parallel tasks can repeat the same risk. The right question is not "What can this tool do?" It is "What may it do for this task?"
+
+### 6. Verification: define exactly what must pass
+
+"Test it" is not a verification plan. Tell the agent what to run and what to do if it fails.
+
+```md
+Verification:
+1. npm run lint
+2. npm run build
+3. Confirm the next parameter is preserved after successful login
+4. Confirm external next URLs fall back to the dashboard
+5. Confirm both /ko and /en routes behave correctly
+
+If verification fails:
+- Summarize the log
+- Make one root-cause assumption
+- Fix and rerun the same verification
+- Stop after two failed attempts and escalate
+```
+
+Verification does not reduce autonomy. It is what makes safe autonomy possible.
+
+### 7. Stop conditions: define when the agent must halt
+
+A good agent workflow includes automatic stopping, not only automatic progress.
+
+```md
+Stop if:
+- Auth provider configuration must change
+- A DB migration is required
+- Existing test expectations must be rewritten
+- Payment or permission policy files must be modified
+- The issue cannot be reproduced
+```
+
+Without stop conditions, an agent keeps trying to solve the task. In operations, stopping when uncertain is often better than confidently changing the wrong thing.
+
+## A copy-paste delegation packet template
+
+```md
+## Delegation Packet
+
+Task:
+- 
+
+Outcome:
+- 
+
+Context:
+- 
+
+Scope:
+- Allowed files/directories:
+- Allowed commands:
+
+Non-goals:
+- 
+
+Permissions:
+- Read:
+- Write:
+- Execute:
+- Publish:
+
+Verification:
+- 
+
+Stop conditions:
+- 
+
+Report format:
+- Summary:
+- Files changed:
+- Verification results:
+- Risks / follow-ups:
+```
+
+You can paste this into an issue, PR description, Claude Code session note, or Codex task brief.
+
+## Example 1: frontend bug fix packet
+
+```md
+Task:
+- Fix the mobile navigation bug where language switching loses the current path
+
+Outcome:
+- From /ko/blog/foo, switching to English navigates to /en/blog/foo
+- If the English post does not exist, navigate to /en/blog
+
+Context:
+- The blog uses route-based i18n
+- Korean is the default language and English is optional
+
+Scope:
+- src/components/layout/LanguageSwitcher.tsx
+- src/i18n-config.ts
+- A small utility may be added if needed
+
+Non-goals:
+- Do not change the full routing structure
+- Do not edit dictionary files
+- Do not change visual design
+
+Permissions:
+- Read: src/app, src/components/layout, src/i18n-config.ts
+- Write: only files listed in Scope
+- Execute: npm run lint, npm run build
+- Publish: create a PR only
+
+Verification:
+- npm run lint
+- npm run build
+- Check switching from /ko/blog, /en/blog, and /ko/projects
+
+Stop conditions:
+- Stop if generateStaticParams must be redesigned
+- Stop if locale middleware must be introduced
+```
+
+The packet is small, but it is enough. It separates the fix area from the areas the agent must not touch.
+
+## Example 2: CI recovery packet
+
+```md
+Task:
+- Find the cause of the latest CI failure on develop and repair it with the smallest safe change
+
+Outcome:
+- The failing check passes
+- Files unrelated to the CI failure are unchanged
+
+Context:
+- The previous commit added an MDX post
+- No product code change was intended
+
+Scope:
+- Files named by the failed log
+- Newly added MDX files
+
+Non-goals:
+- Do not relax ESLint rules
+- Do not weaken TypeScript strictness
+- Do not upgrade packages
+
+Permissions:
+- Read: repository and CI logs
+- Write: only files directly connected to the failure
+- Execute: npm run lint, npm run build
+- Publish: push a fix commit if needed
+
+Verification:
+- Rerun the same failed command
+- Confirm the diff directly addresses the logged failure
+
+Stop conditions:
+- Stop if dependency installation or lockfile regeneration is required
+- Stop if the same failure remains after two repair attempts
+```
+
+CI recovery is a good agent task because the loop is clear: logs, root cause, fix, rerun. But wide permissions can create bad "make CI green" patches, so non-goals matter.
+
+## How to embed this into team operations
+
+A delegation packet should become a team interface, not a personal habit.
+
+### 1. Add it to issue templates
+
+Even if requesters only fill in Outcome, Scope, and Non-goals, the quality of delegation improves. Engineers or agent operators can fill in the rest.
+
+### 2. Pin verification in PR descriptions
+
+Agent-created PRs need explicit verification results.
+
+```md
+## Verification
+- [x] npm run lint
+- [x] npm run build
+- [ ] manual mobile language switch
+```
+
+If a box is empty, reviewers should examine the missing verification before debating implementation details.
+
+### 3. Scale packet length by risk
+
+Not every task needs a long document.
+
+| Risk | Example | Packet level |
+| --- | --- | --- |
+| Low | docs, small UI copy | Outcome + Scope + Verification |
+| Medium | small bug, test addition | all 7 fields |
+| High | auth, payment, migration | 7 fields + human approval + rollback plan |
+
+### 4. Automate policy with hooks and scripts
+
+Claude Code hooks can help enforce packet rules. For example, a hook can run lint after certain edits or detect changes to forbidden files and stop the session. The key is not to treat hooks as magic. Hooks execute policy. The policy should be written in the packet first.
+
+## Common mistakes
+
+### Mistake 1: asking the agent to be the PM
+
+Agents can help implement, investigate, and test. But product judgment should not be silently delegated. Humans should define outcomes and non-goals.
+
+### Mistake 2: defining verification at the end
+
+If verification comes last, implementation runs ahead of safety. Define verification before the agent starts.
+
+### Mistake 3: thinking permissions are tool-level only
+
+"Claude Code can do this" and "this task allows this" are different statements. Permissions should be task-specific.
+
+### Mistake 4: having no failure report format
+
+If the agent fails and only says "it did not work," the team learns nothing. A useful failure report includes the root-cause hypothesis, commands run, log summary, and next options.
+
+## AIAx view: delegation packets are the organization's API
+
+AI Transformation is not just using more AI tools. It is converting work into units that AI systems can safely execute. In that sense, a delegation packet is an organizational API.
+
+Good APIs define inputs, outputs, permissions, and error handling. Good delegation packets do the same.
+
+- Input: Context, Scope
+- Output: Outcome, Report format
+- Permissions: Permissions, Non-goals
+- Error handling: Verification, Stop conditions
+
+Once this structure exists, the team becomes less dependent on a specific model or vendor. You may use Claude Code today, Codex tomorrow, and an internal agent next month. The delegation interface stays stable.
+
+## 30-minute rollout checklist
+
+Start small:
+
+1. Pick three recent agent tasks that failed or required heavy review.
+2. Mark which missing field caused the problem: Outcome, Scope, Non-goals, or Verification.
+3. Add the seven-field packet to your issue template.
+4. Delegate low-risk docs or test tasks first.
+5. Require every agent report to include verification results and stop-condition status.
+6. After two weeks, shorten or expand the packet based on real failures.
+
+You do not need a perfect agent operating system on day one. But if agent usage grows without delegation packets, review burden often grows before productivity does.
+
+## Closing
+
+AI coding agents will keep improving. But team execution quality does not improve from model capability alone. The delegation interface has to improve too.
+
+A delegation packet is a small habit with large leverage. It clarifies the goal, constrains the scope, fixes the verification path, and defines when to stop. With those four things in place, an agent becomes less like autocomplete and more like a reliable execution partner.
+
+Try it on one task today. The difference between teams that write good prompts and teams that operate agents well starts there.
+
+## References
+
+- [Anthropic Claude Code hooks documentation](https://docs.anthropic.com/en/docs/claude-code/hooks)
+- [Anthropic Claude Code settings documentation](https://docs.anthropic.com/en/docs/claude-code/settings)
+- [OpenAI Codex overview](https://developers.openai.com/codex/)

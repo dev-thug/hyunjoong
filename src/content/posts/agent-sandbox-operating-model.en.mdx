@@ -1,0 +1,181 @@
+export const metadata = {
+  title: "An Operating Model for AI Agent Sandboxes: Permissions, Networks, and Worktrees",
+  excerpt: "To use coding agents more often, teams do not need heavier supervision. They need clearer boundaries. This guide turns permissions, network access, worktrees, and CI gates into a practical sandbox operating model.",
+  category: "Engineering",
+  date: "2026-06-07",
+  readTime: "8 min",
+  lang: "en",
+  keywords: "ai agents, claude code, codex, sandbox, aiax, ai transformation, agent workflow, developer productivity",
+};
+
+A common failure mode in AI agent adoption is simple: because the model is more capable, the team gives it more authority. At first, that feels fast. Then local files, secrets, deployment scripts, external APIs, and Git history start to blur together. The team can no longer explain exactly what the agent changed or where the blast radius ends.
+
+In AIAx, or AI Transformation, the important question is less "which model are we using?" and more "inside which boundary is the agent allowed to work?" A good sandbox is not a device for slowing agents down. It is the operating layer that lets people delegate more work without watching every step manually.
+
+This post lays out a practical sandbox operating model for development teams.
+
+## Do not treat the sandbox as one security feature
+
+A sandbox is often understood as an isolated execution environment. For coding agents, four boundaries need to work together.
+
+1. **File boundary**: directories the agent may read and write
+2. **Command boundary**: shell commands the agent may run or must never run
+3. **Network boundary**: access to the internet, internal APIs, and package registries
+4. **Change boundary**: Git branches, worktrees, commits, reviews, and CI gates
+
+Anthropic's Claude Code security documentation describes protections for agentic systems such as a sandboxed bash tool with filesystem and network isolation, write access restrictions, and permission flows for commands. It also emphasizes a permission-based architecture where Bash commands require approval before execution. See: [Claude Code Security](https://docs.anthropic.com/en/docs/claude-code/security).
+
+The point is not "agents are dangerous." The point is that agents need work compartments just like humans do.
+
+## Step 1: create an isolated worktree for each task
+
+The most practical first step is to use a Git worktree or a temporary clone. Do not let an agent work directly inside your main development directory.
+
+```bash
+git fetch origin develop
+git worktree add ../agent-worktrees/refactor-checkout-flow -b agent/refactor-checkout-flow origin/develop
+cd ../agent-worktrees/refactor-checkout-flow
+```
+
+The benefits are straightforward.
+
+- Agent-created files do not mix with local human changes.
+- Failed work can be removed by deleting the worktree.
+- Multiple agents can work in parallel on different branches.
+- Review scope is clear with `git diff origin/develop...HEAD`.
+
+The operating rule matters more than the command.
+
+```text
+An agent always starts from a dedicated branch and dedicated worktree.
+An agent never works in a directory that already contains human changes.
+An agent reports the diff summary and verification results before commit.
+```
+
+This one rule prevents many incidents that feel like "the agent broke my workspace."
+
+## Step 2: assign permissions by task, not by identity
+
+Many teams design permissions around people: senior developers can deploy, junior developers need review, and so on. That model does not map cleanly to agents. The same agent may write documentation today and touch a database migration tomorrow.
+
+Agent permissions should be tied to the **task type**.
+
+| Task type | File writes | Commands | Network | Human approval |
+| --- | --- | --- | --- | --- |
+| Blog or documentation | content, docs | lint, build | official docs lookup | diff review before commit |
+| UI component change | src/components | lint, build, test | no package install | PR review |
+| API refactor | src/lib, src/app/api | test, typecheck | block internal APIs | design approval plus PR review |
+| Deployment or infra | infra, config | plan only | restricted cloud APIs | always required |
+
+Claude Code's hooks reference explains that hooks can run around tool usage, and that a `PreToolUse` hook can decide before a tool call runs. Preventing or deferring a risky call before execution is safer than trying to rewrite output after the side effect already happened. See: [Claude Code Hooks Reference](https://docs.anthropic.com/en/docs/claude-code/hooks).
+
+In practice, a small policy file can be enough.
+
+```json
+{
+  "taskType": "content_publish",
+  "allowWrite": ["src/content/posts/"],
+  "allowCommands": ["npm run lint", "npm run build", "git diff", "git status"],
+  "denyCommands": ["rm -rf", "git reset --hard", "git push --force"],
+  "requiresHumanApproval": ["package.json", "next.config.ts", ".github/workflows/"]
+}
+```
+
+You do not need a perfect policy engine on day one. A checklist and a wrapper script are enough to start.
+
+## Step 3: make network access closed by default
+
+Network access makes coding agents useful. They can read documentation, install packages, and call APIs. But the network is also where prompt injection, data exfiltration, and supply-chain risk meet.
+
+A safer default looks like this.
+
+```text
+Documentation and refactoring: allow public documentation lookup, block internal APIs, inject no secrets
+Test execution: allow required local services only, block external network
+Package changes: treat lockfile changes as a separate approval item
+Deployment work: block cloud write APIs until a human approves
+```
+
+When an agent needs current facts, point it to official documentation and reputable sources. For example, OpenAI's Codex CLI documentation covers CLI operation, approvals, security, and non-interactive usage topics. See: [OpenAI Codex CLI documentation](https://developers.openai.com/codex/cli).
+
+Network policy is not about slowing development. It is about limiting how far failure can spread.
+
+## Step 4: turn CI into the task contract, not the last defense
+
+Agent output quality depends more on the verification loop than on the prompt. A good delegation prompt should end like this.
+
+```text
+Completion criteria:
+- The only changed files are two src/content/posts/*.mdx files.
+- The metadata export remains compatible with the existing parser.
+- npm run lint passes.
+- npm run build passes.
+- If a command fails, report the cause and reproduction command, and do not commit.
+```
+
+CI is not just automation that checks the work later. It is the contract you give to the agent. The agent should run the gates, read failure logs, fix the issue, and run the gates again.
+
+For a small team, these three checks are often enough to start.
+
+```bash
+npm run lint
+npm run build
+git diff --check
+```
+
+For backend services, add migration dry-runs, contract tests, and smoke tests. The important part is not the number of checks. The important part is that the agent cannot silently skip them.
+
+## Step 5: keep sandbox logs as an operating asset
+
+If you only track whether the agent succeeded, the team learns slowly. Capture the following information for each run.
+
+- Original task description
+- Allowed permission scope
+- Changed file list
+- Commands executed and results
+- Failures and retry count
+- Human intervention points
+- Final commit SHA or PR link
+
+This log is not mainly for surveillance. It is for improvement. After a month, repeated bottlenecks become visible.
+
+For example:
+
+```text
+Repeated bottleneck: the agent misdiagnoses build failures as package lock issues.
+Improvement: add a runbook step that checks node_modules and npm ci requirements before debugging build logs.
+```
+
+That is the operating shift behind AIAx. You are not merely adding AI. You are changing the work system so AI can operate inside it.
+
+## A checklist you can use today
+
+Add this to your agent task template.
+
+```text
+[ ] Does this task run in a dedicated branch and worktree?
+[ ] Are writable directories explicitly listed?
+[ ] Are forbidden commands and approval-required commands separated?
+[ ] Is the network access scope defined?
+[ ] Are secrets excluded from the agent environment?
+[ ] Are completion criteria written as executable commands?
+[ ] Is there a rule that stops commit or push on failure?
+[ ] Are the change log, verification results, and commit SHA recorded?
+```
+
+## Tradeoffs
+
+A sandbox operating model has costs.
+
+- Initial setup takes time.
+- Overly narrow permissions reduce agent autonomy.
+- If policy files diverge from real work, teams will bypass them.
+- Automating everything can create more operational complexity than it removes.
+
+So do not start by building a perfect platform. Start with dedicated worktrees, command allowlists, closed-by-default network access, CI gates, and run logs. Those five practices are useful for most teams immediately.
+
+## Conclusion: agent productivity comes from boundary design
+
+Teams that use AI agents well do not give them unlimited authority. They break work down, match permissions to tasks, and make failures easy to contain and reverse.
+
+AIAx is not about becoming a company that uses more AI. It is about building a structure where people can safely delegate more work to agents. A sandbox operating model is one of the best places to start.
