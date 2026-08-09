@@ -20,6 +20,9 @@
   },
   "about": {
     "philosophy_label": "철학",
+    "heading_prefix": "고객과 팀의 일을 ",
+    "heading_emphasis": "더 편하게",
+    "heading_suffix": " 합니다.",
     "description": "사람들이 제품을 잘 쓰고, 팀이 중요한 일에 집중할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
     "stack_label": "핵심 스택",
     "stack_value": "TypeScript / Python / AWS",

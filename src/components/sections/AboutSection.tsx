@@ -19,10 +19,12 @@ const AboutSection = ({ dict }: AboutSectionProps) => {
             {dict.about.philosophy_label}
           </span>
           <h2 className="text-2xl md:text-4xl lg:text-6xl xl:text-7xl font-light font-montserrat leading-[1.15] md:leading-[1.1]">
-            &quot;I don&apos;t just build software.
-            <br className="hidden md:block" />
-            <span className="text-gray-500 italic">
-              I build leverage.&quot;
+            {dict.about.heading_prefix}
+            <span className="inline-block whitespace-nowrap">
+              <span className="text-gray-500 italic">
+                {dict.about.heading_emphasis}
+              </span>
+              {dict.about.heading_suffix}
             </span>
           </h2>
         </div>
