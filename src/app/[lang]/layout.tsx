@@ -1,5 +1,7 @@
 import GlobalNavigationWrapper from "@/components/layout/GlobalNavigationWrapper";
-import { i18n, type Locale } from "@/i18n-config";
+import { SOCIAL_LINK_MAP } from "@/constants";
+import { getPublicProfile } from "@/data/public-profile";
+import { i18n, isSupportedLocale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
 import {
   DEFAULT_OG_IMAGE,
@@ -7,7 +9,8 @@ import {
   getSiteBaseUrl,
 } from "@/lib/site-config";
 import type { Metadata, Viewport } from "next";
-import { Inter, Montserrat } from "next/font/google";
+import { Inter, Montserrat, Noto_Sans_KR } from "next/font/google";
+import { notFound } from "next/navigation";
 import "../globals.css";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -22,6 +25,12 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "700", "900"],
+});
+
+const notoSansKr = Noto_Sans_KR({
+  variable: "--font-noto-sans-kr",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 export async function generateStaticParams() {
@@ -39,8 +48,12 @@ export async function generateMetadata({
 }: {
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
-  const { lang } = (await params) as { lang: Locale };
+  const { lang } = await params;
+  if (!isSupportedLocale(lang)) {
+    notFound();
+  }
   const dict = await getDictionary(lang);
+  const profile = getPublicProfile(lang);
 
   const baseUrl = getSiteBaseUrl();
 
@@ -50,6 +63,10 @@ export async function generateMetadata({
       default: dict.hero.meta_title,
     },
     description: dict.hero.meta_description,
+    authors: [{ name: profile.name, url: `${baseUrl}/${lang}/profile` }],
+    creator: profile.name,
+    publisher: profile.name,
+    category: "technology",
     metadataBase: new URL(baseUrl),
     icons: {
       icon: [
@@ -79,11 +96,13 @@ export async function generateMetadata({
       siteName: SITE_NAME,
       title: dict.hero.meta_title,
       description: dict.hero.meta_description,
+      url: `${baseUrl}/${lang}`,
       locale: lang === "ko" ? "ko_KR" : "en_US",
+      alternateLocale: lang === "ko" ? ["en_US"] : ["ko_KR"],
       images: [
         {
           url: DEFAULT_OG_IMAGE,
-          alt: SITE_NAME,
+          alt: `${profile.name} — ${profile.jobTitle}`,
           width: 1200,
           height: 630,
         },
@@ -91,6 +110,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
+      creator: SOCIAL_LINK_MAP.x.handle,
       title: dict.hero.meta_title,
       description: dict.hero.meta_description,
       images: [DEFAULT_OG_IMAGE],
@@ -105,11 +125,16 @@ export default async function LangLayout({
   children: React.ReactNode;
   params: Promise<{ lang: string }>;
 }) {
-  const { lang } = (await params) as { lang: Locale };
+  const { lang } = await params;
+  if (!isSupportedLocale(lang)) {
+    notFound();
+  }
 
   return (
     <html lang={lang} className="dark" suppressHydrationWarning>
-      <body className={`${inter.variable} ${montserrat.variable} antialiased`}>
+      <body
+        className={`${inter.variable} ${montserrat.variable} ${notoSansKr.variable} antialiased`}
+      >
         <GlobalNavigationWrapper lang={lang} />
         {children}
         <SpeedInsights />

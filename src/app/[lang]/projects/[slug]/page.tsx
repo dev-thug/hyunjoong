@@ -12,7 +12,8 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
-import { getSiteBaseUrl, SITE_NAME, toAbsoluteSiteUrl } from "@/lib/site-config";
+import { loadRequiredContent } from "@/lib/required-content";
+import { getSiteBaseUrl, toAbsoluteSiteUrl } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
 import { NOT_FOUND_METADATA_TITLE } from "@/lib/site-config";
 
@@ -50,7 +51,7 @@ export async function generateMetadata({
     canonicalLang: lang,
     slug,
     section: "projects",
-    title: `${project.title} | ${SITE_NAME}`,
+    title: project.title,
     description: project.description || project.adCopy,
     availableLocales: { ko: hasKo, en: hasEn },
     image: project.image,
@@ -85,7 +86,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     url: projectUrl,
     image: toAbsoluteSiteUrl(project.image),
     inLanguage: lang,
-    creator: buildSitePerson(baseUrl),
+    creator: buildSitePerson(baseUrl, lang),
+    isPartOf: { "@id": `${baseUrl}/#website` },
     ...(project.serviceUrl ? { sameAs: [project.serviceUrl] } : {}),
     ...(project.tags.length > 0 ? { keywords: project.tags.join(", ") } : {}),
   };
@@ -99,14 +101,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       ? allProjects[currentIndex + 1]
       : null;
 
-  // MDX 컨텐츠 동적 import
-  let ProjectContent: React.ComponentType | null = null;
-  try {
-    const mdxModule = await import(`@/content/projects/${slug}.${lang}.mdx`);
-    ProjectContent = mdxModule.default;
-  } catch (error) {
-    console.error(`Failed to load MDX content for ${slug}.${lang}:`, error);
-  }
+  // MDX 콘텐츠는 필수입니다. import/compile 실패 시 shell 200으로 축소하지 않고 fail-closed 처리합니다.
+  const mdxModule = await loadRequiredContent(
+    `${slug}.${lang}.mdx`,
+    () => import(`@/content/projects/${slug}.${lang}.mdx`)
+  );
+  const ProjectContent = mdxModule.default;
 
   return (
     <>
@@ -160,7 +160,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* 메트릭스 */}
       <section
         className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8"
-        aria-label="Project metrics"
+        aria-label={lang === "ko" ? "프로젝트 핵심 항목" : "Project metrics"}
       >
         {project.metrics.map((metric) => (
           <div
@@ -180,7 +180,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       {/* 태그 */}
       <div
         className="flex flex-wrap gap-3 mb-12"
-        aria-label="Technologies used"
+        aria-label={lang === "ko" ? "사용 기술" : "Technologies used"}
       >
         {project.tags.map((tag) => (
           <span
@@ -222,23 +222,21 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
       </section>
 
-      {/* MDX 본문 컨텐츠 */}
-      {ProjectContent && (
-        <>
-          <hr className="border-gray-800 my-8" aria-hidden="true" />
-          <section
-            className="prose-custom mb-16"
-            aria-label="Detailed project documentation"
-          >
-            <ProjectContent />
-          </section>
-        </>
-      )}
+      {/* MDX 본문 콘텐츠 */}
+      <hr className="border-gray-800 my-8" aria-hidden="true" />
+      <section
+        className="prose-custom mb-16"
+        aria-label={
+          lang === "ko" ? "프로젝트 상세 문서" : "Detailed project documentation"
+        }
+      >
+        <ProjectContent />
+      </section>
 
       {/* 네비게이션 */}
       <nav
         className="mt-16 pt-8 border-t border-gray-800"
-        aria-label="Project navigation"
+        aria-label={lang === "ko" ? "프로젝트 탐색" : "Project navigation"}
       >
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
           {prevProject ? (

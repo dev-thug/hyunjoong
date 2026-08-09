@@ -39,11 +39,12 @@ export const SOCIAL_LINK_MAP = {
   x: {
     href: "https://x.com/de0978",
     label: "X",
+    handle: "@de0978",
     ariaLabel: "Visit X profile",
   },
 } as const satisfies Record<
   "github" | "linkedin" | "x",
-  { href: string; label: string; ariaLabel: string }
+  { href: string; label: string; handle?: string; ariaLabel: string }
 >;
 
 export type SocialLinkKey = keyof typeof SOCIAL_LINK_MAP;
@@ -62,7 +63,7 @@ export const SOCIAL_LINKS: readonly SocialLink[] = [
  */
 export const BRAND = {
   NAME: "Hyunjoong Kim",
-  TITLE: "Full-stack & AWS Cloud Developer",
+  TITLE: "AI Product Builder & Full-Stack Architect",
   LOCATION: "DESIGNED IN SEOUL",
   ESTABLISHED_YEAR: "2025",
   /** Dynamically computed at render time so the copyright year never goes stale. */

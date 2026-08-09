@@ -1,63 +1,72 @@
 export const metadata = {
   id: "p1",
-  title: "Ontology AI-Agent Specify",
-  adCopy: "파편화된 기업 데이터를 유기적 지식 자산으로.",
+  title: "Specify.app: 코드와 함께 최신화되는 SDLC 문서",
   description:
-    "그래프 기반 온톨로지와 Multi-Source RAG(GitHub, Notion, Google Docs 연동)를 통해 기업 데이터를 '기업용 두뇌'로 전환하는 AI 에이전트 서비스입니다. 실시간 맥락 연결(Semantic Linking)과 인사이트 대시보드로 정보 탐색 시간 40% 단축, 무형 자산의 가시화 및 데이터 기반 의사결정을 지원합니다. ",
-  highlight: "Specify · 1인 프로젝트 · 2025.07 - Present",
-  serviceUrl: "https://specify.app",
+    "코드와 업무 맥락에서 SDLC 문서를 생성하고 변경 영향을 추적해 문서가 계속 최신 상태를 유지하도록 만드는 Specify.app의 제품 가설과 시장 검증 기록.",
+  tags: ["AI Agents", "SDLC", "Documentation", "Change Impact", "Compliance"],
+  highlight: "Specify.app · 시장 검증 · 2026",
   image: "/images/ko/specify.png",
-  tags: ["AI Agent", "AWS Bedrock", "Next.js", "Ontology", "RAG", "GraphRAG"],
+  serviceUrl: "https://specify.app",
   metrics: [
-    { label: "서비스 단계", value: "Open Beta" },
-    { label: "초기 가입자 (OBT)", value: "20명" },
-    { label: "평균 클릭률 (CTR)", value: "3.2%" },
+    { label: "첫 검증 고객군", value: "10–100인 SW 기업" },
+    { label: "일정 조건", value: "3–6개월 내 GS·납품" },
+    { label: "운영 원칙", value: "근거·승인 이력 우선" },
   ],
+  adCopy:
+    "코드가 바뀌면 문서도 함께 최신화되어야 합니다. Specify.app은 코드와 업무 맥락을 연결해 SDLC 문서를 생성하고 변경 영향을 추적합니다.",
   lang: "ko",
 };
 
-# GraphRAG AI-Agent Specify
+# Specify.app
 
-**"문서 도구는 왜 '기록'만 하고 '생각'은 하지 못할까?"**
+## 문제의 출발점
 
-Specify는 이 질문에서 시작된 **기업용 AI 두뇌 서비스**입니다. 파편화된 기업 데이터를 그래프 기반 온톨로지(Ontology)로 구조화하여, 단순한 정보 저장을 넘어 지식 간의 인과관계를 스스로 규명하고 인사이트를 제안합니다.
+의료기기 소프트웨어 인증 문서를 직접 다루면서 코드와 문서가 쉽게 어긋나는 문제를 경험했습니다. 기능과 설계가 바뀌어도 요구사항, 설계, 시험, 운영 문서는 별도로 찾아 수정해야 했고, 누락 여부를 확인하는 데 많은 시간이 들었습니다.
 
-## 💡 Core Problem & Solution
+이 문제는 인증 시점에만 나타나지 않습니다. 신규 인력 온보딩, 고객·감사 대응, 공공·대기업 납품에서도 같은 코드-문서 불일치가 반복됩니다.
 
-**The Problem: 데이터 사일로(Data Silo)와 지식의 휘발**
+## 제품 가설
 
-현대의 업무 환경에서 데이터는 폭발적으로 증가하지만, Notion, Slack, Google Docs 등에 파편화되어 존재합니다. 이로 인해 프로젝트 맥락(Context)이 단절되고, 과거의 시행착오가 반복되는 '비효율적 지식 관리' 문제가 발생합니다.
+Specify.app은 코드와 업무 맥락을 연결해 SDLC 문서를 생성하고, 코드 변경이 어떤 요구사항·설계·시험 항목에 영향을 주는지 추적해 필요한 문서 수정과 승인 이력을 남기는 제품을 지향합니다.
 
-**The Solution: 팔란티어(Palantir)의 온톨로지 문서 엔진**
+현재 검증하는 핵심 가설은 다음과 같습니다.
 
-글로벌 데이터 분석 기업 팔란티어의 데이터 구조화 방식에 착안하여, 문서 내 객체(Entity)와 관계(Relation)를 정의하는 엔진을 개발했습니다.
+- 전담 문서 인력이 부족한 소프트웨어 팀은 인증·납품 직전 문서를 한꺼번에 맞추는 과정에서 큰 재작업 비용을 겪는다.
+- 단발성 문서 생성보다 코드 변경 영향 탐지, 수정 제안, 승인 기록을 통한 지속 최신화에 더 큰 운영 가치가 있다.
+- 신뢰 가능한 근거와 감사 가능한 상태 전환이 단순한 AI 문서 생성보다 구매 결정에 중요하다.
 
-- **Assetization:** 흩어진 텍스트를 유기적인 '지식 자산'으로 자동 전환
-- **Contextual Reasoning:** AI가 문서 간의 충돌이나 연관성을 추론하여 사용자에게 역제안
+## 첫 검증 고객군
 
-## 🛠 Key Features
+초기 고객군은 국내에서 다음 조건을 동시에 가진 팀입니다.
 
-- **Multi-Source RAG System:** 내부 문서뿐만 아니라 GitHub(코드), Notion(기획), Google Docs(사양서)를 실시간으로 연동하여 교차 참조 및 답변 생성.
-- **Semantic Linking (실시간 맥락 연결):** 문서를 작성하는 즉시 AI가 관련된 과거 히스토리, 기술 사양, 잠재적 리스크를 실시간으로 사이드바에 추천.
-- **Insight Dashboard:** 프로젝트의 '건강도'와 '기술 부채'를 시각화된 그래프(Knowledge Graph)로 제공하여 의사결정 속도 극대화.
+- 10–100인 소프트웨어 기업
+- 3–6개월 안에 GS 1등급 인증 또는 공공·대기업 납품 일정이 있음
+- 전담 문서 인력이 부족함
+- 코드 변경과 문서 수정 사이의 책임·승인 이력이 분산되어 있음
 
-## 🏗 Technical Architecture
+이 조건은 확정된 시장 성과가 아니라, 고객 인터뷰와 유료 약속으로 검증 중인 ICP입니다.
 
-**1. Cloud Native & Event-Driven Architecture**
+## 목표 워크플로우
 
-- **Scalability:** AWS Lambda, SQS, EventBridge를 활용한 서버리스(Serverless) 아키텍처를 설계하여 트래픽 변동에 유연하게 대응하고 인프라 운영 복잡도를 최소화했습니다.
-- **Cost Optimization:** 사용량 기반의 리소스 할당을 통해 초기 스타트업 운영에 최적화된 고성능/저비용 구조를 구현했습니다.
+1. 저장소의 코드, 요구사항, 기존 문서를 연결합니다.
+2. 변경된 코드가 어떤 설계·시험·운영 문서에 영향을 주는지 탐지합니다.
+3. 근거와 함께 수정안을 제안합니다.
+4. 담당자가 검토·승인한 이력을 남깁니다.
+5. 납품·인증 시점에 필요한 문서 상태와 누락을 확인합니다.
 
-**2. AI & Real-time Collaboration**
+자동 생성 자체보다 사람이 검토할 수 있는 근거, 승인 경계, 변경 이력을 우선합니다.
 
-- **Gen AI Orchestration:** AWS Bedrock과 LangChain을 활용하여 단순 답변 생성을 넘어, 자율적으로 외부 데이터를 탐색하고 추론하는 에이전틱(Agentic) 워크플로우를 구축했습니다.
-- **CRDT (Yjs) Engine:** 끊김 없는 실시간 동시 편집 환경을 구현하여 팀 협업 시 데이터 정합성을 보장합니다.
+## 사업 모델 가설
 
-## 🚀 Traction & Status
+인증·납품 문서 제작 프로젝트로 문제와 데이터를 먼저 이해한 뒤, 코드 변경 영향 탐지와 문서 최신화를 제공하는 구독으로 확장하는 모델을 검증하고 있습니다. 컨설팅 파트너가 고객 프로젝트에 적용할 수 있는 채널도 함께 탐색합니다.
 
-- **Market Validation:** 별도의 마케팅 비용 집행 없이 검색 기반 유기적 유입(Organic Search)만으로 **CTR 3.2%**를 기록하며 시장의 자생적 수요를 확인했습니다.
-- **Current Status:** Next.js 및 AWS Bedrock 기반의 MVP 개발을 완료하고, 현재 오픈 베타 테스트(OBT)를 통해 사용자 피드백 루프를 구축하여 온톨로지 엔진을 고도화하고 있습니다.
+## 현재 상태와 증거 기준
 
----
+Specify.app은 현재 시장 검증 단계입니다. 공개 페이지에는 검증되지 않은 고객 수, 전환율, 시간 절감 수치를 성과처럼 표시하지 않습니다. 다음 증거가 생길 때만 상태를 갱신합니다.
 
-_Developed with Next.js, AWS Bedrock, and Passion for Knowledge Management._
+- 실제 고객 인터뷰와 반복 관찰
+- 가격에 대한 구체적 반응
+- 유료 파일럿 또는 구매 약속
+- 사용 전후를 같은 기준으로 측정한 운영 지표
+
+[Specify.app 방문하기](https://specify.app)

@@ -17,12 +17,20 @@ A bilingual (Korean/English) personal portfolio site and tech blog for Hyunjoong
 
 ```bash
 npm run dev      # Start development server (localhost:3000)
-npm run build    # Production build (static generation + ISR)
+npm run build    # Deterministic quality gate, then Next production build
 npm run start    # Start production server
 npm run lint     # ESLint with next/core-web-vitals + next/typescript
+npm run typecheck # TypeScript without emitting files
+npm test         # Run all TypeScript unit and policy tests
+npm run content:validate:strict      # Validate all MDX metadata/content contracts
+npm run content:validate:automation  # Enforce bilingual automation policy
+npm run content:validate:assets      # Reject missing local images/assets referenced by MDX
+npm run content:verify               # Run every deterministic content gate
+npm run check    # Tests + content gates + lint + typecheck
+npm run verify   # Vercel-safe build gate + production dependency audit
 ```
 
-There is no test framework configured. No `npm test` command exists.
+Tests use Node's built-in test runner through `tsx`. GitHub Actions runs `npm run verify` for pull requests, production-branch pushes, and the weekly scheduled health check.
 
 ## Project Structure
 
@@ -69,6 +77,9 @@ Blog posts and projects are MDX files stored in `src/content/posts/` and `src/co
 ```
 
 Examples: `nextjs-architecture.ko.mdx`, `nextjs-architecture.en.mdx`
+
+The route template owns the single visible `<h1>`. MDX `#` headings are not rendered;
+start article sections at `##` so detail pages keep a correct heading hierarchy.
 
 Metadata is defined as an inline export at the top of each MDX file (not YAML frontmatter):
 
@@ -127,6 +138,12 @@ TypeScript path alias `@/*` maps to `./src/*`. Always use `@/` imports.
 - Extends `next/core-web-vitals` and `next/typescript`
 - Run `npm run lint` before committing
 
+### Quality Gate
+
+- Run `npm run verify` before every pull request or merge.
+- `verify` must pass unit tests, strict content validation, bilingual automation policy, local asset validation, lint, production dependency audit, and the production build.
+- Do not bypass a failed gate or report success from a partial command.
+
 ### Component Organization
 
 - Layout components go in `src/components/layout/`
@@ -141,6 +158,13 @@ Pages use `generateStaticParams()` for static generation at build time. Blog and
 ### Caching
 
 Library functions in `src/lib/` use React's `cache()` for request-level deduplication during server rendering.
+
+### Production Branch and Deployment
+
+- `develop` is connected to the production Vercel deployment for `hyunjoong.kim`.
+- Work on a topic branch and open a pull request into `develop`.
+- Merge only after the `quality` workflow and final diff review pass.
+- Verify the deployed pages, metadata, JSON-LD, sitemap, and robots response after every production merge.
 
 ## Environment Variables
 
@@ -160,7 +184,8 @@ NEXT_PUBLIC_GISCUS_CATEGORY_ID=<category-id>
 1. Create `src/content/posts/{slug}.{lang}.mdx`
 2. Add the `export const metadata = { ... }` block with all required fields
 3. Write MDX content below the metadata export
-4. For bilingual posts, create both `.ko.mdx` and `.en.mdx` files with the same slug
+4. Every new automated post from 2026-08-09 onward must include both `.ko.mdx` and `.en.mdx` files with the same slug
+5. Keep the pair's date, category, and visibility identical and run `npm run verify`
 
 ### New Project
 
@@ -178,7 +203,7 @@ NEXT_PUBLIC_GISCUS_CATEGORY_ID=<category-id>
 
 - MDX metadata uses `export const metadata = { ... };` format — not YAML frontmatter. The regex parser in `posts.ts` expects this exact format.
 - All values in the metadata export must use double quotes (the regex matches `"([^"]+)"`).
-- The `keywords` field is a comma-separated string, not an array.
+- The `keywords` field must be a non-empty string array. Legacy string values have been migrated.
 - `hidden: true` is a boolean (not a string) in the metadata export.
 - Tailwind v4 does not use a `tailwind.config.js` — configuration is CSS-first via `globals.css`.
 - No Prettier is configured. Code formatting relies on ESLint rules.

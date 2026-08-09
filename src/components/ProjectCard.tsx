@@ -31,7 +31,7 @@ const ProjectCard = ({
             {/* 메타 정보 */}
             <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-8">
               <span
-                className="text-[10px] md:text-xs font-mono text-gray-500"
+                className="text-[10px] md:text-xs font-mono text-gray-400"
                 aria-hidden="true"
               >
                 NO. 0{index + 1}
@@ -58,7 +58,7 @@ const ProjectCard = ({
           {/* 태그 */}
           <div
             className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3"
-            aria-label="Project tags"
+            aria-label={lang === "ko" ? "프로젝트 기술 태그" : "Project tags"}
           >
             {project.tags.map((tag) => (
               <span
@@ -76,7 +76,11 @@ const ProjectCard = ({
           <div className="absolute inset-0 bg-gray-900">
             <Image
               src={project.image}
-              alt={`Showcase image for ${project.title}`}
+              alt={
+                lang === "ko"
+                  ? `${project.title} 프로젝트 화면`
+                  : `Showcase image for ${project.title}`
+              }
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 58vw, 50vw"
               priority={index < 2}

@@ -1,24 +1,27 @@
-# User context for topic selection
+# User Context for Topic Selection
 
-The user prefers:
-- architecture-first thinking
-- practical, operational AI topics
-- concise but expandable answers
-- bottom-line-first recommendations
-- engineering-minded, calm tone
-- strong opinions when useful
-- bilingual Korean/English blog output
+The canonical public-profile context is `USER.md`. Read it at the start of every automated publishing run.
 
-Topic fit should favor:
-- developer leverage
-- AI orchestration
-- agent workflows
-- tool permissions and automation
-- review/test/CI automation
-- real-world tradeoffs over hype
+## Preferred Topic Domains
 
-Avoid topics that are:
-- pure product marketing
-- speculative without operational value
-- too generic or trend-chasing
-- disconnected from architecture or execution
+- Reliable AI-agent architecture and operations
+- SDLC documentation, traceability, and change-impact detection
+- Evidence-led product discovery and market validation
+- Full-stack and serverless architecture
+- Test automation, delivery gates, and auditable operations
+- Practical lessons learned while building Specify.app
+
+## Audience
+
+- Senior engineers and technical founders
+- Software teams preparing for GS certification or public/enterprise delivery
+- Teams without dedicated documentation staff
+- Product builders operating AI systems in production
+
+## Evidence Rules
+
+- Distinguish direct experience, sourced fact, hypothesis, and opinion.
+- Use current primary sources for time-sensitive claims.
+- Do not expose private operations data.
+- Do not invent traction, customer outcomes, or quantified improvements.
+- When product status is not proven, say that it is under validation.

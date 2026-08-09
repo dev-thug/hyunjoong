@@ -4,7 +4,9 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
+import { buildBlogSchema, safeJsonLdStringify } from "@/lib/json-ld";
 import { BLOG_POSTS_PAGE_SIZE, getPostsPage } from "@/lib/posts";
+import { getSiteBaseUrl } from "@/lib/site-config";
 import { parseSearchQuery } from "@/lib/search-query";
 
 export async function generateMetadata({
@@ -44,29 +46,57 @@ export default async function BlogPage({
   const { lang } = (await params) as { lang: Locale };
   const { q } = await searchParams;
   const query = parseSearchQuery(q);
+  const pageSize = query ? Number.MAX_SAFE_INTEGER : BLOG_POSTS_PAGE_SIZE;
   const [dict, paginatedPosts] = await Promise.all([
     getDictionary(lang),
-    getPostsPage(lang, 1, BLOG_POSTS_PAGE_SIZE, query),
+    getPostsPage(lang, 1, pageSize, query),
   ]);
+  const blogJsonLd = query
+    ? null
+    : buildBlogSchema({
+        baseUrl: getSiteBaseUrl(),
+        lang,
+        name:
+          lang === "ko" ? "김현중의 기술 블로그" : "Hyunjoong Kim's Technical Blog",
+        description: dict.blog.page_description,
+        posts: paginatedPosts.items.map((post) => ({
+          slug: post.slug,
+          title: post.title,
+          excerpt: post.excerpt,
+          date: post.date,
+        })),
+      });
 
   return (
-    <div>
-      {/* 헤더 */}
-      <div className="mb-12 md:mb-16 pt-6 md:pt-8">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
-          {dict.blog.page_title.toUpperCase()}
-        </h1>
-        <p className="text-gray-400 mt-4 text-lg">
-          {dict.blog.page_description}
-        </p>
-      </div>
+    <>
+      {blogJsonLd ? (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: safeJsonLdStringify(blogJsonLd),
+          }}
+        />
+      ) : null}
+      <div>
+        <h1 className="sr-only">{dict.blog.page_heading}</h1>
+        <div className="mb-12 md:mb-16 pt-6 md:pt-8">
+          <div
+            aria-hidden="true"
+            className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none"
+          >
+            {dict.blog.page_title.toUpperCase()}
+          </div>
+          <p className="text-gray-400 mt-4 text-lg">
+            {dict.blog.page_description}
+          </p>
+        </div>
 
       <BlogSearchClient
         posts={paginatedPosts.items}
         lang={lang}
         query={query}
         currentPage={paginatedPosts.currentPage}
-        totalPages={paginatedPosts.totalPages}
+        totalPages={query ? 1 : paginatedPosts.totalPages}
         totalItems={paginatedPosts.totalItems}
         labels={{
           searchAria: dict.blog.search_aria,
@@ -86,6 +116,7 @@ export default async function BlogPage({
           currentPage: dict.blog.current_page,
         }}
       />
-    </div>
+      </div>
+    </>
   );
 }

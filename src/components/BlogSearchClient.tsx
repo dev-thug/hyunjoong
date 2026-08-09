@@ -36,12 +36,17 @@ interface BlogSearchClientProps {
 
 const COUNT_PLACEHOLDER = "{count}";
 
-const getResultsText = (resultsLabel: string, resultCount: number): string => {
+const getResultsText = (
+  resultsLabel: string,
+  resultCount: number,
+  lang: string
+): string => {
+  const locale = lang === "ko" ? "ko-KR" : "en-US";
   if (resultsLabel.includes(COUNT_PLACEHOLDER)) {
-    return resultsLabel.replace(COUNT_PLACEHOLDER, resultCount.toLocaleString());
+    return resultsLabel.replace(COUNT_PLACEHOLDER, resultCount.toLocaleString(locale));
   }
 
-  return `${resultCount.toLocaleString()} ${resultsLabel}`;
+  return `${resultCount.toLocaleString(locale)} ${resultsLabel}`;
 };
 
 const BlogSearchClient = ({
@@ -59,7 +64,7 @@ const BlogSearchClient = ({
     Math.max(1, Math.floor(totalPages))
   );
   const hasQuery = normalizedQuery.length > 0;
-  const resultsText = getResultsText(labels.resultsCount, totalItems);
+  const resultsText = getResultsText(labels.resultsCount, totalItems, lang);
   const blogRootPath = `/${lang}/blog`;
   const startIndex = (safeCurrentPage - 1) * BLOG_POSTS_PAGE_SIZE;
 

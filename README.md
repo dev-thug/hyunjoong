@@ -14,7 +14,6 @@
 - **Styling**: Tailwind CSS v4
 - **Content**: MDX
 - **Icons**: Lucide React
-- **Charts**: Recharts
 - **Deployment**: Vercel
 
 ## Features
@@ -51,7 +50,7 @@ src/
 
 ```bash
 # 의존성 설치
-npm install
+npm ci
 
 # 개발 서버 실행
 npm run dev
@@ -59,13 +58,28 @@ npm run dev
 # 프로덕션 빌드
 npm run build
 
+# 테스트·콘텐츠·보안·빌드 전체 릴리스 게이트
+npm run verify
+
 # 프로덕션 서버 실행
 npm start
 ```
 
+## Quality and Deployment
+
+- `develop` 브랜치는 `hyunjoong.kim` Vercel 프로덕션 배포와 연결됩니다.
+- 변경은 topic branch에서 작업하고 `develop` 대상 pull request로 제출합니다.
+- GitHub Actions `quality / Verify production build`와 최종 diff 검토가 통과한 뒤에만 merge합니다.
+- `scripts/assert-pr-ready.sh`가 PR head SHA와 성공한 quality check를 고정하며, `--match-head-commit`으로만 merge합니다.
+- `npm run build` 자체가 테스트, 콘텐츠 검사, ESLint, typecheck를 통과한 뒤 Next.js build를 실행합니다. Vercel도 `vercel.json`을 통해 이 명령만 사용합니다.
+- `npm run verify`는 위 build gate에 프로덕션 의존성 audit을 추가합니다.
+- 프로덕션 브랜치에 직접 push하지 않습니다.
+
 ## Writing Blog Posts
 
 블로그 포스트는 `src/content/posts/` 디렉토리에 MDX 파일로 작성합니다.
+새 자동발행 글은 같은 slug의 한국어·영어 파일을 모두 작성해야 하며 날짜·카테고리·공개상태가 일치해야 합니다. 기존 한국어 전용 글 9개만 명시적 legacy 예외입니다.
+상세 route가 유일한 H1을 소유하므로 MDX 본문 섹션은 `##`부터 시작합니다.
 
 ### 파일 네이밍
 
@@ -81,10 +95,10 @@ export const metadata = {
   title: "포스트 제목",
   excerpt: "포스트 요약",
   category: "Engineering", // Engineering | Business | Insight
-  date: "2024-05-10",
+  date: "2026-08-09",
   readTime: "8 min",
   lang: "ko",
-  keywords: ["Next.js", "React"], // 선택
+  keywords: ["Next.js", "React"], // 필수 비어 있지 않은 배열
   hidden: false, // 선택, true면 목록에서 숨김
 };
 ```
