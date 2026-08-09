@@ -8,23 +8,23 @@
   "hero": {
     "title_beyond": "BEYOND",
     "title_code": "CODE",
-    "role_title": "Designing and building software",
-    "role_description": "I understand the problem and operating context to build software that is scalable, reliable, and useful.",
+    "role_title": "I build software that creates leverage.",
+    "role_description": "I build products and systems that make day-to-day work easier for customers and teams.",
     "scroll": "Scroll",
     "architecture": "Software Engineer",
     "intelligence_subtitle": "Full-Stack · Cloud",
     "meta_title": "Hyunjoong Kim | Software Engineer",
-    "meta_description": "The portfolio and technical blog of software engineer Hyunjoong Kim, building full-stack and cloud software across a range of applications.",
+    "meta_description": "Portfolio and technical writing by software engineer Hyunjoong Kim, focused on software that creates leverage for businesses.",
     "meta_title_template": "%s | Hyunjoong Kim",
     "open_for_ventures": "Open to collaboration"
   },
   "about": {
     "philosophy_label": "The Philosophy",
-    "description": "I understand both the problem and operating environment to design and build software that is scalable, maintainable, and reliable.",
+    "description": "I care about software that helps people use products well and gives teams room to focus on important work.",
     "stack_label": "Core Stack",
     "stack_value": "TypeScript / Python / AWS",
     "focus_label": "Focus",
-    "focus_value": "Full-Stack / Cloud"
+    "focus_value": "Customers / Teams"
   },
   "projects": {
     "title_bg": "PORTFOLIO",
@@ -72,10 +72,10 @@
   },
   "profile": {
     "meta_title": "Profile | Software Engineer",
-    "meta_description": "Experience, technical skills, and current focus of software engineer Hyunjoong Kim.",
+    "meta_description": "Experience, skills, and selected projects by software engineer Hyunjoong Kim.",
     "about_heading": "About Me",
-    "intro_para_1": "I am a Seoul-based software engineer building products and systems for the web and cloud.",
-    "intro_para_2": "I understand the problem and operating context, then design and implement software that people can rely on over time.",
+    "intro_para_1": "I build products and systems for the web and cloud.",
+    "intro_para_2": "I'm interested in software that helps people use products well and helps teams do better work.",
     "current_focus_heading": "Current Focus",
     "current_focus_cta": "View GitHub",
     "tech_stack_heading": "Tech Stack",
@@ -85,8 +85,8 @@
     "get_in_touch_cta": "Get in Touch",
     "open_contact_form_aria": "Open contact form",
     "job_title": "Software Engineer",
-    "intro_heading_prefix": "Solving problems with ",
-    "intro_heading_emphasis": "software",
+    "intro_heading_prefix": "Software that creates ",
+    "intro_heading_emphasis": "leverage",
     "intro_heading_suffix": "",
     "visit_company_website_aria": "Visit {company} website"
   },

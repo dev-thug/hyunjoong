@@ -96,8 +96,10 @@ export default async function ProfilePage({
                 className="text-2xl md:text-4xl lg:text-5xl font-light font-montserrat leading-tight text-white mb-6"
               >
                 {dict.profile.intro_heading_prefix}
-                <span className="text-gray-500 italic">{dict.profile.intro_heading_emphasis}</span>
-                {dict.profile.intro_heading_suffix}
+                <span className="inline-block whitespace-nowrap">
+                  <span className="text-gray-500 italic">{dict.profile.intro_heading_emphasis}</span>
+                  {dict.profile.intro_heading_suffix}
+                </span>
               </h2>
             </div>
 
