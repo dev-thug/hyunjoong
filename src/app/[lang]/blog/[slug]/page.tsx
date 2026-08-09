@@ -15,13 +15,13 @@ import type { Locale } from "@/i18n-config";
 import Giscus from "@/components/mdx/Giscus";
 import BlogToc from "@/components/blog/BlogToc";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
+import { buildNotFoundMetadata } from "@/lib/metadata/not-found";
 import {
   DEFAULT_OG_IMAGE,
   getSiteBaseUrl,
   toAbsoluteSiteUrl,
 } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
-import { NOT_FOUND_METADATA_TITLE } from "@/lib/site-config";
 import { extractTocItems } from "@/lib/toc";
 
 interface BlogPostPageProps {
@@ -59,7 +59,7 @@ export async function generateMetadata({
   const currentPost = post ?? fallbackPost;
 
   if (!currentPost) {
-    return { title: NOT_FOUND_METADATA_TITLE };
+    return buildNotFoundMetadata();
   }
 
   return buildContentDetailMetadata({

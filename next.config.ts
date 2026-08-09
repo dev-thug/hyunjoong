@@ -48,12 +48,21 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    globalNotFound: true,
   },
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: securityHeaders,
+      },
+      {
+        source: '/ko/:path*',
+        headers: [{ key: 'Content-Language', value: 'ko' }],
+      },
+      {
+        source: '/en/:path*',
+        headers: [{ key: 'Content-Language', value: 'en' }],
       },
     ];
   },

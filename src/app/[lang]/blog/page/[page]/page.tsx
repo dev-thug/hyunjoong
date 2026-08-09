@@ -5,6 +5,7 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 import { getDictionary } from "@/get-dictionary";
 import { i18n, type Locale } from "@/i18n-config";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
+import { buildNotFoundMetadata } from "@/lib/metadata/not-found";
 import { BLOG_POSTS_PAGE_SIZE, getAllPosts, getPostsPage } from "@/lib/posts";
 
 const PAGE_PARAM_PATTERN = /^[1-9]\d*$/;
@@ -55,6 +56,16 @@ export async function generateMetadata({
     parsedPage !== null &&
     parsedPage >= 2 &&
     parsedPage <= Math.ceil(postCount / BLOG_POSTS_PAGE_SIZE);
+  const requestedPostCount = lang === "en" ? enPosts.length : koPosts.length;
+  const requestedPageExists = pageExists(requestedPostCount);
+  const isMissingPage =
+    query.length === 0 &&
+    (parsedPage === null || (parsedPage !== 1 && !requestedPageExists));
+
+  if (isMissingPage) {
+    return buildNotFoundMetadata();
+  }
+
   const canonicalPath =
     parsedPage !== null && parsedPage >= 2 ? `/blog/page/${parsedPage}` : "/blog";
   return buildLocalizedPageMetadata({

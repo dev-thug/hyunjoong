@@ -1,13 +1,8 @@
 import GlobalNavigationWrapper from "@/components/layout/GlobalNavigationWrapper";
-import { SOCIAL_LINK_MAP } from "@/constants";
 import { getPublicProfile } from "@/data/public-profile";
 import { i18n, isSupportedLocale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
-import {
-  DEFAULT_OG_IMAGE,
-  SITE_NAME,
-  getSiteBaseUrl,
-} from "@/lib/site-config";
+import { getSiteBaseUrl } from "@/lib/site-config";
 import type { Metadata, Viewport } from "next";
 import { Inter, Montserrat, Noto_Sans_KR } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -30,7 +25,9 @@ const montserrat = Montserrat({
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
   subsets: ["latin"],
+  weight: ["400"],
   display: "swap",
+  preload: false,
 });
 
 export async function generateStaticParams() {
@@ -58,11 +55,13 @@ export async function generateMetadata({
   const baseUrl = getSiteBaseUrl();
 
   return {
+    // Keep only metadata that is safe for every child route. Home-specific
+    // canonical, description, and social metadata live in page.tsx so 404s
+    // never inherit a valid homepage identity.
     title: {
       template: dict.hero.meta_title_template,
-      default: dict.hero.meta_title,
+      default: dict.notFound.title,
     },
-    description: dict.hero.meta_description,
     authors: [{ name: profile.name, url: `${baseUrl}/${lang}/profile` }],
     creator: profile.name,
     publisher: profile.name,
@@ -70,7 +69,6 @@ export async function generateMetadata({
     metadataBase: new URL(baseUrl),
     icons: {
       icon: [
-        { url: "/images/favicon.svg", type: "image/svg+xml", sizes: "any" },
         { url: "/images/favicon-96x96.png", type: "image/png", sizes: "96x96" },
         { url: "/images/favicon.ico", type: "image/x-icon", sizes: "any" },
       ],
@@ -83,38 +81,6 @@ export async function generateMetadata({
       ],
     },
     manifest: "/images/site.webmanifest",
-    alternates: {
-      canonical: `${baseUrl}/${lang}`,
-      languages: {
-        ko: `${baseUrl}/ko`,
-        en: `${baseUrl}/en`,
-        "x-default": `${baseUrl}/ko`,
-      },
-    },
-    openGraph: {
-      type: "website",
-      siteName: SITE_NAME,
-      title: dict.hero.meta_title,
-      description: dict.hero.meta_description,
-      url: `${baseUrl}/${lang}`,
-      locale: lang === "ko" ? "ko_KR" : "en_US",
-      alternateLocale: lang === "ko" ? ["en_US"] : ["ko_KR"],
-      images: [
-        {
-          url: DEFAULT_OG_IMAGE,
-          alt: `${profile.name} — ${profile.jobTitle}`,
-          width: 1200,
-          height: 630,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      creator: SOCIAL_LINK_MAP.x.handle,
-      title: dict.hero.meta_title,
-      description: dict.hero.meta_description,
-      images: [DEFAULT_OG_IMAGE],
-    },
   };
 }
 

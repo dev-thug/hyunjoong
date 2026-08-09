@@ -12,10 +12,10 @@ import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
 import { buildContentDetailMetadata } from "@/lib/metadata/content-detail";
+import { buildNotFoundMetadata } from "@/lib/metadata/not-found";
 import { loadRequiredContent } from "@/lib/required-content";
 import { getSiteBaseUrl, toAbsoluteSiteUrl } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
-import { NOT_FOUND_METADATA_TITLE } from "@/lib/site-config";
 
 interface ProjectPageProps {
   params: Promise<{ lang: string; slug: string }>;
@@ -43,7 +43,7 @@ export async function generateMetadata({
   const hasEn = availableLocales.includes("en");
 
   if (!project) {
-    return { title: NOT_FOUND_METADATA_TITLE };
+    return buildNotFoundMetadata();
   }
 
   return buildContentDetailMetadata({

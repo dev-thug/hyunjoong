@@ -7,23 +7,32 @@
   --heading-decorative-opacity: 0.4;
   /* Section background decorative text (e.g. Projects "WORKS"); purely visual */
   --heading-decorative-bg-opacity: 0.1;
+  --font-korean-system: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), var(--font-noto-sans-kr), sans-serif;
+  --font-sans: var(--font-inter), var(--font-noto-sans-kr), var(--font-korean-system);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    var(--font-noto-sans-kr), monospace;
+    var(--font-noto-sans-kr), var(--font-korean-system), monospace;
   /* Intentionally re-exposes the Next.js font CSS variable as a Tailwind v4 design token */
   --font-montserrat: var(--font-montserrat);
 }
 
 body {
-  font-family: var(--font-inter), var(--font-noto-sans-kr), sans-serif;
+  font-family: var(--font-inter), var(--font-noto-sans-kr), var(--font-korean-system);
   background-color: #050505;
   color: #ffffff;
   overflow-x: hidden;
+}
+
+/* Visible immediately while the optional WebGL layer waits for idle time. */
+.liquid-background-fallback {
+  background:
+    radial-gradient(circle at 18% 18%, rgb(73 83 106 / 18%), transparent 36%),
+    radial-gradient(circle at 80% 72%, rgb(76 83 101 / 14%), transparent 42%),
+    linear-gradient(145deg, #050505 0%, #090913 48%, #050505 100%);
 }
 
 /* Custom Scrollbar */
