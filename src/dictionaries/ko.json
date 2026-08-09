@@ -8,23 +8,23 @@
   "hero": {
     "title_beyond": "BEYOND",
     "title_code": "CODE",
-    "role_title": "소프트웨어를 설계하고 구현합니다",
-    "role_description": "문제의 맥락과 운영 환경을 이해해, 확장 가능하고 신뢰할 수 있는 소프트웨어를 만듭니다.",
+    "role_title": "사업에 도움이 되는 소프트웨어를 만듭니다",
+    "role_description": "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있도록 제품과 시스템을 만듭니다.",
     "scroll": "스크롤",
     "architecture": "소프트웨어 엔지니어",
     "intelligence_subtitle": "풀스택 · 클라우드",
     "meta_title": "김현중 | 소프트웨어 엔지니어",
-    "meta_description": "소프트웨어 엔지니어 김현중의 포트폴리오와 기술 블로그. 풀스택·클라우드 시스템과 다양한 앱을 설계하고 구현합니다.",
+    "meta_description": "사업에 도움이 되는 소프트웨어를 만드는 엔지니어 김현중의 포트폴리오와 기술 블로그.",
     "meta_title_template": "%s | 김현중",
     "open_for_ventures": "새로운 협업을 환영합니다"
   },
   "about": {
     "philosophy_label": "철학",
-    "description": "사용자와 조직의 문제를 이해하고, 웹과 클라우드 환경에서 확장 가능하고 유지보수하기 쉬운 소프트웨어를 설계하고 구현합니다.",
+    "description": "사람들이 제품을 잘 쓰고, 팀이 중요한 일에 집중할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
     "stack_label": "핵심 스택",
     "stack_value": "TypeScript / Python / AWS",
     "focus_label": "집중 분야",
-    "focus_value": "풀스택 / 클라우드"
+    "focus_value": "고객 / 팀"
   },
   "projects": {
     "title_bg": "PORTFOLIO",
@@ -72,10 +72,10 @@
   },
   "profile": {
     "meta_title": "프로필 | 소프트웨어 엔지니어",
-    "meta_description": "소프트웨어 엔지니어 김현중의 경력, 기술 스택과 현재 집중 분야.",
+    "meta_description": "소프트웨어 엔지니어 김현중의 경력, 기술, 그리고 프로젝트.",
     "about_heading": "소개",
-    "intro_para_1": "서울을 기반으로 웹과 클라우드 환경에서 제품과 시스템을 만드는 소프트웨어 엔지니어입니다.",
-    "intro_para_2": "문제의 맥락을 이해하고, 성능·신뢰성·운영 가능성을 함께 고려해 사용자에게 오래 쓰이는 소프트웨어를 설계하고 구현합니다.",
+    "intro_para_1": "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
+    "intro_para_2": "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
     "current_focus_heading": "현재 집중",
     "current_focus_cta": "GitHub에서 보기",
     "tech_stack_heading": "기술 스택",
@@ -85,7 +85,7 @@
     "get_in_touch_cta": "연락하기",
     "open_contact_form_aria": "연락 양식 열기",
     "job_title": "소프트웨어 엔지니어",
-    "intro_heading_prefix": "문제를 해결하는 ",
+    "intro_heading_prefix": "사업에 도움이 되는 ",
     "intro_heading_emphasis": "소프트웨어",
     "intro_heading_suffix": "를 만듭니다",
     "visit_company_website_aria": "{company} 웹사이트 방문"

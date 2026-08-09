@@ -49,16 +49,16 @@ export const PUBLIC_PROFILE = {
       alternateName: "Hyunjoong Kim",
       jobTitle: "소프트웨어 엔지니어",
       description:
-        "웹과 클라우드 환경에서 확장 가능하고 신뢰할 수 있는 소프트웨어를 설계하고 구현하는 소프트웨어 엔지니어.",
+        "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어를 만드는 엔지니어.",
       currentFocus: {
-        title: "소프트웨어 설계와 구현",
+        title: "제품과 시스템을 만듭니다",
         description:
-          "문제의 맥락과 운영 환경을 이해하고, 성능·신뢰성·운영 가능성을 함께 고려하는 웹·클라우드 소프트웨어를 만듭니다.",
+          "사람들이 실제로 쓰고, 사업에도 도움이 되는 소프트웨어를 만드는 데 집중합니다.",
         href: "https://github.com/dev-thug",
       },
       introParagraphs: [
-        "저는 서울을 기반으로 웹과 클라우드 환경에서 제품과 시스템을 만드는 소프트웨어 엔지니어입니다.",
-        "문제의 맥락을 이해하고, 성능·신뢰성·운영 가능성을 함께 고려해 사용자에게 오래 쓰이는 소프트웨어를 설계하고 구현합니다.",
+        "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
+        "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
       ],
       skills: [
         {
@@ -109,16 +109,16 @@ export const PUBLIC_PROFILE = {
       alternateName: "김현중",
       jobTitle: "Software Engineer",
       description:
-        "Software engineer designing and building scalable, reliable software for web and cloud environments.",
+        "Software engineer building software that helps people use products well and helps teams do better work.",
       currentFocus: {
-        title: "Software Design & Engineering",
+        title: "Building products and systems",
         description:
-          "I build web and cloud software by understanding the problem and operating context, with performance, reliability, and operational readiness in mind.",
+          "I focus on products and systems that people use every day and that help the business.",
         href: "https://github.com/dev-thug",
       },
       introParagraphs: [
-        "I am a Seoul-based software engineer building products and systems for the web and cloud.",
-        "I understand the problem and its operating context, then design and implement software that people can rely on over time.",
+        "I build products and systems for the web and cloud.",
+        "I'm interested in software that helps people use products well and helps teams do better work.",
       ],
       skills: [
         {

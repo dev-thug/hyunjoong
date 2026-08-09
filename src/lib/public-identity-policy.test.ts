@@ -79,3 +79,94 @@ test("keeps public hero, about, project-index, and profile copy independent of S
   assert.equal(ko.hero.meta_title, "김현중 | 소프트웨어 엔지니어");
   assert.equal(en.hero.meta_title, "Hyunjoong Kim | Software Engineer");
 });
+
+test("uses concrete business-impact language instead of generic engineering claims", () => {
+  const koDictionary = readDictionary("ko");
+  const enDictionary = readDictionary("en");
+  const koProfile = getPublicProfile("ko");
+  const enProfile = getPublicProfile("en");
+
+  assert.equal(koDictionary.hero.role_title, "사업에 도움이 되는 소프트웨어를 만듭니다");
+  assert.equal(enDictionary.hero.role_title, "I build software that creates leverage.");
+  assert.equal(
+    koDictionary.hero.role_description,
+    "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있도록 제품과 시스템을 만듭니다.",
+  );
+  assert.equal(
+    enDictionary.hero.role_description,
+    "I build products and systems that make day-to-day work easier for customers and teams.",
+  );
+  assert.equal(
+    enDictionary.hero.meta_description,
+    "Portfolio and technical writing by software engineer Hyunjoong Kim, focused on software that creates leverage for businesses.",
+  );
+  assert.equal(
+    koDictionary.hero.meta_description,
+    "사업에 도움이 되는 소프트웨어를 만드는 엔지니어 김현중의 포트폴리오와 기술 블로그.",
+  );
+  assert.equal(koDictionary.profile.intro_heading_prefix, "사업에 도움이 되는 ");
+  assert.equal(koDictionary.profile.intro_heading_emphasis, "소프트웨어");
+  assert.equal(koDictionary.profile.intro_heading_suffix, "를 만듭니다");
+  assert.equal(enDictionary.profile.intro_heading_prefix, "Software that creates ");
+  assert.equal(enDictionary.profile.intro_heading_emphasis, "leverage");
+  assert.deepEqual(koProfile.introParagraphs, [
+    "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
+    "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
+  ]);
+  assert.deepEqual(enProfile.introParagraphs, [
+    "I build products and systems for the web and cloud.",
+    "I'm interested in software that helps people use products well and helps teams do better work.",
+  ]);
+  assert.equal(
+    koDictionary.about.description,
+    "사람들이 제품을 잘 쓰고, 팀이 중요한 일에 집중할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
+  );
+  assert.equal(
+    enDictionary.about.description,
+    "I care about software that helps people use products well and gives teams room to focus on important work.",
+  );
+  assert.equal(koDictionary.about.focus_value, "고객 / 팀");
+  assert.equal(enDictionary.about.focus_value, "Customers / Teams");
+  assert.equal(
+    koDictionary.profile.meta_description,
+    "소프트웨어 엔지니어 김현중의 경력, 기술, 그리고 프로젝트.",
+  );
+  assert.equal(
+    enDictionary.profile.meta_description,
+    "Experience, skills, and selected projects by software engineer Hyunjoong Kim.",
+  );
+  assert.equal(
+    koProfile.description,
+    "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어를 만드는 엔지니어.",
+  );
+  assert.equal(
+    enProfile.description,
+    "Software engineer building software that helps people use products well and helps teams do better work.",
+  );
+  assert.equal(
+    koProfile.currentFocus.description,
+    "사람들이 실제로 쓰고, 사업에도 도움이 되는 소프트웨어를 만드는 데 집중합니다.",
+  );
+  assert.equal(
+    enProfile.currentFocus.description,
+    "I focus on products and systems that people use every day and that help the business.",
+  );
+
+  const retiredGenericPhrases =
+    /문제의 맥락|성능·신뢰성|운영 가능성|확장 가능|신뢰할 수 있는|오래 쓰이는|operating context|scalable, reliable|people can rely on/i;
+
+  for (const copy of [
+    koDictionary.hero.role_description,
+    koDictionary.about.description,
+    koDictionary.profile.intro_para_2,
+    koProfile.description,
+    koProfile.currentFocus.description,
+    enDictionary.hero.role_description,
+    enDictionary.about.description,
+    enDictionary.profile.intro_para_2,
+    enProfile.description,
+    enProfile.currentFocus.description,
+  ]) {
+    assert.doesNotMatch(copy, retiredGenericPhrases);
+  }
+});
