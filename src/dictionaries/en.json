@@ -20,6 +20,9 @@
   },
   "about": {
     "philosophy_label": "The Philosophy",
+    "heading_prefix": "I help customers and teams ",
+    "heading_emphasis": "work better",
+    "heading_suffix": ".",
     "description": "I care about software that helps people use products well and gives teams room to focus on important work.",
     "stack_label": "Core Stack",
     "stack_value": "TypeScript / Python / AWS",
