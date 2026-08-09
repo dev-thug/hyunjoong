@@ -6,6 +6,7 @@ import {
   type LiquidBackgroundLoadState,
 } from "@/lib/liquid-background-loader-state";
 import {
+  LIQUID_BACKGROUND_INITIAL_DELAY_MS,
   isSoftwareWebGLRenderer,
   shouldEnableLiquidBackground,
 } from "@/lib/liquid-background-policy";
@@ -28,7 +29,6 @@ type WindowWithIdleCallback = Window & {
   cancelIdleCallback?: (handle: number) => void;
 };
 
-const INITIAL_ENHANCEMENT_DELAY_MS = 1800;
 const IDLE_CALLBACK_TIMEOUT_MS = 1500;
 
 const supportsWebGL = (): boolean => {
@@ -181,7 +181,7 @@ const LiquidBackgroundLoader = () => {
         }
 
         importBackground();
-      }, INITIAL_ENHANCEMENT_DELAY_MS);
+      }, LIQUID_BACKGROUND_INITIAL_DELAY_MS);
     };
 
     const handleVisibilityChange = () => {

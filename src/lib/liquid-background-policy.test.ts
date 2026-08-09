@@ -1,12 +1,17 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  LIQUID_BACKGROUND_INITIAL_DELAY_MS,
   getLiquidBackgroundCanvasSize,
   isSoftwareWebGLRenderer,
   shouldEnableLiquidBackground,
   shouldRenderLiquidBackgroundFrame,
   shouldRenderStaticLiquidBackgroundFrame,
 } from "./liquid-background-policy";
+
+test("keeps optional WebGL outside the initial interactive window", () => {
+  assert.ok(LIQUID_BACKGROUND_INITIAL_DELAY_MS >= 6000);
+});
 
 test("uses the static background for reduced motion, Save-Data, unsupported WebGL, low-capability devices, and slow connections", () => {
   const capableDevice = {
