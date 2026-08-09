@@ -2,6 +2,7 @@ import { match as matchLocale } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import { NextRequest, NextResponse } from 'next/server';
 import { i18n, type Locale } from './i18n-config';
+import { getLocaleFromPathname } from './lib/pathname-locale';
 
 const getLocale = (request: NextRequest): string => {
   const acceptLanguage = request.headers.get("accept-language") ?? "";
@@ -55,11 +56,19 @@ export function proxy(request: NextRequest) {
     return response;
   }
 
-  return NextResponse.next();
+  const requestLocale = getLocaleFromPathname(pathname);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-request-locale", requestLocale);
+
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {
-  // Matcher ignoring `/_next/`, `/api/`, and `/favicon.ico`
-  // Exclude: api routes, next internals, favicon, and files with extensions (static assets)
-  matcher: ["/((?!api|_next|_vercel|favicon.ico|.*\\..*).*)"],
+  // Every document path is locale-tagged before rendering so global 404 can
+  // select a server-rendered language. Internal/API/static paths stay excluded.
+  matcher: [
+    "/((?!api|_next|_vercel|favicon.ico|.*\\.(?:avif|bmp|css|gif|ico|jpe?g|js|map|mjs|png|svg|txt|webmanifest|woff2?|xml)).*)",
+  ],
 };

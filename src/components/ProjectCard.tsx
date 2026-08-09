@@ -83,7 +83,7 @@ const ProjectCard = ({
               }
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 58vw, 50vw"
-              priority={index < 2}
+              loading="lazy"
               className="object-cover opacity-100 md:opacity-60 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
             />
           </div>

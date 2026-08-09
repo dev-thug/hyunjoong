@@ -1,24 +1,31 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { LIQUID_BACKGROUND } from '@/constants';
+import { useEffect, useRef, useState } from "react";
+import { LIQUID_BACKGROUND } from "@/constants";
+import {
+  getLiquidBackgroundCanvasSize,
+  shouldRenderLiquidBackgroundFrame,
+  shouldRenderStaticLiquidBackgroundFrame,
+} from "@/lib/liquid-background-policy";
 
 /**
  * WebGL 기반 유체 배경 애니메이션 컴포넌트
  */
 const LiquidBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [contextVersion, setContextVersion] = useState(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const gl = canvas.getContext('webgl');
+    const gl = canvas.getContext("webgl");
     if (!gl) return;
 
     let animationFrameId = 0;
-    let time = 0;
-    
+    let lastFrameTimestamp: number | null = null;
+    let contextLost = false;
+
     const mouse = { x: 0.5, y: 0.5, targetX: 0.5, targetY: 0.5 };
 
     const vertexShaderSource = `
@@ -37,7 +44,7 @@ const LiquidBackground = () => {
       vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
       vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
       vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-      
+
       float snoise(vec2 v) {
         const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
         vec2 i  = floor(v + dot(v, C.yy) );
@@ -66,14 +73,14 @@ const LiquidBackground = () => {
         vec2 st = gl_FragCoord.xy / u_resolution.xy;
         st.x *= u_resolution.x / u_resolution.y;
 
-        vec2 mouseEffect = (u_mouse - 0.5) * 0.3;
-        
+        vec2 mouseEffect = (u_mouse - 0.5) * ${LIQUID_BACKGROUND.MOUSE_EFFECT_STRENGTH};
+
         float n1 = snoise(vec2(st.x * 1.5 + u_time * 0.05 + mouseEffect.x, st.y * 1.5 - u_time * 0.02));
         float n2 = snoise(vec2(st.x * 3.0 - u_time * 0.02, st.y * 3.0 + u_time * 0.05 + mouseEffect.y));
         float n3 = snoise(vec2(st.x * 6.0 + mouseEffect.x, st.y * 6.0 + mouseEffect.y));
 
         float fluid = n1 * 0.5 + n2 * 0.3 + n3 * 0.1;
-        
+
         vec3 deepBlack = vec3(0.02, 0.02, 0.02);
         vec3 midnightBlue = vec3(0.05, 0.05, 0.1);
         vec3 mercury = vec3(0.4, 0.45, 0.5);
@@ -91,14 +98,18 @@ const LiquidBackground = () => {
       }
     `;
 
-    const createShader = (gl: WebGLRenderingContext, type: number, source: string) => {
-      const shader = gl.createShader(type);
+    const createShader = (
+      renderingContext: WebGLRenderingContext,
+      type: number,
+      source: string
+    ) => {
+      const shader = renderingContext.createShader(type);
       if (!shader) return null;
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error(gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
+      renderingContext.shaderSource(shader, source);
+      renderingContext.compileShader(shader);
+      if (!renderingContext.getShaderParameter(shader, renderingContext.COMPILE_STATUS)) {
+        console.error(renderingContext.getShaderInfoLog(shader));
+        renderingContext.deleteShader(shader);
         return null;
       }
       return shader;
@@ -106,17 +117,42 @@ const LiquidBackground = () => {
 
     const vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-    
-    if (!vertexShader || !fragmentShader) return;
+
+    if (!vertexShader || !fragmentShader) {
+      if (vertexShader) gl.deleteShader(vertexShader);
+      if (fragmentShader) gl.deleteShader(fragmentShader);
+      return;
+    }
+
+    const deleteShaders = () => {
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+    };
 
     const program = gl.createProgram();
-    if (!program) return;
+    if (!program) {
+      deleteShaders();
+      return;
+    }
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error(gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+      deleteShaders();
+      return;
+    }
+
     gl.useProgram(program);
 
     const buffer = gl.createBuffer();
+    if (!buffer) {
+      gl.deleteProgram(program);
+      deleteShaders();
+      return;
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -124,55 +160,81 @@ const LiquidBackground = () => {
       gl.STATIC_DRAW
     );
 
-    const positionLocation = gl.getAttribLocation(program, 'position');
+    const positionLocation = gl.getAttribLocation(program, "position");
+    if (positionLocation < 0) {
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
+      deleteShaders();
+      return;
+    }
     gl.enableVertexAttribArray(positionLocation);
     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 
-    const timeLocation = gl.getUniformLocation(program, 'u_time');
-    const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
-    const mouseLocation = gl.getUniformLocation(program, 'u_mouse');
+    const timeLocation = gl.getUniformLocation(program, "u_time");
+    const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+    const mouseLocation = gl.getUniformLocation(program, "u_mouse");
 
     const handleResize = () => {
-      if (canvas) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+      if (contextLost || document.hidden) return;
+
+      const { width, height } = getLiquidBackgroundCanvasSize(
+        window.innerWidth,
+        window.innerHeight
+      );
+      canvas.width = width;
+      canvas.height = height;
+      gl.viewport(0, 0, width, height);
+      gl.uniform2f(resolutionLocation, width, height);
+      lastFrameTimestamp = null;
+
+      if (
+        shouldRenderStaticLiquidBackgroundFrame(
+          mediaQuery.matches,
+          !document.hidden
+        )
+      ) {
+        renderStaticFrame();
       }
     };
 
-    const handleMouseMove = (e: MouseEvent) => {
-      mouse.targetX = e.clientX / window.innerWidth;
-      mouse.targetY = 1.0 - e.clientY / window.innerHeight; 
+    const handleMouseMove = (event: MouseEvent) => {
+      mouse.targetX = event.clientX / window.innerWidth;
+      mouse.targetY = 1.0 - event.clientY / window.innerHeight;
     };
 
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    handleResize();
-
     const renderStaticFrame = () => {
+      if (contextLost) return;
       gl.uniform1f(timeLocation, 0);
       gl.uniform2f(mouseLocation, mouse.x, mouse.y);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
     };
 
     const render = (timestamp: number) => {
-      time = timestamp * LIQUID_BACKGROUND.TIME_MULTIPLIER;
+      if (contextLost || document.hidden) {
+        animationFrameId = 0;
+        return;
+      }
 
-      mouse.x += (mouse.targetX - mouse.x) * LIQUID_BACKGROUND.MOUSE_LERP;
-      mouse.y += (mouse.targetY - mouse.y) * LIQUID_BACKGROUND.MOUSE_LERP;
+      if (shouldRenderLiquidBackgroundFrame(timestamp, lastFrameTimestamp)) {
+        lastFrameTimestamp = timestamp;
+        const time = timestamp * LIQUID_BACKGROUND.TIME_MULTIPLIER;
 
-      gl.uniform1f(timeLocation, time);
-      gl.uniform2f(mouseLocation, mouse.x, mouse.y);
+        mouse.x += (mouse.targetX - mouse.x) * LIQUID_BACKGROUND.MOUSE_LERP;
+        mouse.y += (mouse.targetY - mouse.y) * LIQUID_BACKGROUND.MOUSE_LERP;
 
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.uniform1f(timeLocation, time);
+        gl.uniform2f(mouseLocation, mouse.x, mouse.y);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      }
+
       animationFrameId = requestAnimationFrame(render);
     };
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const startAnimation = () => {
-      if (animationFrameId) return;
+      if (animationFrameId || contextLost || document.hidden) return;
+      lastFrameTimestamp = null;
       animationFrameId = requestAnimationFrame(render);
     };
 
@@ -181,53 +243,73 @@ const LiquidBackground = () => {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = 0;
       }
-      renderStaticFrame();
+      lastFrameTimestamp = null;
+      if (!document.hidden) {
+        renderStaticFrame();
+      }
     };
 
-    const handleReducedMotionChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
+    const handleReducedMotionChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
         stopAnimation();
       } else {
         startAnimation();
       }
     };
 
-    if (mediaQuery.matches) {
-      renderStaticFrame();
-    } else {
-      render(0);
-    }
-
-    mediaQuery.addEventListener('change', handleReducedMotionChange);
-
-    // Pause the rAF loop while the tab is backgrounded so we don't burn GPU.
     const handleVisibilityChange = () => {
       if (document.hidden) {
         stopAnimation();
-      } else if (!mediaQuery.matches) {
-        startAnimation();
+      } else {
+        handleResize();
+        if (!mediaQuery.matches) {
+          startAnimation();
+        }
       }
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    const handleContextLost = (event: Event) => {
+      event.preventDefault();
+      contextLost = true;
+      stopAnimation();
+    };
+
+    const handleContextRestored = () => {
+      setContextVersion((version) => version + 1);
+    };
+
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    mediaQuery.addEventListener("change", handleReducedMotionChange);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    canvas.addEventListener("webglcontextlost", handleContextLost);
+    canvas.addEventListener("webglcontextrestored", handleContextRestored);
+    handleResize();
+
+    if (!mediaQuery.matches) {
+      startAnimation();
+    }
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
-      mediaQuery.removeEventListener('change', handleReducedMotionChange);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      mediaQuery.removeEventListener("change", handleReducedMotionChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      canvas.removeEventListener("webglcontextlost", handleContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       cancelAnimationFrame(animationFrameId);
-      // Release WebGL resources so Strict Mode double-mount / HMR doesn't leak.
-      if (vertexShader) gl.deleteShader(vertexShader);
-      if (fragmentShader) gl.deleteShader(fragmentShader);
-      if (program) gl.deleteProgram(program);
-      if (buffer) gl.deleteBuffer(buffer);
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      gl.deleteProgram(program);
+      gl.deleteBuffer(buffer);
     };
-  }, []);
+  }, [contextVersion]);
 
   return (
-    <canvas 
-      ref={canvasRef} 
-      className="fixed top-0 left-0 w-full h-full -z-10 pointer-events-none"
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="fixed top-0 left-0 h-full w-full -z-10 pointer-events-none"
     />
   );
 };

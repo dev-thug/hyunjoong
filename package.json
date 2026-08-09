@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "npm run check && next build",
+    "build": "npm run check && next build && npm run verify:static-home",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --incremental false",
@@ -19,7 +19,8 @@
     "content:verify": "npm run content:validate:strict && npm run content:validate:automation && npm run content:validate:assets",
     "security:audit": "npm audit --omit=dev --audit-level=high",
     "check": "npm test && npm run content:verify && npm run lint && npm run typecheck",
-    "verify": "npm run build && npm run security:audit"
+    "verify": "npm run build && npm run security:audit",
+    "verify:static-home": "tsx scripts/verify-static-home.ts"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.8.0",
