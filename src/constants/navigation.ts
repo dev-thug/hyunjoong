@@ -63,7 +63,7 @@ export const SOCIAL_LINKS: readonly SocialLink[] = [
  */
 export const BRAND = {
   NAME: "Hyunjoong Kim",
-  TITLE: "AI Product Builder & Full-Stack Architect",
+  TITLE: "Software Engineer",
   LOCATION: "DESIGNED IN SEOUL",
   ESTABLISHED_YEAR: "2025",
   /** Dynamically computed at render time so the copyright year never goes stale. */

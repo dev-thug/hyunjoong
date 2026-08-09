@@ -37,32 +37,33 @@ export const PUBLIC_PROFILE = {
   },
   knowsAbout: [
     "AI agents",
-    "SDLC documentation",
+    "Software engineering",
+    "System design",
     "Full-stack architecture",
     "Serverless systems",
-    "Software certification documentation",
+    "Cloud architecture",
   ],
   localized: {
     ko: {
       name: "김현중",
       alternateName: "Hyunjoong Kim",
-      jobTitle: "AI 제품 빌더 · 풀스택 아키텍트",
+      jobTitle: "소프트웨어 엔지니어",
       description:
-        "코드와 업무 맥락을 연결해 SDLC 문서를 생성·최신화하는 Specify.app을 만드는 AI 제품 빌더이자 풀스택 아키텍트.",
+        "웹과 클라우드 환경에서 확장 가능하고 신뢰할 수 있는 소프트웨어를 설계하고 구현하는 소프트웨어 엔지니어.",
       currentFocus: {
-        title: "Specify.app — 코드와 함께 최신화되는 SDLC 문서",
+        title: "소프트웨어 설계와 구현",
         description:
-          "의료기기 소프트웨어 인증 문서를 다루며 겪은 코드-문서 불일치에서 출발했습니다. GS 1등급 인증 또는 공공·대기업 납품을 3–6개월 안에 준비하고 전담 문서 인력이 부족한 10–100인 소프트웨어 팀을 첫 검증 대상으로 삼고 있습니다.",
-        href: "https://specify.app",
+          "문제의 맥락과 운영 환경을 이해하고, 성능·신뢰성·운영 가능성을 함께 고려하는 웹·클라우드 소프트웨어를 만듭니다.",
+        href: "https://github.com/dev-thug",
       },
       introParagraphs: [
-        "저는 서울을 기반으로 제품과 시스템을 만드는 AI 제품 빌더이자 풀스택 아키텍트입니다. 의료기기 소프트웨어 인증 문서를 직접 다루며 코드가 바뀔 때 설계·시험·운영 문서가 뒤처지는 문제를 경험했습니다.",
-        "현재 Specify.app을 통해 코드와 업무 맥락에서 SDLC 문서를 생성하고, 변경 영향을 추적해 문서가 계속 최신 상태를 유지하도록 만드는 방법을 검증하고 있습니다. 제품 발견부터 서버리스 아키텍처, AI 에이전트 운영, 배포 품질까지 하나의 시스템으로 설계합니다.",
+        "저는 서울을 기반으로 웹과 클라우드 환경에서 제품과 시스템을 만드는 소프트웨어 엔지니어입니다.",
+        "문제의 맥락을 이해하고, 성능·신뢰성·운영 가능성을 함께 고려해 사용자에게 오래 쓰이는 소프트웨어를 설계하고 구현합니다.",
       ],
       skills: [
         {
-          category: "제품 & AI",
-          items: ["AI Agents", "RAG / GraphRAG", "SDLC Documentation", "Product Discovery"],
+          category: "AI & 시스템",
+          items: ["AI Agents", "RAG / GraphRAG", "System Design", "Software Architecture"],
         },
         {
           category: "프론트엔드",
@@ -78,14 +79,6 @@ export const PUBLIC_PROFILE = {
         },
       ],
       experiences: [
-        {
-          period: "2025.07 — 현재",
-          title: "제품 빌더",
-          company: "Specify.app",
-          companyUrl: "https://specify.app",
-          description:
-            "코드와 업무 맥락을 기반으로 SDLC 문서를 생성하고 변경에 맞춰 최신화하는 제품을 만들고 시장을 검증하고 있습니다.",
-        },
         {
           period: "2023.12 — 현재",
           title: "테크 리드 · 풀스택/AWS 개발자",
@@ -114,23 +107,23 @@ export const PUBLIC_PROFILE = {
     en: {
       name: "Hyunjoong Kim",
       alternateName: "김현중",
-      jobTitle: "AI Product Builder · Full-Stack Architect",
+      jobTitle: "Software Engineer",
       description:
-        "AI product builder and full-stack architect building Specify.app, which generates and keeps SDLC documentation synchronized with code and business context.",
+        "Software engineer designing and building scalable, reliable software for web and cloud environments.",
       currentFocus: {
-        title: "Specify.app — SDLC documentation that stays aligned with code",
+        title: "Software Design & Engineering",
         description:
-          "The product grew from hands-on medical-device software certification documentation and the recurring gap between code and evidence. The first validation segment is Korean software teams of 10–100 people preparing for GS Grade 1 certification or public-enterprise delivery within 3–6 months without dedicated documentation staff.",
-        href: "https://specify.app",
+          "I build web and cloud software by understanding the problem and operating context, with performance, reliability, and operational readiness in mind.",
+        href: "https://github.com/dev-thug",
       },
       introParagraphs: [
-        "I am a Seoul-based AI product builder and full-stack architect. While working directly with medical-device software certification documentation, I saw how quickly design, test, and operational evidence falls behind the code.",
-        "I am now validating Specify.app: a system that generates SDLC documentation from code and business context, traces change impact, and keeps evidence current. I design product discovery, serverless architecture, AI-agent operations, and delivery quality as one operating system.",
+        "I am a Seoul-based software engineer building products and systems for the web and cloud.",
+        "I understand the problem and its operating context, then design and implement software that people can rely on over time.",
       ],
       skills: [
         {
-          category: "Product & AI",
-          items: ["AI Agents", "RAG / GraphRAG", "SDLC Documentation", "Product Discovery"],
+          category: "AI & Systems",
+          items: ["AI Agents", "RAG / GraphRAG", "System Design", "Software Architecture"],
         },
         {
           category: "Frontend",
@@ -146,14 +139,6 @@ export const PUBLIC_PROFILE = {
         },
       ],
       experiences: [
-        {
-          period: "2025.07 — Present",
-          title: "Product Builder",
-          company: "Specify.app",
-          companyUrl: "https://specify.app",
-          description:
-            "Building and validating a product that generates SDLC documentation from code and business context and keeps it aligned with change.",
-        },
         {
           period: "2023.12 — Present",
           title: "Tech Leader, Full-Stack & AWS Cloud Developer",

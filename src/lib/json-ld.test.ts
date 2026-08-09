@@ -16,8 +16,8 @@ test("builds one canonical Korean public Person identity", () => {
   assert.equal(person["@id"], `${baseUrl}/#person`);
   assert.equal(person.name, "김현중");
   assert.equal(person.alternateName, "Hyunjoong Kim");
-  assert.match(person.jobTitle, /AI/);
-  assert.match(person.description, /Specify\.app/);
+  assert.equal(person.jobTitle, "소프트웨어 엔지니어");
+  assert.doesNotMatch(person.description, /Specify\.app|제품 빌더/i);
   assert.deepEqual(person.sameAs, [
     SOCIAL_LINK_MAP.github.href,
     SOCIAL_LINK_MAP.linkedin.href,
@@ -31,7 +31,7 @@ test("links WebSite authorship to the canonical Person id", () => {
     baseUrl,
     lang: "en",
     title: "Hyunjoong Kim",
-    description: "AI product builder and full-stack architect.",
+    description: "Software engineering and cloud architecture.",
   });
 
   assert.equal(website["@id"], `${baseUrl}/#website`);
