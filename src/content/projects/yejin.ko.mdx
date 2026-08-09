@@ -3,7 +3,7 @@ export const metadata = {
   title: "AI-EMR Yejin Clinic",
   adCopy: "AI 기반 한의원 전자차트(EMR) 시스템",
   description:
-    "한의사 전용 AI 처방 추천 EMR 시스템으로, 환자 증상 입력 시 AI가 실시간 처방을 추천합니다. Amplify Gen1 멀티테넌트 인증 구조와 DynamoDB 액세스 패턴 최적화로 초진 시간을 27분에서 12분으로 단축했습니다.",
+    "한의원 진료 기록과 처방 보조 흐름을 React, AWS Amplify Gen1, Lambda, GraphQL, DynamoDB로 구현한 멀티테넌트 EMR 시스템입니다.",
   highlight: "Healicure · Fullstack · 2021 - 2023",
   serviceUrl: "https://yejin.clinic",
   image: "/images/yejin.png",
@@ -18,45 +18,44 @@ export const metadata = {
     "CloudFormation",
   ],
   metrics: [
-    { label: "초진 시간", value: "55%↓" },
-    { label: "네트워크 오버헤드", value: "60%↓" },
-    { label: "TIPS 선정", value: "2023.05" },
+    { label: "Architecture", value: "Amplify Gen1" },
+    { label: "Identity", value: "Cognito" },
+    { label: "Data", value: "DynamoDB" },
   ],
   lang: "ko",
 };
 
-# Healicure - 예진 (Yejin Clinic)
-
 **AI 기반 한의원 전자차트(EMR) 시스템**
 
-한의사 전용 AI 처방 추천 EMR 시스템으로, 환자 증상 입력 시 AI가 실시간 처방을 추천합니다. AWS Amplify Gen1 기반 멀티테넌트 인증 구조와 DynamoDB 액세스 패턴 최적화로 초진 시간을 27분에서 12분으로 단축했습니다.
+예진은 한의원의 진료 기록과 처방 보조 흐름을 디지털화한 EMR 시스템입니다. 클리닉별 데이터 격리, 사용자 권한, 진료 데이터 액세스 패턴을 중심으로 프론트엔드부터 AWS 백엔드와 배포 구조까지 구현했습니다.
 
-## 💡 주요 성과
+## 주요 구현
 
-- **초진 시간 단축:** AI 처방 추천으로 초진 시간 27분 → 12분 (**55% 단축**)
-- **TIPS 선정 기여:** 베타 테스터 3곳, 30건 초진 로그 측정 데이터로 TIPS 선정(2023.05)에 기여
-- **GraphQL 최적화:** 쿼리 최적화로 네트워크 오버헤드 **60% 감소**
-- **DynamoDB 키 설계:** 액세스 패턴 분석 기반 키 설계 최적화
-- **멀티테넌트 인증:** Amplify Gen1 기반 멀티테넌트 인증 구조 구현
+- **진료 기록 UI:** React와 TypeScript로 환자·진료 기록 흐름과 처방 보조 인터페이스 구현
+- **멀티테넌트 인증:** AWS Amplify Gen1과 Cognito로 클리닉별 사용자·권한 경계 구성
+- **데이터 격리:** 클리닉·환자·진료 기록 액세스 패턴을 기준으로 DynamoDB 키 설계
+- **GraphQL API:** 필요한 진료 데이터를 중심으로 쿼리와 응답 범위를 정리
+- **서버리스 백엔드:** Lambda에서 API와 처방 보조 로직을 실행
+- **인프라 코드화:** CloudFormation으로 환경과 배포 구성을 관리
 
-## 🏗 Technical Architecture
+## Technical Architecture
 
 **1. Frontend & Auth**
 
-- **ReactJS · TypeScript:** 전자차트(EMR) UI 및 실시간 AI 처방 추천 인터페이스
-- **AWS Amplify Gen1:** 멀티테넌트 인증 구조, 클리닉별 데이터 격리
+- **ReactJS · TypeScript:** 전자차트 UI와 처방 보조 인터페이스
+- **AWS Amplify Gen1:** 멀티테넌트 애플리케이션 구성
 - **Cognito:** 사용자 인증 및 권한 관리
 
 **2. Backend & Data**
 
-- **Lambda · GraphQL:** API 및 AI 처방 추천 로직, 쿼리 최적화로 오버헤드 60% 감소
-- **DynamoDB:** 액세스 패턴 분석 기반 키 설계, 일관된 저지연 조회
+- **Lambda · GraphQL:** API와 처방 보조 로직
+- **DynamoDB:** 액세스 패턴 기반 키 설계와 클리닉별 데이터 경계
 - **CloudFormation:** 인프라 코드화 및 배포 자동화
 
-## 🛠 Key Technologies
+## Key Technologies
 
 ReactJS, TypeScript, AWS Amplify Gen1, Lambda, DynamoDB, GraphQL, Cognito, CloudFormation
 
 ---
 
-_Developed with React, AWS Amplify Gen1, and AI-driven EMR for Korean medicine clinics._
+_Developed with React, AWS Amplify Gen1, and an AI-assisted EMR workflow for Korean medicine clinics._

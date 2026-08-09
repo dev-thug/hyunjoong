@@ -6,13 +6,12 @@ import ProjectsSection from "@/components/sections/ProjectsSection";
 import BlogSection from "@/components/sections/BlogSection";
 import { type Locale } from "@/i18n-config";
 import { getDictionary } from "@/get-dictionary";
+import { getSiteBaseUrl } from "@/lib/site-config";
 import {
-  DEFAULT_OG_IMAGE,
-  SITE_NAME,
-  getSiteBaseUrl,
-  toAbsoluteSiteUrl,
-} from "@/lib/site-config";
-import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
+  buildSitePerson,
+  buildWebsiteSchema,
+  safeJsonLdStringify,
+} from "@/lib/json-ld";
 
 /**
  * 홈 페이지 (서버 컴포넌트)
@@ -30,28 +29,15 @@ export default async function Home({
 
   const personSchema = {
     "@context": "https://schema.org",
-    ...buildSitePerson(baseUrl),
-    alternateName: lang === "ko" ? "김현중" : "Hyunjoong Kim",
-    jobTitle: "Full-Stack Developer",
-    description: dict.hero.meta_description,
-    image: toAbsoluteSiteUrl(DEFAULT_OG_IMAGE),
-    sameAs: [
-      "https://github.com/hyunjoongkim",
-      "https://linkedin.com/in/hyunjoongkim",
-    ],
+    ...buildSitePerson(baseUrl, lang),
   };
 
-  const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: dict.hero.meta_title,
+  const websiteSchema = buildWebsiteSchema({
+    baseUrl,
+    lang,
+    title: dict.hero.meta_title,
     description: dict.hero.meta_description,
-    url: `${baseUrl}/${lang}`,
-    author: {
-      "@type": "Person",
-      name: SITE_NAME,
-    },
-  };
+  });
 
   return (
     <>

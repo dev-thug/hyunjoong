@@ -1,6 +1,7 @@
 import { Mail, Github, Linkedin, Twitter } from "lucide-react";
 import Link from "next/link";
 import { getContactHref, SOCIAL_LINK_MAP } from "@/constants";
+import { getPublicProfile } from "@/data/public-profile";
 import { getDictionary } from "@/get-dictionary";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
@@ -18,122 +19,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
+  const profile = getPublicProfile(lang);
   return buildLocalizedPageMetadata({
     lang,
     path: "/profile",
     title: dict.profile.meta_title,
-    description: dict.profile.meta_description,
+    description: profile.description,
     openGraphType: "profile",
   });
-}
-
-/**
- * 프로필 페이지에서 사용할 스킬/경력 데이터를 로케일별로 반환
- */
-function getProfileData(lang: Locale) {
-  if (lang === "ko") {
-    return {
-      skills: [
-        {
-          category: "프론트엔드",
-          items: ["React", "Next.js", "TypeScript", "TailwindCSS"],
-        },
-        {
-          category: "백엔드",
-          items: ["Node.js", "Python", "GraphQL", "REST API"],
-        },
-        {
-          category: "클라우드",
-          items: ["Amplify Gen1 & Gen2", "Lambda", "DynamoDB", "ECS"],
-        },
-        {
-          category: "데브옵스",
-          items: [
-            "Docker",
-            "CloudFormation/Terraform",
-            "CI/CD (GitHub Actions)",
-            "Kubernetes",
-          ],
-        },
-      ],
-      experiences: [
-        {
-          period: "2023.12 — 현재",
-          title: "테크 리더, 풀스택 & AWS 클라우드 개발자",
-          company: "Fortuna Helix",
-          companyUrl: "https://fortunahelix.com/",
-          description:
-            "백엔드 및 AWS 클라우드 개발을 주도하고, 기술 방향과 제품 출시를 이끌고 있습니다.",
-        },
-        {
-          period: "2021.12 — 2023.12",
-          title: "백엔드 & AWS 클라우드 개발자",
-          company: "Healicure",
-          companyUrl: "https://yejin.clinic/",
-          description:
-            "헬스케어 및 기업용 솔루션을 위한 백엔드 및 AWS 클라우드 개발을 담당했습니다.",
-        },
-        {
-          period: "2015.03 — 2022.02",
-          title: "학사 학위",
-          company: "금오공과대학교",
-          companyUrl: "https://www.kumoh.ac.kr/",
-          description: "컴퓨터소프트웨어공학",
-        },
-      ],
-    };
-  }
-
-  return {
-    skills: [
-      {
-        category: "Frontend",
-        items: ["React", "Next.js", "TypeScript", "TailwindCSS"],
-      },
-      {
-        category: "Backend",
-        items: ["Node.js", "Python", "GraphQL", "REST API"],
-      },
-      {
-        category: "Cloud",
-        items: ["Amplify Gen1 & Gen2", "Lambda", "DynamoDB", "ECS"],
-      },
-      {
-        category: "DevOps",
-        items: [
-          "Docker",
-          "CloudFormation/Terraform",
-          "CI/CD (GitHub Actions)",
-          "Kubernetes",
-        ],
-      },
-    ],
-    experiences: [
-      {
-        period: "2023.12 — Present",
-        title: "Tech Leader, Fullstack & AWS Cloud Developer",
-        company: "Fortuna Helix",
-        companyUrl: "https://fortunahelix.com/",
-        description:
-          "Leading backend and AWS cloud development, driving technical direction and delivery.",
-      },
-      {
-        period: "2021.12 — 2023.12",
-        title: "Backend & AWS Cloud Developer",
-        company: "Healicure",
-        companyUrl: "https://yejin.clinic/",
-        description:
-          "Backend and AWS cloud development for healthcare and enterprise solutions.",
-      },
-      {
-        period: "2015.03 — 2022.02",
-        title: "Bachelor's Degree",
-        company: "Kumoh National Institute of Technology",
-        companyUrl: "https://www.kumoh.ac.kr/",
-        description: "Computer Software Engineering",
-      },
-    ],
-  };
 }
 
 /**
@@ -146,22 +39,37 @@ export default async function ProfilePage({
 }) {
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
+  const profile = getPublicProfile(lang);
   const baseUrl = getSiteBaseUrl();
   const personJsonLd = {
     "@context": "https://schema.org",
-    ...buildSitePerson(baseUrl),
-    jobTitle: dict.profile.job_title,
-    sameAs: Object.values(SOCIAL_LINK_MAP).map((link) => link.href),
+    ...buildSitePerson(baseUrl, lang),
+  };
+  const profilePageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "@id": `${baseUrl}/${lang}/profile#profile-page`,
+    url: `${baseUrl}/${lang}/profile`,
+    name: dict.profile.meta_title,
+    description: profile.description,
+    inLanguage: lang,
+    mainEntity: { "@id": `${baseUrl}/#person` },
+    isPartOf: { "@id": `${baseUrl}/#website` },
   };
   const personJsonLdScript = safeJsonLdStringify(personJsonLd);
+  const profilePageJsonLdScript = safeJsonLdStringify(profilePageJsonLd);
 
-  const { skills, experiences } = getProfileData(lang);
+  const { skills, experiences } = profile;
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: personJsonLdScript }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: profilePageJsonLdScript }}
       />
       <div>
         <h1 className="sr-only">{dict.profile.meta_title}</h1>
@@ -195,12 +103,39 @@ export default async function ProfilePage({
 
             <div className="flex flex-col justify-end">
               <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed mb-6">
-                {dict.profile.intro_para_1}
+                {profile.introParagraphs[0]}
               </p>
               <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed">
-                {dict.profile.intro_para_2}
+                {profile.introParagraphs[1]}
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* 현재 집중 */}
+        <section className="mb-16 md:mb-24" aria-labelledby="current-focus-heading">
+          <span className="text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
+            <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
+            {dict.profile.current_focus_heading}
+          </span>
+          <div className="glass-panel rounded-2xl border border-white/10 bg-white/[0.03] p-6 md:p-8">
+            <h2
+              id="current-focus-heading"
+              className="text-2xl md:text-3xl font-light text-white mb-4"
+            >
+              {profile.currentFocus.title}
+            </h2>
+            <p className="max-w-4xl text-sm md:text-base text-gray-400 leading-relaxed mb-6">
+              {profile.currentFocus.description}
+            </p>
+            <a
+              href={profile.currentFocus.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center rounded-full border border-white/15 px-4 py-2 text-xs font-mono uppercase tracking-wider text-white transition-colors hover:bg-white hover:text-black"
+            >
+              {dict.profile.current_focus_cta} ↗
+            </a>
           </div>
         </section>
 

@@ -46,15 +46,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
   headingIdCounts.clear();
 
   return {
-    // 헤딩 스타일
-    h1: ({ children }) => (
-      <h1
-        id={getHeadingId(children)}
-        className="text-3xl md:text-4xl font-bold font-montserrat first:mt-0 mt-12 mb-6 text-zinc-100 tracking-tight leading-tight scroll-mt-20 text-balance"
-      >
-        {children}
-      </h1>
-    ),
+    // 상세 route가 문서 제목 H1을 소유하므로 MDX 내부 H1은 중복 렌더링하지 않습니다.
+    h1: () => null,
     h2: ({ children }) => (
       <h2
         id={getHeadingId(children)}

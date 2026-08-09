@@ -15,12 +15,12 @@ const BlogList = ({ posts, lang, startIndex = 0 }: BlogListProps) => {
   return (
     <div className="w-full flex flex-col gap-3 md:gap-4">
       <div className="flex justify-between items-end mb-6 md:mb-8 border-b border-white/10 pb-3 md:pb-4 px-2 md:px-4">
-        <h2 className="text-[10px] md:text-xs font-mono text-gray-500 uppercase tracking-[0.15em] md:tracking-[0.2em]">Latest Intelligence</h2>
+        <h2 className="text-[10px] md:text-xs font-mono text-gray-400 uppercase tracking-[0.15em] md:tracking-[0.2em]">Latest Intelligence</h2>
         <Link
           href={`/${lang}/blog`}
-          className="text-[10px] md:text-xs font-mono text-gray-500 hover:text-white transition-colors"
+          className="text-[10px] md:text-xs font-mono text-gray-400 hover:text-white transition-colors"
           tabIndex={0}
-          aria-label="View all blog posts"
+          aria-label={lang === 'ko' ? '모든 블로그 글 보기' : 'View all blog posts'}
         >
           ARCHIVE
         </Link>
@@ -33,12 +33,16 @@ const BlogList = ({ posts, lang, startIndex = 0 }: BlogListProps) => {
             href={`/${lang}/blog/${post.slug}`}
             className="group relative rounded-lg md:rounded-xl transition-all duration-500 cursor-pointer p-4 md:p-6 lg:p-8 border border-transparent hover:glass-panel hover:glass-interactive hover:bg-noise block"
             tabIndex={0}
-            aria-label={`Read blog post: ${post.title}`}
+            aria-label={
+              lang === 'ko'
+                ? `블로그 글 읽기: ${post.title}`
+                : `Read blog post: ${post.title}`
+            }
           >
             <div className="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-6 relative z-10">
                 
               {/* 메타 정보 */}
-              <div className="lg:w-1/4 flex items-center gap-2 md:gap-4 text-[10px] md:text-xs font-mono text-gray-500 group-hover:text-gray-400 transition-colors">
+              <div className="lg:w-1/4 flex items-center gap-2 md:gap-4 text-[10px] md:text-xs font-mono text-gray-400 group-hover:text-gray-400 transition-colors">
                 <span>{String(idx + startIndex + 1).padStart(2, '0')}</span>
                 <span className={`uppercase tracking-wider px-1.5 md:px-2 py-0.5 md:py-1 rounded border border-transparent ${
                   post.category === 'Business' ? 'group-hover:border-white/20 group-hover:text-white' : 'group-hover:border-gray-700'

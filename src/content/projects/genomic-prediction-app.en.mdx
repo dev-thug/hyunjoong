@@ -2,9 +2,9 @@ export const metadata = {
   id: "p3",
   title: "Genome Analysis Platform",
   adCopy:
-    "Event-driven serverless system for large-scale genomic data processing",
+    "An event-driven serverless system for large-scale genomic data processing",
   description:
-    "A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS run up to 1,000 samples in parallel, while EFS I/O throttling and Lambda timeout issues were addressed to ensure stable operation.",
+    "A platform combining AWS Batch, EFS, Lambda, and event-driven messaging to run genomic sequencing analysis in parallel and orchestrate report generation.",
   highlight: "Fortuna Helix · Fullstack · 2023 - Present",
   image: "/images/en/genomic.png",
   tags: [
@@ -15,7 +15,7 @@ export const metadata = {
     "Python",
     "AWS Batch",
     "Lambda",
-    "Step Function",
+    "Step Functions",
     "AppSync",
     "EventBridge",
     "SQS",
@@ -28,46 +28,44 @@ export const metadata = {
     "CloudFormation",
   ],
   metrics: [
-    { label: "Analysis Time", value: "66%↓" },
-    { label: "Concurrent", value: "1000" },
-    { label: "Cost Reduction", value: "92%↓" },
+    { label: "Compute", value: "AWS Batch" },
+    { label: "Orchestration", value: "EventBridge · SQS" },
+    { label: "Storage", value: "EFS · S3" },
   ],
   lang: "en",
 };
 
-# Fortuna Helix - Genome Analysis & Prediction Platform
+**An event-driven serverless system for large-scale genomic data processing**
 
-**Event-driven serverless system for large-scale genomic data processing**
+The platform separates genomic sequencing analysis into AWS Batch jobs and connects raw inputs, intermediate results, and reports through EFS and S3. Event-driven messaging and explicit retry boundaries orchestrate the long-running flow from analysis request to result generation.
 
-A serverless platform that efficiently processes 100–200GB of genomic sequencing data. AWS Batch and EFS run up to 1,000 samples in parallel, while EFS I/O throttling and Lambda timeout issues were addressed to ensure stable operation.
+## Key Implementations
 
-## 💡 Key Outcomes
+- **Parallel analysis jobs:** Run analysis as isolated AWS Batch jobs and manage container images in ECR
+- **Shared data paths:** Separate EFS and S3 responsibilities for input data, intermediate results, and final artifacts
+- **I/O reliability:** Investigate EFS throttling and adjust job and filesystem boundaries
+- **Lambda execution boundaries:** Keep long-running analysis in Batch while Lambda handles triggers, state transitions, and report orchestration
+- **Message-driven reports:** Separate analysis completion from report generation with EventBridge, SNS, and SQS
+- **Operational visibility:** Observe job state, failures, and retries through CloudWatch
 
-- **Faster analysis:** AWS Batch + EFS parallel processing cut analysis time from 30 min → 10 min (**66% reduction**)
-- **Cost savings:** Serverless migration reduced monthly operating cost from ₩6M → ₩500K (**92% reduction**)
-- **EFS I/O throttling:** Root-cause analysis and a multi-EFS distributed setup to improve throughput
-- **Lambda stability:** Timeout tuning and retry policy design for reliable execution
-- **PDF reports:** SQS FIFO + Lambda generates 1,000 PDFs in about 30 seconds
-- **Event-driven architecture:** EventBridge + SNS/SQS–based pipeline design
-
-## 🏗 Technical Architecture
+## Technical Architecture
 
 **1. Compute & Storage**
 
-- **AWS Batch + EFS:** Parallel processing of large genomic sequencing data (100–200GB), 1,000 samples per run
-- **Lambda:** Report generation and orchestration; timeout and retry policies for stability
-- **S3 · EFS:** Raw data and intermediate results; shared storage across Batch jobs
+- **AWS Batch + EFS:** Container-based analysis jobs and shared intermediate results
+- **Lambda:** Request triggers, state transitions, and report-generation orchestration
+- **S3 · EFS:** Purpose-specific storage for raw data, intermediate results, and final artifacts
 
 **2. Event-Driven Pipeline**
 
-- **EventBridge + SNS/SQS:** Event-based triggers; FIFO queues for ordering and bulk PDF generation
-- **AppSync · Cognito:** API and authentication
-- **CloudWatch · ECR:** Monitoring and container image management
+- **EventBridge + SNS/SQS:** Event triggers and decoupled processing stages
+- **AppSync · Cognito:** APIs, authentication, and authorization
+- **CloudWatch · ECR:** Monitoring and container-image management
 
-## 🛠 Key Technologies
+## Key Technologies
 
-NextJS, NestJS, Fast API, TypeScript, Python, AWS Batch, Lambda, Step Function, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR, CloudFormation
+NextJS, NestJS, FastAPI, TypeScript, Python, AWS Batch, Lambda, Step Functions, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR, CloudFormation
 
 ---
 
-_Developed with NestJS, AWS Batch, and event-driven serverless architecture._
+_Developed with NestJS, AWS Batch, and an event-driven serverless architecture._

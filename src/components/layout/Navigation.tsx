@@ -41,6 +41,24 @@ const Navigation = ({
     [lang, navLabels]
   );
   const contactHref = useMemo(() => getContactHref(lang), [lang]);
+  const ariaLabels =
+    lang === "ko"
+      ? {
+          mainNavigation: "주요 탐색",
+          home: "홈페이지로 이동",
+          contact: "문의 양식 열기",
+          openMenu: "모바일 메뉴 열기",
+          closeMenu: "모바일 메뉴 닫기",
+          mobileNavigation: "모바일 탐색 메뉴",
+        }
+      : {
+          mainNavigation: "Main navigation",
+          home: "Go to home page",
+          contact: "Open contact form",
+          openMenu: "Open mobile menu",
+          closeMenu: "Close mobile menu",
+          mobileNavigation: "Mobile navigation menu",
+        };
 
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
   const firstMobileLinkRef = useRef<HTMLAnchorElement | null>(null);
@@ -123,7 +141,7 @@ const Navigation = ({
     <>
       {/* Navigation Bar */}
       <nav
-        aria-label="Main navigation"
+        aria-label={ariaLabels.mainNavigation}
         className={`fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-[1400px] z-50 transition-all duration-700 ${
           isScrolled
             ? "glass-panel rounded-full py-4 px-8 bg-noise"
@@ -134,7 +152,7 @@ const Navigation = ({
           <Link
             href={`/${lang}`}
             className="text-xs font-bold font-montserrat tracking-[0.3em] mix-blend-difference z-50 animate-fade-up delay-0 hover:scale-105 active:scale-95 transition-all duration-300 inline-block"
-            aria-label="Go to home page"
+            aria-label={ariaLabels.home}
           >
             {BRAND.NAME}
           </Link>
@@ -160,7 +178,7 @@ const Navigation = ({
               href={contactHref}
               aria-current={pathname === contactHref ? "page" : undefined}
               className="px-5 py-2 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all duration-300"
-              aria-label="Open contact form"
+              aria-label={ariaLabels.contact}
             >
               {navLabels.contact}
             </Link>
@@ -171,10 +189,10 @@ const Navigation = ({
           <button
             ref={toggleButtonRef}
             type="button"
-            className="md:hidden text-white z-50"
+            className="md:hidden inline-flex h-11 w-11 items-center justify-center text-white z-50"
             onClick={onToggleMobileMenu}
             aria-label={
-              isMobileMenuOpen ? "Close mobile menu" : "Open mobile menu"
+              isMobileMenuOpen ? ariaLabels.closeMenu : ariaLabels.openMenu
             }
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-navigation-menu"
@@ -190,7 +208,7 @@ const Navigation = ({
         id="mobile-navigation-menu"
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile navigation menu"
+        aria-label={ariaLabels.mobileNavigation}
         aria-hidden={!isMobileMenuOpen}
         hidden={!isMobileMenuOpen}
         onKeyDown={handleDialogKeyDown}

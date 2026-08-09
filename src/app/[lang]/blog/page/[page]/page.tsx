@@ -26,23 +26,47 @@ const parsePageParam = (pageParam: string): number | null => {
   return parsedPage;
 };
 
-// `?q=` search submits to /blog only; paginated routes have no search UI,
-// so this file omits `searchParams` to remain fully statically generated.
+const parseSearchQuery = (value?: string | string[]): string => {
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  return rawValue?.trim() ?? "";
+};
+
+// `?q=` search is canonicalized to /blog so pagination stays deterministic.
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string; page: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }): Promise<Metadata> {
-  const { lang, page } = (await params) as { lang: Locale; page: string };
-  const dict = await getDictionary(lang);
+  const [resolvedParams, resolvedSearchParams] = await Promise.all([
+    params,
+    searchParams,
+  ]);
+  const { lang, page } = resolvedParams as { lang: Locale; page: string };
+  const query = parseSearchQuery(resolvedSearchParams.q);
   const parsedPage = parsePageParam(page);
+  const [dict, koPosts, enPosts] = await Promise.all([
+    getDictionary(lang),
+    getAllPosts("ko"),
+    getAllPosts("en"),
+  ]);
+  const pageExists = (postCount: number): boolean =>
+    parsedPage !== null &&
+    parsedPage >= 2 &&
+    parsedPage <= Math.ceil(postCount / BLOG_POSTS_PAGE_SIZE);
   const canonicalPath =
     parsedPage !== null && parsedPage >= 2 ? `/blog/page/${parsedPage}` : "/blog";
   return buildLocalizedPageMetadata({
     lang,
     title: dict.blog.page_title,
     description: dict.blog.page_description,
-    canonicalPath,
+    canonicalPath: query ? "/blog" : canonicalPath,
+    noIndex: query.length > 0,
+    availableLocales:
+      query.length === 0 && parsedPage !== null && parsedPage >= 2
+        ? { ko: pageExists(koPosts.length), en: pageExists(enPosts.length) }
+        : { ko: true, en: true },
   });
 }
 
@@ -71,10 +95,20 @@ export const generateStaticParams = async (): Promise<
 
 export default async function BlogPageByPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ lang: string; page: string }>;
+  searchParams: Promise<{ q?: string | string[] }>;
 }) {
-  const { lang, page } = (await params) as { lang: Locale; page: string };
+  const [resolvedParams, resolvedSearchParams] = await Promise.all([
+    params,
+    searchParams,
+  ]);
+  const { lang, page } = resolvedParams as { lang: Locale; page: string };
+  const query = parseSearchQuery(resolvedSearchParams.q);
+  if (query) {
+    redirect(`/${lang}/blog?q=${encodeURIComponent(query)}`);
+  }
   const parsedPage = parsePageParam(page);
   if (parsedPage === null) {
     notFound();
@@ -94,11 +128,17 @@ export default async function BlogPageByPage({
 
   return (
     <div>
+      <h1 className="sr-only">{dict.blog.page_heading}</h1>
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
-        <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
+        <div
+          aria-hidden="true"
+          className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none"
+        >
           {dict.blog.page_title.toUpperCase()}
-        </h1>
-        <p className="text-gray-400 mt-4 text-lg">{dict.blog.page_description}</p>
+        </div>
+        <p className="text-gray-400 mt-4 text-lg">
+          {dict.blog.page_description}
+        </p>
       </div>
 
       <BlogSearchClient

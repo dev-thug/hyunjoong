@@ -1,63 +1,72 @@
 export const metadata = {
   id: "p1",
-  title: "Ontology AI-Agent Specify",
-  adCopy: "Turn fragmented enterprise data into a living knowledge asset.",
+  title: "Specify.app: SDLC documentation that stays aligned with code",
   description:
-    "An AI agent that transforms enterprise data into a 'corporate brain' via graph-based ontology and Multi-Source RAG (GitHub, Notion, Google Docs). Semantic Linking and an insight dashboard cut information search time by 40%, enable assetization of intangible knowledge, and support data-driven decision making.",
-  highlight: "Specify · Solo Project · 2025.07 - Present",
-  serviceUrl: "https://specify.app",
+    "The product hypothesis and validation record for Specify.app, which generates SDLC documentation from code and business context and traces change impact to keep evidence current.",
+  tags: ["AI Agents", "SDLC", "Documentation", "Change Impact", "Compliance"],
+  highlight: "Specify.app · Market Validation · 2026",
   image: "/images/en/specify.png",
-  tags: ["AI Agent", "AWS Bedrock", "Next.js", "Ontology", "RAG", "GraphRAG"],
+  serviceUrl: "https://specify.app",
   metrics: [
-    { label: "Service Stage", value: "Open Beta" },
-    { label: "Early Sign-ups (OBT)", value: "20" },
-    { label: "Avg. Click-through Rate (CTR)", value: "3.2%" },
+    { label: "Initial segment", value: "10–100 person software teams" },
+    { label: "Timing condition", value: "GS or delivery within 3–6 months" },
+    { label: "Operating principle", value: "Evidence and approvals first" },
   ],
+  adCopy:
+    "Documentation should change when the code does. Specify.app connects code and business context to generate SDLC documentation and trace change impact.",
   lang: "en",
 };
 
-# GraphRAG AI-Agent Specify
+# Specify.app
 
-**"Why do document tools only 'record' and never 'think'?"**
+## Where the problem started
 
-Specify is an **enterprise AI brain** born from that question. It structures fragmented enterprise data with a graph-based ontology—going beyond simple storage to infer causal relationships across knowledge and surface actionable insights.
+While working directly with medical-device software certification documentation, I experienced how quickly code and evidence drift apart. When features and architecture changed, requirements, design, test, and operational documents still had to be found and updated separately, with no reliable way to know what had been missed.
 
-## 💡 Core Problem & Solution
+The problem is not limited to certification. The same code-documentation gap appears in onboarding, customer and audit responses, and delivery to public agencies or large enterprises.
 
-**The Problem: Data Silos and Volatile Knowledge**
+## Product hypothesis
 
-Data grows explosively in modern work environments but remains scattered across Notion, Slack, Google Docs, and more. As a result, project context breaks down and past mistakes repeat, leading to inefficient knowledge management.
+Specify.app is being designed to connect code with business context, generate SDLC documentation, trace which requirements, designs, and tests are affected by a code change, and preserve the resulting review and approval history.
 
-**The Solution: A Palantir-Style Ontology Document Engine**
+The current validation focuses on three hypotheses:
 
-Inspired by how Palantir structures data, we built an engine that defines entities and relations inside documents.
+- Software teams without dedicated documentation staff face substantial rework when they reconcile evidence immediately before certification or delivery.
+- Ongoing change-impact detection, revision proposals, and approval history create more operational value than one-off document generation.
+- Trustworthy evidence and auditable state transitions matter more to a buying decision than generic AI-generated documentation.
 
-- **Assetization:** Automatically turns scattered text into a living 'knowledge asset'
-- **Contextual Reasoning:** The AI infers conflicts or connections across documents and surfaces them back to the user
+## Initial validation segment
 
-## 🛠 Key Features
+The first segment under validation is Korean software teams with all of the following conditions:
 
-- **Multi-Source RAG System:** Connects internal docs with GitHub (code), Notion (plans), and Google Docs (specs) in real time for cross-referencing and answer generation.
-- **Semantic Linking (Real-time Context):** As you write, the AI suggests related past history, technical specs, and potential risks in a sidebar.
-- **Insight Dashboard:** Visualizes project 'health' and 'technical debt' in a Knowledge Graph to speed up decision-making.
+- 10–100 people
+- A GS Grade 1 certification or public/enterprise delivery deadline within 3–6 months
+- No dedicated documentation team
+- Fragmented ownership and approval history between code changes and document updates
 
-## 🏗 Technical Architecture
+This is a working ICP being tested through customer interviews and paid commitments, not a claim of proven market traction.
 
-**1. Cloud Native & Event-Driven Architecture**
+## Target workflow
 
-- **Scalability:** A serverless design using AWS Lambda, SQS, and EventBridge adapts to traffic changes and keeps operational complexity low.
-- **Cost Optimization:** Usage-based resource allocation delivers a high-performance, low-cost setup suited for early-stage startups.
+1. Connect source code, requirements, and existing documentation.
+2. Detect which design, test, and operational documents are affected by a change.
+3. Propose revisions with traceable evidence.
+4. Preserve human review and approval history.
+5. Surface missing or stale evidence before certification or delivery.
 
-**2. AI & Real-time Collaboration**
+The priority is not autonomous text generation. It is evidence that a reviewer can inspect, explicit approval boundaries, and an auditable change history.
 
-- **Gen AI Orchestration:** AWS Bedrock and LangChain power an agentic workflow that autonomously explores external data and reasons over it—beyond single-shot answers.
-- **CRDT (Yjs) Engine:** Enables seamless real-time collaborative editing and keeps team data consistent.
+## Business-model hypothesis
 
-## 🚀 Traction & Status
+The entry point is a certification or delivery documentation project that reveals the customer's process and evidence. The longer-term model is a subscription for change-impact detection and continuous documentation maintenance, with a potential channel for consulting partners who deliver these projects.
 
-- **Market Validation:** With no paid marketing, organic search alone drove a **3.2% CTR**, validating real demand.
-- **Current Status:** MVP is built on Next.js and AWS Bedrock. We're running an open beta, collecting user feedback to refine the ontology engine.
+## Current status and evidence standard
 
----
+Specify.app is in market validation. This page does not present unverified customer counts, conversion rates, or time savings as results. The status will change only when supported by evidence such as:
 
-_Developed with Next.js, AWS Bedrock, and a passion for knowledge management._
+- Repeated observations from real customer interviews
+- Concrete reactions to price
+- A paid pilot or purchasing commitment
+- Before-and-after operating metrics measured on the same basis
+
+[Visit Specify.app](https://specify.app)

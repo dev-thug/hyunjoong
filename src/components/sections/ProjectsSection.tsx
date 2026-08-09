@@ -19,7 +19,7 @@ const ProjectsSection = async ({ dict, lang }: ProjectsSectionProps) => {
           <h2 className="text-xl md:text-2xl lg:text-3xl font-light relative z-10">
             {dict.projects.title}
           </h2>
-          <span className="text-[10px] md:text-xs font-mono text-gray-500 relative z-10">
+          <span className="text-[10px] md:text-xs font-mono text-gray-400 relative z-10">
             2023 — 2026
           </span>
         </div>

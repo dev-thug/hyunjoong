@@ -15,12 +15,6 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: [
-          "/ko/blog?*",
-          "/en/blog?*",
-          "/ko/blog/page/*?*",
-          "/en/blog/page/*?*",
-        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

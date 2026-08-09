@@ -17,7 +17,7 @@ const HomeLayoutWrapper = ({ children, lang }: HomeLayoutWrapperProps) => (
   <div className="relative min-h-screen text-white selection:bg-white selection:text-black">
     <LiquidBackgroundLoader />
 
-    {children}
+    <main>{children}</main>
 
     <Footer lang={lang} />
   </div>

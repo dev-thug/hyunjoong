@@ -3,8 +3,8 @@
 :root {
   --background: #050505;
   --foreground: #ffffff;
-  /* Decorative heading opacity: ~3:1 contrast for large text on #050505 (WCAG AA 1.4.3) */
-  --heading-decorative-opacity: 0.22;
+  /* Decorative heading opacity: >3:1 contrast for large text on #020202 (WCAG AA 1.4.3) */
+  --heading-decorative-opacity: 0.4;
   /* Section background decorative text (e.g. Projects "WORKS"); purely visual */
   --heading-decorative-bg-opacity: 0.1;
 }
@@ -12,13 +12,15 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-inter), var(--font-noto-sans-kr), sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    var(--font-noto-sans-kr), monospace;
   /* Intentionally re-exposes the Next.js font CSS variable as a Tailwind v4 design token */
   --font-montserrat: var(--font-montserrat);
 }
 
 body {
-  font-family: var(--font-inter);
+  font-family: var(--font-inter), var(--font-noto-sans-kr), sans-serif;
   background-color: #050505;
   color: #ffffff;
   overflow-x: hidden;
@@ -64,7 +66,11 @@ body {
 
 /* Font Classes */
 .font-montserrat {
-  font-family: var(--font-montserrat);
+  font-family: var(--font-montserrat), var(--font-noto-sans-kr), sans-serif;
+}
+
+.spotlight-copy::before {
+  content: attr(data-text);
 }
 
 /* Decorative page hero title - uses design token for readability (WCAG large text ~3:1) */

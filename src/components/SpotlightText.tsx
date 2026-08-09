@@ -12,6 +12,7 @@ interface SpotlightTextProps {
 }
 
 const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
+  const decorativeText = typeof children === 'string' ? children : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const rafIdRef = useRef<number | null>(null);
   const pendingPositionRef = useRef<{ x: number; y: number } | null>(null);
@@ -85,18 +86,20 @@ const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
 
       <span
         aria-hidden="true"
-        className="absolute top-0 left-0 z-20 text-white pointer-events-none"
+        data-text={decorativeText}
+        className="spotlight-copy absolute top-0 left-0 z-20 text-white pointer-events-none"
         style={overlayStyle}
       >
-        {children}
+        {decorativeText === undefined ? children : null}
       </span>
 
       <span
         aria-hidden="true"
-        className="absolute top-0 left-0 z-20 text-transparent pointer-events-none"
+        data-text={decorativeText}
+        className="spotlight-copy absolute top-0 left-0 z-20 text-transparent pointer-events-none"
         style={outlineStyle}
       >
-        {children}
+        {decorativeText === undefined ? children : null}
       </span>
     </div>
   );

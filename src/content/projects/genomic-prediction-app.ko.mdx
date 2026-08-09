@@ -1,9 +1,9 @@
 export const metadata = {
   id: "p3",
   title: "유전체 분석-예측 플랫폼",
-  adCopy: "대용량 유전체 데이터 처리 Event-Driven 서버리스 시스템",
+  adCopy: "대용량 유전체 데이터 처리를 위한 이벤트 기반 서버리스 시스템",
   description:
-    "100~200GB 규모의 유전체 시퀀싱 데이터를 효율적으로 처리하는 서버리스 플랫폼입니다. AWS Batch와 EFS 병렬 처리로 1000개 샘플을 동시 연산하며, EFS I/O 스로틀링 및 Lambda 타임아웃 문제를 해결하여 안정성을 확보했습니다.",
+    "AWS Batch, EFS, Lambda와 이벤트 기반 메시징을 결합해 유전체 시퀀싱 분석 작업을 병렬 실행하고 리포트 생성까지 오케스트레이션하는 플랫폼입니다.",
   highlight: "Fortuna Helix · Fullstack · 2023 - Present",
   image: "/images/ko/genomic.png",
   tags: [
@@ -14,7 +14,7 @@ export const metadata = {
     "Python",
     "AWS Batch",
     "Lambda",
-    "Step Function",
+    "Step Functions",
     "AppSync",
     "EventBridge",
     "SQS",
@@ -27,46 +27,44 @@ export const metadata = {
     "CloudFormation",
   ],
   metrics: [
-    { label: "분석 시간", value: "66%↓" },
-    { label: "동시 처리", value: "1000개" },
-    { label: "비용 절감", value: "92%↓" },
+    { label: "Compute", value: "AWS Batch" },
+    { label: "Orchestration", value: "EventBridge · SQS" },
+    { label: "Storage", value: "EFS · S3" },
   ],
   lang: "ko",
 };
 
-# Fortuna Helix - 유전체 분석 플랫폼
+**대용량 유전체 데이터 처리를 위한 이벤트 기반 서버리스 시스템**
 
-**대용량 유전체 데이터 처리 Event-Driven 서버리스 시스템**
+유전체 시퀀싱 분석 작업을 AWS Batch로 분리하고, EFS와 S3를 통해 원시 데이터·중간 결과·리포트를 연결한 플랫폼입니다. 이벤트 기반 메시징과 재시도 경계를 두어 분석 요청부터 결과 생성까지의 긴 실행 흐름을 오케스트레이션합니다.
 
-100~200GB 규모의 유전체 시퀀싱 데이터를 효율적으로 처리하는 서버리스 플랫폼입니다. AWS Batch와 EFS 병렬 처리로 1000개 샘플을 동시 연산하며, EFS I/O 스로틀링 및 Lambda 타임아웃 문제를 해결하여 안정성을 확보했습니다.
+## 주요 구현
 
-## 💡 주요 성과
+- **병렬 분석 작업:** AWS Batch 작업 단위로 분석 실행을 분리하고 컨테이너 이미지를 ECR에서 관리
+- **공유 데이터 경로:** EFS와 S3를 용도별로 나눠 Batch 작업 사이의 입력·중간 결과·최종 산출물을 연결
+- **I/O 안정성:** EFS 스로틀링 원인을 조사하고 작업·파일시스템 경계를 조정
+- **Lambda 실행 경계:** 장시간 분석은 Batch에 두고 Lambda는 트리거·상태 전환·리포트 오케스트레이션에 집중
+- **메시지 기반 리포트:** EventBridge, SNS, SQS를 이용해 분석 완료와 리포트 생성 흐름을 분리
+- **운영 가시성:** CloudWatch에서 작업 상태와 실패·재시도 흐름을 관찰
 
-- **분석 시간 단축:** AWS Batch + EFS 병렬 처리로 분석 시간 30분 → 10분 (**66% 단축**)
-- **비용 절감:** 서버리스 전환으로 운영 비용 월 600만 원 → 50만 원 (**92% 절감**)
-- **EFS I/O 스로틀링:** 문제 분석 및 멀티 EFS 분산 구성 제안으로 처리량 확보
-- **Lambda 안정성:** 타임아웃 최적화 및 재시도 정책 설계로 안정성 확보
-- **PDF 리포트:** SQS FIFO + Lambda로 1000개 PDF 30초 생성
-- **Event-Driven 아키텍처:** EventBridge + SNS/SQS 기반 파이프라인 설계
-
-## 🏗 Technical Architecture
+## Technical Architecture
 
 **1. Compute & Storage**
 
-- **AWS Batch + EFS:** 대용량 유전체 시퀀싱 데이터(100~200GB) 병렬 처리, 1000개 샘플 동시 연산
-- **Lambda:** 리포트 생성·오케스트레이션, 타임아웃·재시도 정책으로 안정성 확보
-- **S3 · EFS:** 원시 데이터 및 중간 결과 저장, Batch 작업 간 공유
+- **AWS Batch + EFS:** 컨테이너 기반 분석 작업과 공유 중간 결과
+- **Lambda:** 요청 트리거, 상태 전환, 리포트 생성 오케스트레이션
+- **S3 · EFS:** 원시 데이터, 중간 결과, 최종 산출물의 용도별 저장
 
 **2. Event-Driven Pipeline**
 
-- **EventBridge + SNS/SQS:** 이벤트 기반 트리거, FIFO 큐로 순서 보장 및 PDF 대량 생성
-- **AppSync · Cognito:** API 및 인증
+- **EventBridge + SNS/SQS:** 이벤트 트리거와 작업 단계 분리
+- **AppSync · Cognito:** API 및 사용자 인증·권한
 - **CloudWatch · ECR:** 모니터링 및 컨테이너 이미지 관리
 
-## 🛠 Key Technologies
+## Key Technologies
 
-NestJS, TypeScript, AWS Batch, Lambda, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR
+NextJS, NestJS, FastAPI, TypeScript, Python, AWS Batch, Lambda, Step Functions, AppSync, EventBridge, SQS, SNS, EFS, S3, Cognito, CloudWatch, ECR, CloudFormation
 
 ---
 
-_Developed with NestJS, AWS Batch, and Event-Driven Serverless Architecture._
+_Developed with NestJS, AWS Batch, and an event-driven serverless architecture._

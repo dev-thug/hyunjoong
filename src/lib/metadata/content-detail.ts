@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SOCIAL_LINK_MAP } from "@/constants";
 import type { Locale } from "@/i18n-config";
 import {
   DEFAULT_OG_IMAGE,
@@ -9,15 +10,6 @@ import {
 
 type DetailSection = "blog" | "projects";
 type OpenGraphType = "article" | "website";
-
-/**
- * Standard Open Graph image dimensions. 1200 x 630 is the spec used by
- * Facebook, LinkedIn, Twitter/X (summary_large_image), and Slack unfurls.
- * Declaring width/height lets crawlers reserve layout space without a HEAD
- * round-trip to the image and silences validator warnings.
- */
-const OG_IMAGE_WIDTH = 1200;
-const OG_IMAGE_HEIGHT = 630;
 
 interface BuildContentDetailMetadataOptions {
   lang: Locale;
@@ -94,14 +86,13 @@ export const buildContentDetailMetadata = ({
       images: [
         {
           url: image,
-          alt: SITE_NAME,
-          width: OG_IMAGE_WIDTH,
-          height: OG_IMAGE_HEIGHT,
+          alt: `${title} — ${SITE_NAME}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
+      creator: SOCIAL_LINK_MAP.x.handle,
       title,
       description,
       images: [image],
