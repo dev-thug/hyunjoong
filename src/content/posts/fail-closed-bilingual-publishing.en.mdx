@@ -1,0 +1,263 @@
+export const metadata = {
+  title: "Treat Content Publishing Like a Release: Fail Closed on the Exact PR Head",
+  excerpt: "A bilingual MDX post is more than two text files. This release-oriented workflow makes locale contracts, local assets, CI checks, and the immutable PR head explicit before content reaches production.",
+  category: "Engineering",
+  date: "2026-08-10",
+  readTime: "9 min",
+  lang: "en",
+  keywords: ["content publishing", "github actions", "pull requests", "bilingual content", "next.js", "mdx", "release engineering", "ci"],
+  hidden: false,
+};
+
+Publishing a technical post looks like a writing task. On a statically generated bilingual site, it is a release.
+
+A post is a pair of locale files. Its metadata drives listings and page metadata. MDX is compiled into the application. Tests and content validators run on a commit. Then a deployment system turns that commit into public URLs. A green check is not enough if it belongs to an older commit, or if the Korean and English files do not describe the same release.
+
+This repository has gradually made that contract explicit. The lesson is not that one particular blog has solved publishing forever, and it is not a claim about traffic or performance. It is a practical pattern for making an automated content release fail closed when evidence is incomplete.
+
+## A bilingual post has more than one failure surface
+
+The visible article is only the last layer. Before a reader sees it, several independent contracts have to hold.
+
+| Layer | What can go wrong | The gate that should catch it |
+| --- | --- | --- |
+| File pair | A Korean file is published without an English counterpart | Locale-pair validation |
+| Metadata | Date, category, or visibility differs between locales | Pair metadata comparison |
+| Metadata shape | Keywords are a string, empty array, or mixed-type array | Strict metadata parsing |
+| MDX content | A heading hierarchy or required field breaks the page contract | Content validation and build |
+| Local assets | An image path does not exist, or escapes the public directory | Asset path validation |
+| Commit identity | Checks pass for a previous PR head | Exact-head readiness guard |
+| Production | The merge succeeds but a public route or metadata is wrong | Live URL and HTML verification |
+
+The important design decision is to make each contract executable. A checklist can tell a person what to inspect, but a validator can stop the release when nobody is watching.
+
+The failure modes in this table are the cases the repository policies are designed to prevent. They should not be presented as a list of production incidents unless there is an incident record to support that claim.
+
+## First make the content contract executable
+
+A new automated post in this repository is identified by a shared slug and two locale suffixes:
+
+```text
+src/content/posts/<slug>.ko.mdx
+src/content/posts/<slug>.en.mdx
+```
+
+The two metadata exports do not need identical titles or excerpts. They do need the same release identity. A minimal pair looks like this:
+
+```tsx
+export const metadata = {
+  title: "A natural local title",
+  excerpt: "A concise description in this locale.",
+  category: "Engineering",
+  date: "2026-08-10",
+  readTime: "9 min",
+  lang: "ko",
+  keywords: ["mdx", "release engineering"],
+  hidden: false,
+};
+```
+
+The English file uses `lang: "en"` and its own natural copy, while keeping `date`, `category`, and `hidden` aligned. `keywords` is an array in both files. The shape is intentionally boring: parsers can reason about it without evaluating arbitrary MDX or JavaScript.
+
+The automation policy groups content by slug and rejects the following conditions for new automated content:
+
+- a missing `ko` or `en` file;
+- a duplicate locale;
+- a date, category, or visibility mismatch;
+- missing, empty, or non-array keywords.
+
+The policy has an explicit start date and an explicit list of legacy exceptions. That is safer than silently weakening the rule for every old file. Existing content can be migrated deliberately, while new content has one predictable contract. The implementation is visible in the repository's [blog automation policy](https://github.com/dev-thug/hyunjoong/blob/develop/scripts/blog-automation-policy.ts).
+
+This is also where bilingual writing needs a human standard. A validator can verify the pair exists and its metadata agrees. It cannot decide whether a Korean paragraph sounds natural, whether the English version adds an unsupported claim, or whether the two versions preserve the same thesis. Those checks remain part of review.
+
+## Treat local assets as paths, not promises
+
+A content validator that only checks metadata still leaves a common release hole: a post can compile while pointing at an image that is not present in the deployment artifact.
+
+The local-asset policy in this repository scans rendered MDX references for `/images/...` paths. It masks fenced and inline code examples first, so a path shown in documentation does not become a runtime dependency. It then resolves the path under `public/` and requires a real file.
+
+The containment check is the important part:
+
+```ts
+const resolvedPath = path.resolve(normalizedPublicDir, `.${assetPath}`);
+const isInsidePublicDir =
+  resolvedPath === normalizedPublicDir ||
+  resolvedPath.startsWith(`${normalizedPublicDir}${path.sep}`);
+
+const exists =
+  isInsidePublicDir && existsSync(resolvedPath) && statSync(resolvedPath).isFile();
+```
+
+This does two jobs at once. It catches a missing image, and it prevents a path such as `/images/../../private-file` from escaping the public directory and being treated as a valid public asset. The full implementation is in the [local asset policy](https://github.com/dev-thug/hyunjoong/blob/develop/scripts/content-asset-policy.ts).
+
+For this kind of site, the safest default is simple: do not add an image unless it is a real local asset or an explicitly reviewed external resource. A prose-only post is often better than a decorative dependency that nobody can verify.
+
+## Make local verification match the CI contract
+
+The local command should not be a weaker approximation of the pull-request gate. In this repository, the `package.json` scripts compose the checks into a single path:
+
+```json
+{
+  "check": "npm test && npm run content:verify && npm run lint && npm run typecheck",
+  "build": "npm run check && next build && npm run verify:static-home",
+  "verify": "npm run build && npm run security:audit"
+}
+```
+
+The release sequence is therefore explicit:
+
+1. Run the unit and policy tests.
+2. Validate metadata, bilingual automation rules, and local assets.
+3. Run ESLint and TypeScript without emitting files.
+4. Build every static route.
+5. Run the static-home assertion.
+6. Audit production dependencies at the configured severity.
+
+The workflow installs the lockfile exactly with `npm ci`, then runs `npm run verify`. See the repository's [quality workflow](https://github.com/dev-thug/hyunjoong/blob/develop/.github/workflows/quality.yml).
+
+That composition matters more than the command name. If `npm run build` omits a content validator, a locally green build can still be a content-invalid release. If CI runs a different command from the one developers run, the team has two definitions of "ready."
+
+GitHub's workflow documentation describes event-based workflow execution and concurrency controls. Those primitives are useful, but they do not themselves prove that the check you are looking at belongs to the current PR head. Identity has to be checked separately.
+
+## A green check can still be stale
+
+A pull request is mutable while checks are running. Someone can push another commit after a build starts. A generic "the PR is green" observation can then refer to a different tree from the one about to be merged.
+
+The readiness guard in this repository treats the PR head as an immutable input for the final decision. Its sequence is:
+
+```bash
+HEAD_SHA="$(gh pr view "$PR_NUMBER" --json headRefOid --jq '.headRefOid')"
+
+gh pr checks "$PR_NUMBER" --watch --fail-fast >/dev/null
+
+SUCCESSFUL_GATE_COUNT="$(
+  gh api "repos/$REPOSITORY/commits/$HEAD_SHA/check-runs" \
+    --jq '[.check_runs[] | select(.name == "Verify production build" and .status == "completed" and .conclusion == "success")] | length'
+)"
+if [[ "$SUCCESSFUL_GATE_COUNT" -lt 1 ]]; then
+  printf 'Required check Verify production build is not successful for %s.\n' "$HEAD_SHA" >&2
+  exit 1
+fi
+
+CURRENT_HEAD_SHA="$(gh pr view "$PR_NUMBER" --json headRefOid --jq '.headRefOid')"
+[[ "$CURRENT_HEAD_SHA" == "$HEAD_SHA" ]]
+```
+
+There are four deliberate details here.
+
+- It reads the head SHA before waiting.
+- It waits for the checks currently attached to the PR.
+- It asks the Checks API about that exact commit and requires the named production gate.
+- It reads the PR head again and fails if it changed during verification.
+
+The guard also requires the PR to be open, non-draft, targeted at `develop`, and mergeable. The complete script is the [PR readiness guard](https://github.com/dev-thug/hyunjoong/blob/develop/scripts/assert-pr-ready.sh).
+
+The [GitHub Checks API documentation](https://docs.github.com/en/rest/checks/runs?apiVersion=2022-11-28) is the primary reference for querying check runs. The distinction is practical: a status attached to a pull request is useful for a human overview, while the final merge decision needs the commit identity as part of the predicate.
+
+## Merge only the head you reviewed
+
+The final merge command should repeat the identity constraint instead of assuming that the branch stayed still:
+
+```bash
+HEAD_SHA="$(scripts/assert-pr-ready.sh "$PR_NUMBER")"
+gh pr merge "$PR_NUMBER" \
+  --squash \
+  --delete-branch \
+  --match-head-commit "$HEAD_SHA"
+```
+
+The `--match-head-commit` option is not a replacement for tests or review. It is a last-mile race check: merge only when the remote PR head still matches the SHA that passed the readiness guard. The [official `gh pr merge` manual](https://cli.github.com/manual/gh_pr_merge) documents this option.
+
+This is the boundary between "a check passed" and "the reviewed artifact was merged." It is especially useful for scheduled publishing, where the job should never silently follow a new push that appeared after verification.
+
+## Separate merge verification from production verification
+
+A successful merge proves that the repository accepted a commit. It does not prove that the production domain serves the intended article. The post-merge check should inspect both routes and the rendered HTML.
+
+For this site, the minimum route check is:
+
+```text
+https://hyunjoong.kim/ko/blog/fail-closed-bilingual-publishing
+https://hyunjoong.kim/en/blog/fail-closed-bilingual-publishing
+```
+
+For each locale, verify all of the following:
+
+- the response is `200`;
+- the visible title and article body match that locale;
+- the canonical URL points to the locale route;
+- `hreflang` alternates include the Korean and English routes;
+- the title, description, Open Graph metadata, and `BlogPosting` JSON-LD are present;
+- `robots.txt` and `sitemap.xml` still return valid responses and include the expected public routes.
+
+Do not turn a successful GitHub merge into an unverified deployment claim. If a duplicate Vercel project reports a failure while the production domain is healthy, record that distinction. The public domain is the thing readers consume, but the deployment signal still deserves investigation.
+
+## A release checklist for automated content
+
+Use a checklist, but make every item point to an executable or inspectable artifact.
+
+### Before editing
+
+- [ ] The worktree is clean.
+- [ ] `develop` is current with `origin/develop`.
+- [ ] The slug and central thesis are distinct from existing posts.
+- [ ] The candidate has first-hand engineering evidence and primary sources for current claims.
+
+### Before the PR
+
+- [ ] Both `*.ko.mdx` and `*.en.mdx` files exist.
+- [ ] `date`, `category`, and `hidden` match.
+- [ ] `keywords` are non-empty arrays.
+- [ ] Article sections begin at `##`; the route owns the visible H1.
+- [ ] Every local image reference resolves to a real file under `public/`.
+- [ ] `npm ci` and `npm run verify` pass.
+- [ ] `git diff --check` and a final diff review pass.
+
+### Before the merge
+
+- [ ] The PR targets `develop` and is not a draft.
+- [ ] GitHub Actions, GitGuardian, and Vercel checks are complete and successful.
+- [ ] `scripts/assert-pr-ready.sh` returns the current immutable head SHA.
+- [ ] The merge uses `--match-head-commit` with that exact SHA.
+
+### After the merge
+
+- [ ] The merge commit is identified.
+- [ ] Both production article URLs return `200`.
+- [ ] Canonical, `hreflang`, title, description, OG metadata, JSON-LD, robots, and sitemap are verified from live responses.
+- [ ] Deployment failures are reported per project instead of being collapsed into one vague status.
+
+## The trade-off is deliberate friction
+
+This workflow adds steps that a one-file blog does not need: paired translation files, metadata parsing, path checks, a full build, an immutable-head guard, and live HTML verification. That is real friction.
+
+The alternative is invisible ambiguity. A missing translation may not be noticed until a reader switches languages. A stale check may be green while a different commit is merged. A missing asset may appear only after deployment. Those cases are cheap to prevent when the contract is executable and expensive to diagnose after publication.
+
+The goal is not to make every article go through an enterprise release train. The goal is to choose a boundary appropriate to the blast radius. For a public bilingual site, the smallest useful boundary is a pair contract, a reproducible build, an exact commit identity, and a live-route check.
+
+## Conclusion: publishing is a release with a smaller artifact
+
+A technical article may contain prose instead of business logic, but it still crosses a production boundary. The reliable workflow is therefore not "write, commit, and hope."
+
+It is:
+
+1. score a distinct idea using real evidence;
+2. write both locales as a coherent pair;
+3. turn metadata and assets into executable contracts;
+4. run the same verification path locally and in CI;
+5. bind the decision to the exact PR head SHA;
+6. merge only that SHA;
+7. verify the public routes and rendered metadata after deployment.
+
+Fail-closed publishing does not guarantee that the writing is good. It guarantees something narrower and more useful: when the release says it is ready, the evidence is attached to the artifact that is actually being reviewed and merged.
+
+## Sources
+
+- [Repository quality workflow](https://github.com/dev-thug/hyunjoong/blob/develop/.github/workflows/quality.yml)
+- [Bilingual blog automation policy](https://github.com/dev-thug/hyunjoong/blob/develop/scripts/blog-automation-policy.ts)
+- [Local asset policy](https://github.com/dev-thug/hyunjoong/blob/develop/scripts/content-asset-policy.ts)
+- [PR readiness guard](https://github.com/dev-thug/hyunjoong/blob/develop/scripts/assert-pr-ready.sh)
+- [GitHub workflow events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows)
+- [GitHub workflow concurrency](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency)
+- [GitHub Checks API](https://docs.github.com/en/rest/checks/runs?apiVersion=2022-11-28)
+- [GitHub CLI: `gh pr merge`](https://cli.github.com/manual/gh_pr_merge)
