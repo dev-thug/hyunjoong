@@ -86,8 +86,8 @@ test("makes the authored leverage philosophy concrete in bilingual profile copy"
   const koProfile = getPublicProfile("ko");
   const enProfile = getPublicProfile("en");
 
-  assert.equal(koDictionary.hero.role_title, "사업에 도움이 되는 소프트웨어를 만듭니다");
-  assert.equal(enDictionary.hero.role_title, "I build software that creates leverage.");
+  assert.equal(koDictionary.hero.role_title, "I don't just build software. I build leverage.");
+  assert.equal(enDictionary.hero.role_title, "I don't just build software. I build leverage.");
   assert.equal(
     koDictionary.hero.role_description,
     "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있도록 제품과 시스템을 만듭니다.",
