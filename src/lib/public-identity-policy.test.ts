@@ -80,7 +80,7 @@ test("keeps public hero, about, project-index, and profile copy independent of S
   assert.equal(en.hero.meta_title, "Hyunjoong Kim | Software Engineer");
 });
 
-test("uses concrete business-impact language instead of generic engineering claims", () => {
+test("makes the authored leverage philosophy concrete in bilingual profile copy", () => {
   const koDictionary = readDictionary("ko");
   const enDictionary = readDictionary("en");
   const koProfile = getPublicProfile("ko");
@@ -104,18 +104,35 @@ test("uses concrete business-impact language instead of generic engineering clai
     koDictionary.hero.meta_description,
     "사업에 도움이 되는 소프트웨어를 만드는 엔지니어 김현중의 포트폴리오와 기술 블로그.",
   );
-  assert.equal(koDictionary.profile.intro_heading_prefix, "사업에 도움이 되는 ");
+  assert.equal(koDictionary.profile.intro_heading_prefix, "더 큰 일을 가능하게 하는 ");
   assert.equal(koDictionary.profile.intro_heading_emphasis, "소프트웨어");
-  assert.equal(koDictionary.profile.intro_heading_suffix, "를 만듭니다");
+  assert.equal(koDictionary.profile.intro_heading_suffix, "를 만듭니다.");
   assert.equal(enDictionary.profile.intro_heading_prefix, "Software that creates ");
   assert.equal(enDictionary.profile.intro_heading_emphasis, "leverage");
+  assert.equal(enDictionary.profile.intro_heading_suffix, ".");
+  assert.equal(
+    koDictionary.profile.intro_para_1,
+    "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
+  );
+  assert.equal(
+    koDictionary.profile.intro_para_2,
+    "고객이 제품을 막힘없이 쓰고, 팀이 중요한 일에 더 많은 시간을 쓸 수 있다면 소프트웨어는 레버리지가 됩니다.",
+  );
+  assert.equal(
+    enDictionary.profile.intro_para_1,
+    "I build products and systems for the web and cloud.",
+  );
+  assert.equal(
+    enDictionary.profile.intro_para_2,
+    "Software becomes leverage when customers can use a product without getting stuck and teams have more time for important work.",
+  );
   assert.deepEqual(koProfile.introParagraphs, [
     "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
-    "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
+    "고객이 제품을 막힘없이 쓰고, 팀이 중요한 일에 더 많은 시간을 쓸 수 있다면 소프트웨어는 레버리지가 됩니다.",
   ]);
   assert.deepEqual(enProfile.introParagraphs, [
     "I build products and systems for the web and cloud.",
-    "I'm interested in software that helps people use products well and helps teams do better work.",
+    "Software becomes leverage when customers can use a product without getting stuck and teams have more time for important work.",
   ]);
   assert.equal(
     koDictionary.about.description,
@@ -129,27 +146,27 @@ test("uses concrete business-impact language instead of generic engineering clai
   assert.equal(enDictionary.about.focus_value, "Customers / Teams");
   assert.equal(
     koDictionary.profile.meta_description,
-    "소프트웨어 엔지니어 김현중의 경력, 기술, 그리고 프로젝트.",
+    "고객과 팀을 위한 제품과 시스템을 만드는 소프트웨어 엔지니어 김현중의 프로필.",
   );
   assert.equal(
     enDictionary.profile.meta_description,
-    "Experience, skills, and selected projects by software engineer Hyunjoong Kim.",
+    "Profile of Hyunjoong Kim, a software engineer building products and systems for customers and teams.",
   );
   assert.equal(
     koProfile.description,
-    "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어를 만드는 엔지니어.",
+    "고객과 팀을 위한 제품과 시스템을 만드는 소프트웨어 엔지니어.",
   );
   assert.equal(
     enProfile.description,
-    "Software engineer building software that helps people use products well and helps teams do better work.",
+    "Software engineer building products and systems for customers and teams.",
   );
   assert.equal(
     koProfile.currentFocus.description,
-    "사람들이 실제로 쓰고, 사업에도 도움이 되는 소프트웨어를 만드는 데 집중합니다.",
+    "지금은 제품 개발과 기술 방향, AWS 클라우드 시스템을 함께 다루는 일에 집중하고 있습니다.",
   );
   assert.equal(
     enProfile.currentFocus.description,
-    "I focus on products and systems that people use every day and that help the business.",
+    "Right now, I work across product development, technical direction, and AWS cloud systems.",
   );
 
   const retiredGenericPhrases =

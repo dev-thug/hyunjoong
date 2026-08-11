@@ -1,6 +1,6 @@
 import type { Locale } from "@/i18n-config";
 
-export const PUBLIC_PROFILE_REVIEWED_AT = "2026-08-09";
+export const PUBLIC_PROFILE_REVIEWED_AT = "2026-08-11";
 
 export interface PublicProfileSkillGroup {
   readonly category: string;
@@ -49,16 +49,16 @@ export const PUBLIC_PROFILE = {
       alternateName: "Hyunjoong Kim",
       jobTitle: "소프트웨어 엔지니어",
       description:
-        "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어를 만드는 엔지니어.",
+        "고객과 팀을 위한 제품과 시스템을 만드는 소프트웨어 엔지니어.",
       currentFocus: {
         title: "제품과 시스템을 만듭니다",
         description:
-          "사람들이 실제로 쓰고, 사업에도 도움이 되는 소프트웨어를 만드는 데 집중합니다.",
+          "지금은 제품 개발과 기술 방향, AWS 클라우드 시스템을 함께 다루는 일에 집중하고 있습니다.",
         href: "https://github.com/dev-thug",
       },
       introParagraphs: [
         "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
-        "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
+        "고객이 제품을 막힘없이 쓰고, 팀이 중요한 일에 더 많은 시간을 쓸 수 있다면 소프트웨어는 레버리지가 됩니다.",
       ],
       skills: [
         {
@@ -109,16 +109,16 @@ export const PUBLIC_PROFILE = {
       alternateName: "김현중",
       jobTitle: "Software Engineer",
       description:
-        "Software engineer building software that helps people use products well and helps teams do better work.",
+        "Software engineer building products and systems for customers and teams.",
       currentFocus: {
         title: "Building products and systems",
         description:
-          "I focus on products and systems that people use every day and that help the business.",
+          "Right now, I work across product development, technical direction, and AWS cloud systems.",
         href: "https://github.com/dev-thug",
       },
       introParagraphs: [
         "I build products and systems for the web and cloud.",
-        "I'm interested in software that helps people use products well and helps teams do better work.",
+        "Software becomes leverage when customers can use a product without getting stuck and teams have more time for important work.",
       ],
       skills: [
         {
