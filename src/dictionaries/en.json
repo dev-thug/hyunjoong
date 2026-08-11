@@ -20,9 +20,6 @@
   },
   "about": {
     "philosophy_label": "The Philosophy",
-    "heading_prefix": "I help customers and teams ",
-    "heading_emphasis": "work better",
-    "heading_suffix": ".",
     "description": "I care about software that helps people use products well and gives teams room to focus on important work.",
     "stack_label": "Core Stack",
     "stack_value": "TypeScript / Python / AWS",
@@ -75,10 +72,10 @@
   },
   "profile": {
     "meta_title": "Profile | Software Engineer",
-    "meta_description": "Experience, skills, and selected projects by software engineer Hyunjoong Kim.",
+    "meta_description": "Profile of Hyunjoong Kim, a software engineer building products and systems for customers and teams.",
     "about_heading": "About Me",
     "intro_para_1": "I build products and systems for the web and cloud.",
-    "intro_para_2": "I'm interested in software that helps people use products well and helps teams do better work.",
+    "intro_para_2": "Software becomes leverage when customers can use a product without getting stuck and teams have more time for important work.",
     "current_focus_heading": "Current Focus",
     "current_focus_cta": "View GitHub",
     "tech_stack_heading": "Tech Stack",
@@ -90,7 +87,7 @@
     "job_title": "Software Engineer",
     "intro_heading_prefix": "Software that creates ",
     "intro_heading_emphasis": "leverage",
-    "intro_heading_suffix": "",
+    "intro_heading_suffix": ".",
     "visit_company_website_aria": "Visit {company} website"
   },
   "contact": {

@@ -20,9 +20,6 @@
   },
   "about": {
     "philosophy_label": "철학",
-    "heading_prefix": "고객과 팀의 일을 ",
-    "heading_emphasis": "더 편하게",
-    "heading_suffix": " 합니다.",
     "description": "사람들이 제품을 잘 쓰고, 팀이 중요한 일에 집중할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
     "stack_label": "핵심 스택",
     "stack_value": "TypeScript / Python / AWS",
@@ -75,10 +72,10 @@
   },
   "profile": {
     "meta_title": "프로필 | 소프트웨어 엔지니어",
-    "meta_description": "소프트웨어 엔지니어 김현중의 경력, 기술, 그리고 프로젝트.",
+    "meta_description": "고객과 팀을 위한 제품과 시스템을 만드는 소프트웨어 엔지니어 김현중의 프로필.",
     "about_heading": "소개",
     "intro_para_1": "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
-    "intro_para_2": "사람들이 제품을 잘 쓰고, 팀이 더 잘 일할 수 있게 돕는 소프트웨어에 관심이 있습니다.",
+    "intro_para_2": "고객이 제품을 막힘없이 쓰고, 팀이 중요한 일에 더 많은 시간을 쓸 수 있다면 소프트웨어는 레버리지가 됩니다.",
     "current_focus_heading": "현재 집중",
     "current_focus_cta": "GitHub에서 보기",
     "tech_stack_heading": "기술 스택",
@@ -88,9 +85,9 @@
     "get_in_touch_cta": "연락하기",
     "open_contact_form_aria": "연락 양식 열기",
     "job_title": "소프트웨어 엔지니어",
-    "intro_heading_prefix": "사업에 도움이 되는 ",
+    "intro_heading_prefix": "더 큰 일을 가능하게 하는 ",
     "intro_heading_emphasis": "소프트웨어",
-    "intro_heading_suffix": "를 만듭니다",
+    "intro_heading_suffix": "를 만듭니다.",
     "visit_company_website_aria": "{company} 웹사이트 방문"
   },
   "contact": {
