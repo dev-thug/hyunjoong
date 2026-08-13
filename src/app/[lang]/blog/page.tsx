@@ -3,6 +3,7 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import { getDeveloperSearchMetadata } from "@/lib/metadata/developer-search";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 import { buildBlogSchema, safeJsonLdStringify } from "@/lib/json-ld";
 import { BLOG_POSTS_PAGE_SIZE, getPostsPage } from "@/lib/posts";
@@ -21,12 +22,15 @@ export async function generateMetadata({
   // for server-side search filtering via getPostsPage(query).
   const { q } = await searchParams;
   const query = parseSearchQuery(q);
-  const dict = await getDictionary(lang);
+  const searchMetadata = getDeveloperSearchMetadata(lang, "blog");
 
   return buildLocalizedPageMetadata({
     lang,
-    title: dict.blog.page_title,
-    description: dict.blog.page_description,
+    path: "/blog",
+    title: searchMetadata.title,
+    description: searchMetadata.description,
+    keywords: searchMetadata.keywords,
+    absoluteTitle: true,
     noIndex: Boolean(query),
   });
 }
@@ -47,6 +51,7 @@ export default async function BlogPage({
   const { q } = await searchParams;
   const query = parseSearchQuery(q);
   const pageSize = query ? Number.MAX_SAFE_INTEGER : BLOG_POSTS_PAGE_SIZE;
+  const searchMetadata = getDeveloperSearchMetadata(lang, "blog");
   const [dict, paginatedPosts] = await Promise.all([
     getDictionary(lang),
     getPostsPage(lang, 1, pageSize, query),
@@ -58,7 +63,7 @@ export default async function BlogPage({
         lang,
         name:
           lang === "ko" ? "김현중의 기술 블로그" : "Hyunjoong Kim's Technical Blog",
-        description: dict.blog.page_description,
+        description: searchMetadata.description,
         posts: paginatedPosts.items.map((post) => ({
           slug: post.slug,
           title: post.title,

@@ -25,6 +25,8 @@ interface BuildLocalizedPageMetadataOptions {
   canonicalPath?: string;
   openGraphType?: OpenGraphType;
   noIndex?: boolean;
+  keywords?: readonly string[];
+  absoluteTitle?: boolean;
   availableLocales?: Partial<Record<Locale, boolean>>;
 }
 
@@ -36,6 +38,8 @@ export const buildLocalizedPageMetadata = ({
   canonicalPath,
   openGraphType = "website",
   noIndex = false,
+  keywords,
+  absoluteTitle = false,
   availableLocales = { ko: true, en: true },
 }: BuildLocalizedPageMetadataOptions): Metadata => {
   const baseUrl = getSiteBaseUrl();
@@ -59,8 +63,9 @@ export const buildLocalizedPageMetadata = ({
   }
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
+    ...(keywords?.length ? { keywords: [...keywords] } : {}),
     ...(noIndex ? { robots: { index: false, follow: true } as const } : {}),
     alternates: {
       canonical,

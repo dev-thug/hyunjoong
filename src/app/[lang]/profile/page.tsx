@@ -5,6 +5,7 @@ import { getPublicProfile } from "@/data/public-profile";
 import { getDictionary } from "@/get-dictionary";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
+import { getDeveloperSearchMetadata } from "@/lib/metadata/developer-search";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 import { getSiteBaseUrl } from "@/lib/site-config";
 import { buildSitePerson, safeJsonLdStringify } from "@/lib/json-ld";
@@ -18,13 +19,14 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
-  const dict = await getDictionary(lang);
-  const profile = getPublicProfile(lang);
+  const searchMetadata = getDeveloperSearchMetadata(lang, "profile");
   return buildLocalizedPageMetadata({
     lang,
     path: "/profile",
-    title: dict.profile.meta_title,
-    description: profile.description,
+    title: searchMetadata.title,
+    description: searchMetadata.description,
+    keywords: searchMetadata.keywords,
+    absoluteTitle: true,
     openGraphType: "profile",
   });
 }
@@ -40,6 +42,7 @@ export default async function ProfilePage({
   const { lang } = (await params) as { lang: Locale };
   const dict = await getDictionary(lang);
   const profile = getPublicProfile(lang);
+  const searchMetadata = getDeveloperSearchMetadata(lang, "profile");
   const baseUrl = getSiteBaseUrl();
   const personJsonLd = {
     "@context": "https://schema.org",
@@ -50,8 +53,8 @@ export default async function ProfilePage({
     "@type": "ProfilePage",
     "@id": `${baseUrl}/${lang}/profile#profile-page`,
     url: `${baseUrl}/${lang}/profile`,
-    name: dict.profile.meta_title,
-    description: profile.description,
+    name: searchMetadata.title,
+    description: searchMetadata.description,
     inLanguage: lang,
     mainEntity: { "@id": `${baseUrl}/#person` },
     isPartOf: { "@id": `${baseUrl}/#website` },

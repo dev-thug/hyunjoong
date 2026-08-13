@@ -1,6 +1,7 @@
 import { ContactForm } from "@/components/contact";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import { getDeveloperSearchMetadata } from "@/lib/metadata/developer-search";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 import type { Metadata } from "next";
 
@@ -10,13 +11,15 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
-  const dict = await getDictionary(lang);
+  const searchMetadata = getDeveloperSearchMetadata(lang, "contact");
 
   return buildLocalizedPageMetadata({
     lang,
     path: "/contact",
-    title: dict.contact.meta_title,
-    description: dict.contact.meta_description,
+    title: searchMetadata.title,
+    description: searchMetadata.description,
+    keywords: searchMetadata.keywords,
+    absoluteTitle: true,
   });
 }
 

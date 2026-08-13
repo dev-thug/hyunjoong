@@ -32,3 +32,18 @@ test("keeps both locale alternates by default", () => {
     "x-default": "https://hyunjoong.kim/ko/profile",
   });
 });
+
+test("forwards page-specific keywords without changing visible content", () => {
+  const keywords = ["백엔드 개발자", "AWS 개발자"] as const;
+  const metadata = buildLocalizedPageMetadata({
+    lang: "ko",
+    title: "김현중 개발자 프로필",
+    description: "개발 경력과 기술 스택",
+    path: "/profile",
+    keywords,
+    absoluteTitle: true,
+  });
+
+  assert.deepEqual(metadata.keywords, keywords);
+  assert.deepEqual(metadata.title, { absolute: "김현중 개발자 프로필" });
+});

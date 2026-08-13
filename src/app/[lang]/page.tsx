@@ -14,6 +14,7 @@ import {
   SITE_NAME,
   getSiteBaseUrl,
 } from "@/lib/site-config";
+import { getDeveloperSearchMetadata } from "@/lib/metadata/developer-search";
 import {
   buildSitePerson,
   buildWebsiteSchema,
@@ -31,13 +32,14 @@ export async function generateMetadata({
     return {};
   }
 
-  const dict = await getDictionary(lang);
+  const searchMetadata = getDeveloperSearchMetadata(lang, "home");
   const profile = getPublicProfile(lang);
   const baseUrl = getSiteBaseUrl();
 
   return {
-    title: { absolute: dict.hero.meta_title },
-    description: dict.hero.meta_description,
+    title: { absolute: searchMetadata.title },
+    description: searchMetadata.description,
+    keywords: [...searchMetadata.keywords],
     alternates: {
       canonical: `${baseUrl}/${lang}`,
       languages: {
@@ -49,8 +51,8 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       siteName: SITE_NAME,
-      title: dict.hero.meta_title,
-      description: dict.hero.meta_description,
+      title: searchMetadata.title,
+      description: searchMetadata.description,
       url: `${baseUrl}/${lang}`,
       locale: lang === "ko" ? "ko_KR" : "en_US",
       alternateLocale: lang === "ko" ? ["en_US"] : ["ko_KR"],
@@ -66,8 +68,8 @@ export async function generateMetadata({
     twitter: {
       card: "summary_large_image",
       creator: SOCIAL_LINK_MAP.x.handle,
-      title: dict.hero.meta_title,
-      description: dict.hero.meta_description,
+      title: searchMetadata.title,
+      description: searchMetadata.description,
       images: [DEFAULT_OG_IMAGE],
     },
   };
@@ -92,12 +94,7 @@ export default async function Home({
     ...buildSitePerson(baseUrl, lang),
   };
 
-  const websiteSchema = buildWebsiteSchema({
-    baseUrl,
-    lang,
-    title: dict.hero.meta_title,
-    description: dict.hero.meta_description,
-  });
+  const websiteSchema = buildWebsiteSchema({ baseUrl });
 
   return (
     <>
