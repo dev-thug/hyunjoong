@@ -5,6 +5,7 @@ import { getDictionary } from "@/get-dictionary";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "@/i18n-config";
+import { getDeveloperSearchMetadata } from "@/lib/metadata/developer-search";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 
 /**
@@ -16,12 +17,14 @@ export async function generateMetadata({
   params: Promise<{ lang: string }>;
 }): Promise<Metadata> {
   const { lang } = (await params) as { lang: Locale };
-  const dict = await getDictionary(lang);
+  const searchMetadata = getDeveloperSearchMetadata(lang, "projects");
   return buildLocalizedPageMetadata({
     lang,
     path: "/projects",
-    title: dict.projects.meta_title,
-    description: dict.projects.meta_description,
+    title: searchMetadata.title,
+    description: searchMetadata.description,
+    keywords: searchMetadata.keywords,
+    absoluteTitle: true,
   });
 }
 

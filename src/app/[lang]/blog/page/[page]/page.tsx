@@ -4,6 +4,10 @@ import BlogSearchClient from "@/components/BlogSearchClient";
 
 import { getDictionary } from "@/get-dictionary";
 import { i18n, type Locale } from "@/i18n-config";
+import {
+  getBlogPaginationSearchMetadata,
+  getDeveloperSearchMetadata,
+} from "@/lib/metadata/developer-search";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 import { buildNotFoundMetadata } from "@/lib/metadata/not-found";
 import { BLOG_POSTS_PAGE_SIZE, getAllPosts, getPostsPage } from "@/lib/posts";
@@ -47,8 +51,8 @@ export async function generateMetadata({
   const { lang, page } = resolvedParams as { lang: Locale; page: string };
   const query = parseSearchQuery(resolvedSearchParams.q);
   const parsedPage = parsePageParam(page);
-  const [dict, koPosts, enPosts] = await Promise.all([
-    getDictionary(lang),
+  const baseSearchMetadata = getDeveloperSearchMetadata(lang, "blog");
+  const [koPosts, enPosts] = await Promise.all([
     getAllPosts("ko"),
     getAllPosts("en"),
   ]);
@@ -68,10 +72,19 @@ export async function generateMetadata({
 
   const canonicalPath =
     parsedPage !== null && parsedPage >= 2 ? `/blog/page/${parsedPage}` : "/blog";
+  const searchMetadata =
+    query.length === 0 && parsedPage !== null && parsedPage >= 2
+      ? {
+          ...baseSearchMetadata,
+          ...getBlogPaginationSearchMetadata(lang, parsedPage),
+        }
+      : baseSearchMetadata;
   return buildLocalizedPageMetadata({
     lang,
-    title: dict.blog.page_title,
-    description: dict.blog.page_description,
+    title: searchMetadata.title,
+    description: searchMetadata.description,
+    keywords: searchMetadata.keywords,
+    absoluteTitle: true,
     canonicalPath: query ? "/blog" : canonicalPath,
     noIndex: query.length > 0,
     availableLocales:

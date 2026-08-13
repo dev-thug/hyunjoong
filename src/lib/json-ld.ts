@@ -1,6 +1,7 @@
 import { SOCIAL_LINK_MAP } from "@/constants";
 import { PUBLIC_PROFILE, getPublicProfile } from "@/data/public-profile";
 import type { Locale } from "@/i18n-config";
+import { SITE_NAME } from "@/lib/site-config";
 
 // Escapes `<` to its JSON unicode form so that an inline <script> tag
 // embedding this output cannot be terminated by `</script>` inside the
@@ -18,6 +19,7 @@ const withoutTrailingSlash = (value: string): string => value.replace(/\/+$/, ""
 export const buildSitePerson = (baseUrl: string, lang: Locale = "en") => {
   const normalizedBaseUrl = withoutTrailingSlash(baseUrl);
   const profile = getPublicProfile(lang);
+  const occupationSkills = profile.skills.flatMap((group) => group.items);
 
   return {
     "@type": "Person",
@@ -38,6 +40,12 @@ export const buildSitePerson = (baseUrl: string, lang: Locale = "en") => {
       },
     },
     knowsAbout: [...PUBLIC_PROFILE.knowsAbout],
+    hasOccupation: {
+      "@type": "Occupation",
+      name: profile.jobTitle,
+      description: profile.description,
+      skills: occupationSkills,
+    },
     sameAs: [
       SOCIAL_LINK_MAP.github.href,
       SOCIAL_LINK_MAP.linkedin.href,
@@ -48,27 +56,18 @@ export const buildSitePerson = (baseUrl: string, lang: Locale = "en") => {
 
 interface WebsiteSchemaOptions {
   readonly baseUrl: string;
-  readonly lang: Locale;
-  readonly title: string;
-  readonly description: string;
 }
 
-export const buildWebsiteSchema = ({
-  baseUrl,
-  lang,
-  title,
-  description,
-}: WebsiteSchemaOptions) => {
+export const buildWebsiteSchema = ({ baseUrl }: WebsiteSchemaOptions) => {
   const normalizedBaseUrl = withoutTrailingSlash(baseUrl);
 
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${normalizedBaseUrl}/#website`,
-    name: title,
-    description,
-    url: `${normalizedBaseUrl}/${lang}`,
-    inLanguage: lang,
+    name: SITE_NAME,
+    alternateName: PUBLIC_PROFILE.localized.ko.name,
+    url: normalizedBaseUrl,
     author: { "@id": `${normalizedBaseUrl}/#person` },
     publisher: { "@id": `${normalizedBaseUrl}/#person` },
   };

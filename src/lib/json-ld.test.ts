@@ -24,20 +24,40 @@ test("builds one canonical Korean public Person identity", () => {
     SOCIAL_LINK_MAP.x.href,
   ]);
   assert.equal(person.image, `${baseUrl}/images/profile-photo.png`);
+  assert.deepEqual(person.hasOccupation, {
+    "@type": "Occupation",
+    name: "소프트웨어 엔지니어",
+    description: "고객과 팀을 위한 제품과 시스템을 만드는 소프트웨어 엔지니어.",
+    skills: [
+      "AI Agents",
+      "RAG / GraphRAG",
+      "System Design",
+      "Software Architecture",
+      "React",
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Node.js",
+      "Python",
+      "AWS",
+      "Serverless",
+      "Test Automation",
+      "GitHub Actions",
+      "Docker",
+      "Evidence-led Validation",
+    ],
+  });
 });
 
-test("links WebSite authorship to the canonical Person id", () => {
-  const website = buildWebsiteSchema({
-    baseUrl,
-    lang: "en",
-    title: "Hyunjoong Kim",
-    description: "Software engineering and cloud architecture.",
-  });
+test("builds one domain-level WebSite identity linked to the canonical Person", () => {
+  const website = buildWebsiteSchema({ baseUrl });
 
   assert.equal(website["@id"], `${baseUrl}/#website`);
-  assert.equal(website.url, `${baseUrl}/en`);
-  assert.equal(website.inLanguage, "en");
+  assert.equal(website.name, "Hyunjoong Kim");
+  assert.equal(website.alternateName, "김현중");
+  assert.equal(website.url, baseUrl);
   assert.deepEqual(website.author, { "@id": `${baseUrl}/#person` });
+  assert.deepEqual(website.publisher, { "@id": `${baseUrl}/#person` });
 });
 
 test("builds an indexable Blog collection with post entities", () => {
