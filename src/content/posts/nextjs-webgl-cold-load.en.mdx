@@ -1,0 +1,207 @@
+export const metadata = {
+  title: "Static First: Deferring Decorative WebGL Until the Page Is Ready in Next.js",
+  excerpt: "A practical design for keeping a full-screen WebGL background without making it part of the initial render: static fallback, capability gates, idle loading, visibility and accessibility handling, and policy tests.",
+  category: "Engineering",
+  date: "2026-08-24",
+  readTime: "9 min",
+  lang: "en",
+  keywords: ["Next.js", "WebGL", "web performance", "LCP", "requestIdleCallback", "prefers-reduced-motion", "code splitting", "frontend architecture"],
+  hidden: false,
+};
+
+A full-screen WebGL background can give a portfolio a distinctive identity. But if a decorative effect consumes network, CPU, or GPU budget before the first screen is usable, the priorities are backwards.
+
+The liquid background in this repository is therefore not treated as an initial-render feature. It is a **selective enhancement layered onto a static page**. The goal is not to remove WebGL unconditionally. The goal is to establish a boundary: content appears first, and the effect starts only when the environment makes it reasonable.
+
+This is not a report claiming a particular Lighthouse improvement or user outcome. It explains design decisions that exist in the code and tests, along with the trade-offs involved in reusing the pattern in another Next.js site. The implementation grew through the [cold-load rendering change](https://github.com/dev-thug/hyunjoong/commit/d1649e6abc3b106e1dce23161fe8fc25a9642c23) and the follow-up [change that moved optional WebGL past interaction](https://github.com/dev-thug/hyunjoong/commit/f7631b18765a71139e9db57672d13e2740663393).
+
+## Do not frame the problem as “is WebGL fast?”
+
+The first question for a decorative background is not its average frame rate.
+
+> Can a visitor read and use the important parts of the page before the effect is ready?
+
+The [web.dev guide to optimizing LCP](https://web.dev/articles/optimize-lcp) explains that parsing and executing unrelated JavaScript, as well as long tasks, can delay the rendering of the main content. Applied to a portfolio, that leads to a simple classification:
+
+- The title, introduction, navigation, and project links are **critical content**.
+- The liquid background is a **decorative enhancement** with no semantic payload.
+- A complete static fallback must remain if the enhancement fails.
+
+This classification changes the design question from “how do I make the background run at 60fps on every browser?” to “does the page still feel complete without the background?” The objective is not to prove that the effect exists. It is to keep the effect from delaying the content.
+
+## Start the first render with a static fallback
+
+`HomeLayoutWrapper` includes the background loader in the page structure, but the loader does not render the WebGL component immediately. It always returns a static layer first.
+
+```tsx
+return (
+  <>
+    <div
+      aria-hidden="true"
+      className="liquid-background-fallback fixed inset-0 -z-10 pointer-events-none"
+    />
+    {LiquidBackground ? <LiquidBackground /> : null}
+  </>
+);
+```
+
+That structure has two consequences:
+
+1. The server render and initial hydration do not depend on browser-only WebGL APIs.
+2. If the dynamic import is delayed or fails, the visitor sees an intentional static background rather than an empty surface.
+
+The [Next.js Lazy Loading guide](https://nextjs.org/docs/app/guides/lazy-loading) describes using dynamic imports to split Client Components and libraries so they can load when needed. Code splitting alone is not a scheduling policy, though. If a component is dynamically imported as soon as the route renders, the module is separate but the initial path can still start loading it. This implementation calls `import("@/components/LiquidBackground")` later inside the loader instead of rendering the component immediately.
+
+## Make the decision with device and user signals
+
+Deferring the effect and declining to load it are separate decisions. The `shouldEnableLiquidBackground` policy keeps the static fallback when:
+
+- `prefers-reduced-motion` is enabled;
+- the user requests `Save-Data`;
+- the connection reports `2g` or `slow-2g`;
+- WebGL is unavailable or the renderer is identified as software-only;
+- reported `deviceMemory` is at or below 4 GB, or `hardwareConcurrency` is at or below 2.
+
+`effectiveType` and `saveData` are optional browser hints documented in [MDN's NetworkInformation reference](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation). The implementation does not assume those properties exist everywhere, and it does not pretend that their presence is a measurement of actual GPU performance. These thresholds are conservative policy choices for declining a decorative effect, not benchmark results or performance guarantees.
+
+`prefers-reduced-motion` is not merely a performance switch. As [MDN's accessibility guidance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion) explains, it communicates a preference to reduce non-essential movement. In reduced-motion mode, the renderer therefore does more than hide the canvas: it avoids the animation loop and permits only a visible static frame.
+
+## Do not start immediately inside `useEffect`
+
+A Client Component can access browser APIs, but that does not mean it should spend browser resources immediately. After checking the initial conditions inside `useEffect`, the loader follows this sequence:
+
+1. Wait for the page `load` event.
+2. Add an initial six-second delay.
+3. Schedule the import during an idle period when `requestIdleCallback` exists.
+4. Give the idle callback a 1.5-second timeout so it cannot wait indefinitely.
+5. Fall back to a timer-based import when the API is unavailable.
+
+The six-second value is not a measured claim that six seconds is optimal. It is an explicit policy value that moves this decorative enhancement outside the site's initial interaction window, and the policy test protects that intent.
+
+```ts
+const LIQUID_BACKGROUND_INITIAL_DELAY_MS = 6000;
+const IDLE_CALLBACK_TIMEOUT_MS = 1500;
+
+window.setTimeout(() => {
+  if (window.requestIdleCallback) {
+    window.requestIdleCallback(importBackground, {
+      timeout: IDLE_CALLBACK_TIMEOUT_MS,
+    });
+    return;
+  }
+
+  importBackground();
+}, LIQUID_BACKGROUND_INITIAL_DELAY_MS);
+```
+
+[MDN's `requestIdleCallback()` reference](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback) describes the API as a way to schedule low-priority work during idle periods without competing with latency-sensitive animation and input. It is also a [limited-availability, non-Baseline feature](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback), so a production implementation needs a feature check and a fallback. The official reference also recommends a timeout for work that must not be postponed for multiple seconds.
+
+The important choice is not whether to use `setTimeout` or `requestIdleCallback`. It is the sequence: first move the enhancement out of the initial path with a deliberate delay, then let the browser choose an idle opportunity, and finally prevent indefinite starvation.
+
+## Make the lifecycle explicit with a state machine
+
+A delayed loader is more than one timer. A tab can become hidden, React Strict Mode can clean up and rerun an effect, and a dynamic import cannot be meaningfully cancelled after it has started.
+
+The loader therefore models these states explicitly:
+
+```ts
+type LiquidBackgroundLoadState =
+  | "idle"
+  | "scheduled"
+  | "loading"
+  | "loaded"
+  | "failed";
+```
+
+- `idle` schedules the enhancement once.
+- `scheduled` cancels only the timer and idle callback that have not started.
+- `loading` keeps the in-flight Promise and reuses it if Strict Mode reruns the effect.
+- `loaded` and `failed` do not schedule another attempt.
+
+This aligns with the purpose of the [Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API). MDN describes avoiding unnecessary work while a document is hidden as a way to save resources. The loader cancels pending work when the tab becomes hidden, but it does not pretend that an already-started module import can be cancelled. Representing that distinction honestly is the important part of the state model.
+
+## Put a budget around the renderer too
+
+Delaying the module does not eliminate GPU work after the component loads. The renderer applies a separate policy:
+
+- set the canvas drawing buffer to 0.65 of the viewport dimensions;
+- skip draws whose timestamp interval is shorter than the target 30fps budget;
+- stop the `requestAnimationFrame` loop when the document is hidden;
+- render a visible static frame instead of an animation loop for reduced motion;
+- stop on WebGL context loss and reinitialize after a restoration event;
+- reject the enhancement when a temporary capability probe identifies a software renderer.
+
+Again, this does not mean that 30fps is sufficient for every device or that 0.65 is the optimal scale. They are the current implementation's ceilings and defaults. A real service should measure representative devices and network conditions with tools such as Chrome DevTools, Lighthouse, and field data before tuning them. Without measurement, these values should not be presented as outcomes.
+
+## Separate policy from browser effects and test it
+
+When every condition lives inside a browser component, the policy becomes difficult to test and easy to weaken accidentally. This repository extracts the decisions into pure functions in `liquid-background-policy.ts` and fixes the boundary cases in tests.
+
+The current policy tests verify that:
+
+- reduced motion, Save-Data, unsupported WebGL, low-capability devices, and slow connections select the static fallback;
+- missing optional device hints do not automatically disable the enhancement;
+- known software renderers such as SwiftShader and llvmpipe are rejected;
+- canvas dimensions never become zero and the default render scale is applied;
+- frames are skipped when the timestamp interval is below the target budget;
+- a visibility cycle cancels only `scheduled` work, and `loading` or `loaded` states are not scheduled again;
+- the chosen initial delay stays outside the initial interactive window.
+
+For example, the state transition can be tested without a browser:
+
+```ts
+let state: LiquidBackgroundLoadState = "idle";
+state = transitionLiquidBackgroundLoad(state, "schedule");
+state = transitionLiquidBackgroundLoad(state, "beginImport");
+state = transitionLiquidBackgroundLoad(state, "importSucceeded");
+
+// A loaded background cannot be scheduled again.
+assert.equal(
+  transitionLiquidBackgroundLoad(state, "schedule"),
+  "loaded"
+);
+```
+
+These tests do not measure a user's FPS or LCP. They protect a different kind of evidence: the conditions that must keep the static fallback, and the lifecycle rule that the enhancement loads at most once. Performance measurements and policy regression tests should remain separate evidence streams.
+
+## Costs and limits of the pattern
+
+Static-first design has real costs.
+
+- The effect appears after six seconds, so some visitors will see the visual transition late or not at all.
+- Limited browser hints cannot classify real hardware perfectly.
+- Memory and logical-core thresholds are conservative heuristics, not performance guarantees.
+- WebGL context loss, browser-specific shader behavior, and mobile GPU thermal behavior cannot be fully covered by automated tests.
+- If an animation conveys product meaning or enables an interaction, this pattern cannot be applied unchanged. That feature needs an accessibility contract and a meaningful static alternative.
+
+The promise is therefore not “this is always fast.” It is narrower and testable:
+
+> The content is complete without the effect, and the effect respects the user's environment and the page's visibility when it starts.
+
+## A checklist for another Next.js site
+
+1. **Classify the critical path.** Do not give decorative effects the same priority as titles, content, and navigation.
+2. **Render a complete static fallback first.** Do not make an empty container or an opacity-zero state the default experience.
+3. **Design the dynamic import's timing.** Code-split the module, but also specify the `load`, delay, and idle policy.
+4. **Include accessibility and resource signals in the deny path.** Treat reduced motion and Save-Data as user settings, not just optimization hints.
+5. **Separate scheduled work from rendering work.** Cancel work that has not started and model in-flight imports honestly.
+6. **Encode a GPU budget.** Handle drawing-buffer scale, FPS, context loss, and hidden tabs separately.
+7. **Extract policies into pure functions and state transitions.** Test important boundaries without requiring a browser.
+8. **Do not confuse deferral with a measured outcome.** Measure LCP, INP, battery, and GPU usage separately on representative environments.
+
+## Conclusion: treat the background as an approved enhancement
+
+Keeping or removing a WebGL background is not only an aesthetic decision. It is an architectural decision about priority across initial rendering, accessibility, device resources, and browser lifecycle.
+
+The most reusable conclusion from this repository is simple: **make the static page the complete product baseline, and treat WebGL as an enhancement that must pass explicit gates before it is added.** When the effect loads late or fails, the important content remains independently usable.
+
+### Primary references
+
+- [Next.js: Lazy Loading](https://nextjs.org/docs/app/guides/lazy-loading)
+- [web.dev: Optimize Largest Contentful Paint](https://web.dev/articles/optimize-lcp)
+- [MDN: `requestIdleCallback()`](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestIdleCallback)
+- [MDN: Page Visibility API](https://developer.mozilla.org/en-US/docs/Web/API/Page_Visibility_API)
+- [MDN: `prefers-reduced-motion`](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/%40media/prefers-reduced-motion)
+- [MDN: Network Information API](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation)
+- [Repository commit: prioritize cold-load rendering](https://github.com/dev-thug/hyunjoong/commit/d1649e6abc3b106e1dce23161fe8fc25a9642c23)
+- [Repository commit: defer optional WebGL past interactive](https://github.com/dev-thug/hyunjoong/commit/f7631b18765a71139e9db57672d13e2740663393)
