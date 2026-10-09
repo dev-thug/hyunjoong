@@ -1,0 +1,27 @@
+{
+  "reviewedAt": "2026-10-09",
+  "projects": {
+    "specify": [
+      "Local project README and current feature map",
+      "Current agent runtime and work queue implementation"
+    ],
+    "mamma": [
+      "Local web-app architecture and conversation handler",
+      "Local native-shell documentation"
+    ],
+    "petty": [
+      "Local app architecture and conversation runtime documentation",
+      "Current conversation provider implementation"
+    ]
+  },
+  "specifyNarrative": {
+    "source": "User-provided application, dated 2026-10-07",
+    "referenceArticle": "https://eopla.net/magazines/47848",
+    "basis": [
+      "Medical-device software development and certification preparation",
+      "More than six months of documentation work",
+      "About four hours aligning documents for one feature change"
+    ],
+    "editorialDirection": "First-person experience, recurring problem, product workflow, concrete example. Screenshot explicitly labeled as a manually written demo."
+  }
+}

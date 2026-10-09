@@ -2,8 +2,9 @@ import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
 import CodeBlock from "@/components/mdx/CodeBlock";
 import BlogImage from "@/components/mdx/BlogImage";
+import ProjectScreenshots from "@/components/projects/ProjectScreenshots";
 import ImageGallery from "@/components/mdx/ImageGallery";
-import { toHeadingId } from "@/lib/toc";
+import { createHeadingIdGenerator } from "@/lib/toc";
 
 const extractTextContent = (value: unknown): string => {
   if (typeof value === "string" || typeof value === "number") {
@@ -24,26 +25,11 @@ const extractTextContent = (value: unknown): string => {
   return "";
 };
 
-/**
- * MDX 컴포넌트 스타일링 정의
- * 마크다운 요소들을 커스텀 React 컴포넌트로 매핑
- *
- * Heading-ID dedup counter is module-level. `useMDXComponents` is called
- * by the MDX runtime per render; allocating a fresh Map per call discards
- * earlier counts and re-runs allocation on every render. The counter is
- * reset at the start of each call so each document render starts clean.
- */
-const headingIdCounts = new Map<string, number>();
-const getHeadingId = (children: unknown): string => {
-  const rawText = extractTextContent(children).trim();
-  const baseId = toHeadingId(rawText);
-  const nextCount = (headingIdCounts.get(baseId) ?? 0) + 1;
-  headingIdCounts.set(baseId, nextCount);
-  return nextCount === 1 ? baseId : `${baseId}-${nextCount}`;
-};
-
+/** Shared styles with per-document heading IDs for stable section navigation. */
 export function useMDXComponents(components: MDXComponents): MDXComponents {
-  headingIdCounts.clear();
+  const headingId = createHeadingIdGenerator();
+  const getHeadingId = (children: unknown): string =>
+    headingId(extractTextContent(children).trim());
 
   return {
     // 상세 route가 문서 제목 H1을 소유하므로 MDX 내부 H1은 중복 렌더링하지 않습니다.
@@ -143,6 +129,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     BlogImage,
     // 이미지 갤러리 컴포넌트 (여러 이미지 그리드 표시)
     ImageGallery,
+    ProjectScreenshots,
     // 테이블 스타일
     table: ({ children }) => (
       <div className="my-8 overflow-hidden rounded-xl border border-zinc-800/50 bg-[#09090b]/40 backdrop-blur-sm">

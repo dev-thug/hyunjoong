@@ -20,6 +20,7 @@ export interface Project {
   readonly highlight: string;
   readonly serviceUrl?: string;
   readonly image: string;
+  readonly updatedAt?: string;
   readonly lang: Locale;
   readonly tags: readonly string[];
   readonly metrics: readonly ProjectMetric[];

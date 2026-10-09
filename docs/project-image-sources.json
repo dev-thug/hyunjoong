@@ -58,6 +58,47 @@
       "file": "/images/projects/petty-phones-en.webp",
       "source": "petty-im/public/assets/app-phones-en.webp",
       "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/screens/specify-editor.webp",
+      "source": "https://specify.app",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/mamma-record.webp",
+      "source": "https://app.mamma.im/record",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/mamma-feeding.webp",
+      "source": "https://app.mamma.im/record/new/feeding",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/petty-home.webp",
+      "source": "https://app.petty.im/home",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/petty-story.webp",
+      "source": "https://app.petty.im/stories/profile",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/profile-avatar.webp",
+      "source": "User-provided profile photograph",
+      "kind": "optimized-profile-crop",
+      "note": "724 × 724 crop matches the previously displayed circular portrait. Original retained as profile-portrait.webp."
     }
   ]
 }

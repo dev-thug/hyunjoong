@@ -98,11 +98,11 @@ test("makes the authored leverage philosophy concrete in bilingual profile copy"
   );
   assert.equal(
     enDictionary.hero.meta_description,
-    "Portfolio and technical writing by software engineer Hyunjoong Kim, focused on software that creates leverage for businesses.",
+    "Hyunjoong Kim is a software engineer and founder of Specify. He independently operates Specify, Mamma, and Petty, and writes about building software products.",
   );
   assert.equal(
     koDictionary.hero.meta_description,
-    "사업에 도움이 되는 소프트웨어를 만드는 엔지니어 김현중의 포트폴리오와 기술 블로그.",
+    "소프트웨어 엔지니어이자 Specify 창업자인 김현중이 Specify·맘마·페티를 1인으로 운영하며 제품과 소프트웨어 개발 경험을 기록합니다.",
   );
   assert.equal(koDictionary.profile.intro_heading_prefix, "더 큰 일을 가능하게 하는 ");
   assert.equal(koDictionary.profile.intro_heading_emphasis, "소프트웨어");
@@ -162,11 +162,11 @@ test("makes the authored leverage philosophy concrete in bilingual profile copy"
   );
   assert.equal(
     koProfile.currentFocus.description,
-    "지금은 제품 개발과 기술 방향, AWS 클라우드 시스템을 함께 다루는 일에 집중하고 있습니다.",
+    "Specify·맘마·페티를 1인으로 운영하며, 기획·디자인·개발·마케팅·영업을 연결해 서비스가 실제 사업 성과로 이어지도록 만들고 있습니다.",
   );
   assert.equal(
     enProfile.currentFocus.description,
-    "Right now, I work across product development, technical direction, and AWS cloud systems.",
+    "I run Specify, Mamma, and Petty independently, connecting product planning, design, development, marketing, and sales to turn services into business results.",
   );
 
   const retiredGenericPhrases =

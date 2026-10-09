@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/IntentLink";
 import Image from "next/image";
 import type { Project } from "@/types";
 import { ArrowUpRight } from "lucide-react";
@@ -8,7 +8,6 @@ interface ProjectCardProps {
   index: number;
   lang: string;
   caseStudyLabel: string;
-  viewProjectAriaTemplate: string;
 }
 
 const ProjectCard = ({
@@ -16,13 +15,11 @@ const ProjectCard = ({
   index,
   lang,
   caseStudyLabel,
-  viewProjectAriaTemplate,
 }: ProjectCardProps) => {
   return (
     <Link
       href={`/${lang}/projects/${project.slug}`}
       className="group relative w-full border-t border-white/10 pt-6 md:pt-12 pb-12 md:pb-24 transition-all duration-700 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/20 outline-none block cursor-pointer"
-      aria-label={viewProjectAriaTemplate.replace("{title}", project.title)}
     >
       <div className="flex flex-col lg:flex-row gap-6 md:gap-10 lg:gap-16">
         {/* 콘텐츠 영역 */}
@@ -31,19 +28,19 @@ const ProjectCard = ({
             {/* 메타 정보 */}
             <div className="flex items-center gap-2 md:gap-4 mb-4 md:mb-8">
               <span
-                className="text-[10px] md:text-xs font-mono text-gray-400"
+                className="shrink-0 whitespace-nowrap text-[10px] md:text-xs font-mono text-gray-400"
                 aria-hidden="true"
               >
                 NO. {String(index + 1).padStart(2, "0")}
               </span>
-              <div className="h-px w-8 md:w-12 bg-gray-800" />
+              <div className="h-px w-8 md:w-12 shrink-0 bg-gray-800" />
               <span className="text-[10px] md:text-xs font-mono text-gray-400 uppercase tracking-widest truncate">
                 {project.highlight}
               </span>
             </div>
 
             {/* 타이틀 */}
-            <h3 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-thin font-montserrat text-white mb-4 md:mb-8 leading-[1.08] md:leading-[1] tracking-tight break-keep mix-blend-screen group-hover:mix-blend-normal transition-all duration-500">
+            <h3 className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-light font-montserrat text-white mb-4 md:mb-8 leading-[1.08] md:leading-[1] tracking-tight break-keep mix-blend-screen group-hover:mix-blend-normal transition-all duration-500">
               <span className="inline-block group-hover:translate-x-1 md:group-hover:translate-x-2 transition-transform duration-700">
                 {project.title}
               </span>
@@ -60,7 +57,7 @@ const ProjectCard = ({
             className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3"
             aria-label={lang === "ko" ? "프로젝트 기술 태그" : "Project tags"}
           >
-            {project.tags.slice(0, 6).map((tag) => (
+            {project.tags.slice(0, 7).map((tag) => (
               <span
                 key={tag}
                 className="glass-panel px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-gray-300 hover:text-white transition-colors bg-noise"
@@ -72,7 +69,7 @@ const ProjectCard = ({
         </div>
 
         {/* 이미지 영역 */}
-        <div className="lg:w-7/12 order-1 lg:order-2 relative aspect-[16/10] overflow-hidden rounded-lg md:rounded-sm group-hover:rounded-xl md:group-hover:rounded-2xl transition-all duration-700">
+        <div className="w-full lg:w-7/12 self-start order-1 lg:order-2 relative  overflow-hidden rounded-lg md:rounded-sm group-hover:rounded-xl md:group-hover:rounded-2xl transition-all duration-700" style={{ aspectRatio: project.slug === "genomic-prediction-app" ? "1440 / 804" : "16 / 10" }}>
           <div className="absolute inset-0 bg-gray-900">
             <Image
               src={project.image}
@@ -82,15 +79,15 @@ const ProjectCard = ({
                   : `Showcase image for ${project.title}`
               }
               fill
-              sizes="(max-width: 1024px) 100vw, (max-width: 1400px) 58vw, 780px"
+              sizes="(max-width: 767px) calc(100vw - 2rem), (max-width: 1023px) calc(100vw - 3rem), (max-width: 1399px) calc(58.333vw - 65px), 752px"
               loading="lazy"
-              className="object-contain group-hover:scale-[1.02] transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className={"object-cover " + " md:grayscale md:opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.02] group-focus-visible:grayscale-0 group-focus-visible:opacity-100 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"}
             />
           </div>
 
           {/* Case Study 버튼 - 태블릿 이상에서만 */}
-          <div className="hidden md:block absolute top-0 right-0 p-0 overflow-hidden">
-            <div className="glass-panel bg-noise border-t-0 border-r-0 border-white/20 rounded-bl-2xl lg:rounded-bl-3xl p-4 lg:p-6 translate-x-full -translate-y-full group-hover:translate-x-0 group-hover:translate-y-0 transition-transform duration-500 delay-100 flex flex-col items-center gap-2">
+          <div className="hidden md:block absolute top-0 right-0 z-20 p-0 overflow-hidden pointer-events-none">
+            <div className="glass-panel bg-noise bg-white/10 border-t-0 border-r-0 border-white/20 rounded-bl-2xl lg:rounded-bl-3xl p-4 lg:p-6 opacity-0 translate-x-full -translate-y-full group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:translate-y-0 transition-all duration-500 delay-100 flex flex-col items-center gap-2">
               <span className="text-[9px] lg:text-[10px] font-bold uppercase tracking-widest text-white writing-vertical">
                 {caseStudyLabel}
               </span>
@@ -101,13 +98,13 @@ const ProjectCard = ({
           </div>
 
           {/* 모바일 Case Study 버튼 */}
-          <div className="md:hidden absolute bottom-3 right-3">
+          <div className="md:hidden absolute bottom-3 right-3 z-20">
             <div className="bg-white text-black p-2 rounded-full">
               <ArrowUpRight size={16} />
             </div>
           </div>
 
-          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-opacity duration-700 pointer-events-none" />
         </div>
       </div>
     </Link>

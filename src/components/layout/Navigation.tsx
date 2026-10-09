@@ -8,7 +8,7 @@ import {
 } from "@/constants";
 import type { Locale } from "@/i18n-config";
 import { Menu, X } from "lucide-react";
-import Link from "next/link";
+import Link from "@/components/IntentLink";
 import { usePathname } from "next/navigation";
 import {
   useEffect,
@@ -151,8 +151,9 @@ const Navigation = ({
         <div className="flex justify-between items-center">
           <Link
             href={`/${lang}`}
+            prefetch={pathname === `/${lang}` ? false : undefined}
             className="text-xs font-bold font-montserrat tracking-[0.3em] mix-blend-difference z-50 animate-fade-up delay-0 hover:scale-105 active:scale-95 transition-all duration-300 inline-block"
-            aria-label={ariaLabels.home}
+            aria-label={BRAND.NAME + " — " + ariaLabels.home}
           >
             {BRAND.NAME}
           </Link>
@@ -167,6 +168,7 @@ const Navigation = ({
               <Link
                 key={link.href}
                 href={link.href}
+                prefetch={pathname === link.href ? false : undefined}
                 aria-current={pathname === link.href ? "page" : undefined}
                 className="hover:text-white transition-colors relative group"
               >
@@ -178,7 +180,7 @@ const Navigation = ({
               href={contactHref}
               aria-current={pathname === contactHref ? "page" : undefined}
               className="px-5 py-2 border border-white/20 rounded-full hover:bg-white hover:text-black transition-all duration-300"
-              aria-label={ariaLabels.contact}
+              aria-label={navLabels.contact + " — " + ariaLabels.contact}
             >
               {navLabels.contact}
             </Link>
@@ -207,17 +209,19 @@ const Navigation = ({
         ref={dialogRef}
         id="mobile-navigation-menu"
         role="dialog"
+        style={{ justifyContent: "safe center" }}
         aria-modal="true"
         aria-label={ariaLabels.mobileNavigation}
         aria-hidden={!isMobileMenuOpen}
         hidden={!isMobileMenuOpen}
         onKeyDown={handleDialogKeyDown}
-        className="fixed inset-0 z-40 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center space-y-8 md:hidden"
+        className="fixed inset-0 z-40 overflow-y-auto bg-black/90 backdrop-blur-xl flex flex-col items-center gap-6 px-6 py-24 md:hidden"
       >
         {navLinks.map((link, index) => (
           <Link
             key={link.href}
             href={link.href}
+                prefetch={pathname === link.href ? false : undefined}
             ref={index === 0 ? firstMobileLinkRef : undefined}
             aria-current={pathname === link.href ? "page" : undefined}
             onClick={onCloseMobileMenu}

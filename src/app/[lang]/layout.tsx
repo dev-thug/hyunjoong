@@ -13,13 +13,14 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "600"],
+  weight: "variable",
 });
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
+  display: "optional",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700", "900"],
+  weight: "variable",
 });
 
 const notoSansKr = Noto_Sans_KR({
@@ -101,9 +102,12 @@ export default async function LangLayout({
       <body
         className={`${inter.variable} ${montserrat.variable} ${notoSansKr.variable} antialiased`}
       >
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-5 focus:py-3 focus:text-sm focus:text-black">
+          {lang === "ko" ? "본문으로 바로가기" : "Skip to main content"}
+        </a>
         <GlobalNavigationWrapper lang={lang} />
         {children}
-        <SpeedInsights />
+        {process.env.VERCEL_ENV === "production" && <SpeedInsights />}
       </body>
     </html>
   );

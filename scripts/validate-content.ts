@@ -1,3 +1,4 @@
+import { parseContentDate } from "../src/lib/content-date";
 import { promises as fs } from "fs";
 import path from "path";
 
@@ -261,6 +262,10 @@ const validateProjectFile = async (
         message: `${field} 필드는 비어 있으면 안 됩니다.`,
       });
     }
+  }
+
+  if (/\bupdatedAt\s*:/.test(metadataBlock) && !parseContentDate(parseStringField(metadataBlock, "updatedAt"))) {
+    issues.push({ filePath: relativePath, level: "ERROR", message: "updatedAt must be a valid ISO calendar date (YYYY-MM-DD)." });
   }
 
   const lang = parseStringField(metadataBlock, "lang");

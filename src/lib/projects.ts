@@ -1,3 +1,4 @@
+import { parseContentDate } from "@/lib/content-date";
 import { promises as fs } from "fs";
 import path from "path";
 import { cache } from "react";
@@ -25,6 +26,7 @@ interface ParsedProjectMetadata {
   highlight?: string;
   serviceUrl?: string;
   image?: string;
+  updatedAt?: string;
   lang?: string;
   tags?: string[];
   metrics?: ProjectMetric[];
@@ -95,6 +97,7 @@ const parseMetadataFromContent = (
     highlight: parseQuotedString(block, "highlight"),
     serviceUrl: parseQuotedString(block, "serviceUrl"),
     image: parseQuotedString(block, "image"),
+    updatedAt: parseContentDate(parseQuotedString(block, "updatedAt")),
     lang: parseQuotedString(block, "lang"),
     tags: parseStringArray(block, "tags") ?? [],
     metrics: parseMetricsArray(block),
@@ -111,6 +114,21 @@ const hasRequiredProjectFields = (
   });
 };
 
+/** Read a validated project source for metadata and section navigation. */
+export const getProjectSourceBySlug = cache(
+  async (slug: string, lang: string): Promise<string | null> => {
+    if (!CONTENT_SLUG_REGEX.test(slug) || !isContentLang(lang)) return null;
+    for (const extension of ["mdx", "md"]) {
+      try {
+        return await fs.readFile(path.join(PROJECTS_DIRECTORY, `${slug}.${lang}.${extension}`), "utf8");
+      } catch {
+        // Support legacy .md projects as well as MDX.
+      }
+    }
+    return null;
+  }
+);
+
 /**
  * 슬러그와 언어로 특정 프로젝트 가져오기
  */
@@ -120,16 +138,9 @@ export const getProjectBySlug = cache(
       return null;
     }
 
-    const mdxPath = path.join(PROJECTS_DIRECTORY, `${slug}.${lang}.mdx`);
-    const mdPath = path.join(PROJECTS_DIRECTORY, `${slug}.${lang}.md`);
-
     try {
-      let fileContents: string;
-      try {
-        fileContents = await fs.readFile(mdxPath, "utf8");
-      } catch {
-        fileContents = await fs.readFile(mdPath, "utf8");
-      }
+      const fileContents = await getProjectSourceBySlug(slug, lang);
+      if (!fileContents) return null;
       const metadata = parseMetadataFromContent(fileContents);
 
       if (!metadata || !hasRequiredProjectFields(metadata)) {
@@ -148,6 +159,7 @@ export const getProjectBySlug = cache(
         highlight: metadata.highlight,
         serviceUrl: metadata.serviceUrl ?? undefined,
         image: metadata.image,
+        updatedAt: metadata.updatedAt,
         lang: lang as Locale,
         tags: metadata.tags ?? [],
         metrics: metadata.metrics ?? [],

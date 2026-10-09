@@ -1,45 +1,68 @@
 export const metadata = {
+  updatedAt: "2026-10-09",
   id: "p2",
-  title: "Mamma — Record-Aware Parenting Agent",
-  adCopy: "Connect everyday care logs, growth reports, and record-aware MammaTalk conversations.",
-  description: "A parenting app with child-specific care logs, live timers, growth reports, and developmental checklists. MammaTalk uses age and saved records to support conversations, with apps for iOS and Android.",
+  title: "Mamma — A Parenting App That Understands Care Records",
+  adCopy: "Make everyday care logs useful when families need to understand their child.",
+  description: "Mamma brings care logs, timers, growth reports, and developmental checklists together. MammaTalk uses the child’s age and saved records as conversation context. I develop and operate the web, iOS, and Android experiences independently.",
   highlight: "Mamma · Parenting Agent · 2026",
   image: "/images/projects/mamma-cover.webp",
   serviceUrl: "https://mamma.im",
-  tags: ["Next.js", "TypeScript", "AWS Amplify Gen2", "Expo", "TanStack Query", "AI Agents"],
+  tags: ["Next.js", "TypeScript", "Serverless", "Expo", "TanStack Query", "AI Agents"],
   metrics: [
-    { label: "Care logs", value: "12+ types" },
-    { label: "Apps", value: "iOS · Android" },
-    { label: "AI assistant", value: "MammaTalk" },
+    { label: "Development", value: "Solo founder" },
+    { label: "Platforms", value: "Web · iOS · Android" },
+    { label: "Core experience", value: "Care logs → MammaTalk" },
   ],
   lang: "en",
 };
 
-## Care records as conversation context
+## The value comes after the record
 
-Mamma reduces the need to repeatedly explain a child's situation. Child-specific feeding, sleep, diaper, and growth records provide context for MammaTalk alongside the child's age.
+A care log becomes useful when a parent needs to find something again: the last feeding time, a recent sleep pattern, or a developmental item worth checking. Saving the data is only the first step.
 
-## Current features
+Mamma starts with these everyday questions. Quick logs feed into timers, reports, and MammaTalk conversations. I work on planning, design, web and mobile development, and operations as a solo founder.
 
-- **Quick logs:** More than 12 care categories, including temperature and medication
-- **Timers:** Track ongoing feeding and sleep sessions
-- **Reports:** Height, weight, and care statistics over time
-- **Development:** Age-based checklists
-- **Multiple children:** Separate profiles and records
-- **MammaTalk:** AI conversations grounded in saved records
+## Quick input, separate records for each child
 
-## Web and mobile architecture
+Parents can record feeding, sleep, diapers, temperature, medication, bathing, and other care activities. Timers track ongoing sessions, while reports bring together growth measurements and statistics over time.
 
-The product uses a Next.js, React, and TypeScript web app with an AWS Amplify Gen2 backend. TanStack Query manages server state. An Expo native shell connects the web product to the iOS and Android experience.
+Each child has a separate profile so records and growth information stay distinct. Developmental checklists are organized around age and can be reviewed alongside previous records.
 
-## App screens
+Community and the play map serve different needs from quick logging. They have their own space for sharing experiences and finding places to visit, rather than interrupting the recording flow.
 
-<ImageGallery columns={3} images={[
-  { src: "/images/projects/mamma-record.webp", alt: "Mamma daily care records", caption: "Daily care records" },
-  { src: "/images/projects/mamma-chat.webp", alt: "MammaTalk conversation screen", caption: "Record-aware conversations" },
-  { src: "/images/projects/mamma-growth.webp", alt: "Mamma growth report", caption: "Growth trends and reports" }
+## How MammaTalk reads care records
+
+An assistant should not make parents explain everything again when the app already holds the relevant records. MammaTalk receives recent records and developmental context for the selected child, with tools available to look up more detail.
+
+The server verifies the user’s access and fixes the child scope before reading records. Notes inside those records are treated as user data, not instructions for the agent.
+
+The current local implementation uses Amazon Bedrock and the Amplify conversation runtime. My focus is on connecting answers to the available context and making the next thing to check understandable.
+
+## One product across web and mobile
+
+The Next.js web app connects to an AWS serverless backend. TanStack Query manages server data, while user and child changes clear the state that should no longer remain on screen.
+
+An Expo native shell hosts the web experience. Device features connect through a bridge, and frequently visited tabs preserve their screens and scroll position. Shared flows remain in the web product, with native capabilities added where needed.
+
+## Live recording screens
+
+Captured in the current Korean app, showing how care records are reviewed and entered. Open either image to view the original.
+
+<ProjectScreenshots lang="en" images={[
+  {
+    "src": "/images/projects/screens/mamma-record.webp",
+    "alt": "Mamma live daily records",
+    "caption": "Daily summary, quick logging, and the timeline.",
+    "width": 380,
+    "height": 675
+  },
+  {
+    "src": "/images/projects/screens/mamma-feeding.webp",
+    "alt": "Mamma live feeding entry",
+    "caption": "Selecting feeding type, duration, and the child’s state.",
+    "width": 380,
+    "height": 675
+  }
 ]} />
 
-[Visit Mamma](https://mamma.im)
-
-_Updated October 9, 2026, using public features and current web and native repository documentation. Screenshots show the Korean app._
+[Try Mamma](https://mamma.im)

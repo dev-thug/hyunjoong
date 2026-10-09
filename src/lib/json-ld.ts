@@ -16,6 +16,30 @@ export const safeJsonLdStringify = (value: unknown): string => {
 
 const withoutTrailingSlash = (value: string): string => value.replace(/\/+$/, "");
 
+export interface BreadcrumbItem {
+  readonly name: string;
+  readonly path: string;
+}
+
+export const buildBreadcrumbSchema = (baseUrl: string, items: readonly BreadcrumbItem[]) => {
+  const origin = withoutTrailingSlash(baseUrl);
+  for (const item of items) {
+    if (!item.path.startsWith("/") || item.path.startsWith("//")) {
+      throw new TypeError("Breadcrumb paths must be site-relative paths.");
+    }
+  }
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: origin + item.path,
+    })),
+  };
+};
+
 export const buildSitePerson = (baseUrl: string, lang: Locale = "en") => {
   const normalizedBaseUrl = withoutTrailingSlash(baseUrl);
   const profile = getPublicProfile(lang);
@@ -27,9 +51,22 @@ export const buildSitePerson = (baseUrl: string, lang: Locale = "en") => {
     name: profile.name,
     alternateName: profile.alternateName,
     url: normalizedBaseUrl,
-    image: `${normalizedBaseUrl}/images/profile-photo.png`,
+    image: `${normalizedBaseUrl}/images/profile-portrait.webp`,
     jobTitle: profile.jobTitle,
     description: profile.description,
+    mainEntityOfPage: normalizedBaseUrl + "/" + lang + "/profile",
+    affiliation: {
+      "@type": "Organization",
+      "@id": "https://specify.app/#organization",
+      name: "Specify",
+      url: "https://specify.app",
+      founder: { "@id": normalizedBaseUrl + "/#person" },
+    },
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: lang === "ko" ? "금오공과대학교" : "Kumoh National Institute of Technology",
+      url: "https://www.kumoh.ac.kr/",
+    },
     homeLocation: {
       "@type": "Place",
       name: PUBLIC_PROFILE.location.name,

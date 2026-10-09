@@ -19,3 +19,8 @@ export const assertStaticHomeRoutes = (manifest: PrerenderManifest): void => {
     );
   }
 };
+
+export const assertStaticContentRoutes = (manifest: PrerenderManifest, paths: readonly string[]): void => {
+  const missing = paths.filter(path => manifest.routes?.[path]?.compute !== "static");
+  if (missing.length) throw new Error("Published content must be statically prerendered: " + missing.join(", "));
+};

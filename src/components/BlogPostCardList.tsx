@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/IntentLink";
 import { ArrowRight } from "lucide-react";
 
 import type { Post } from "@/types";
@@ -42,7 +42,7 @@ const BlogPostCardList = ({
         >
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <span className="text-xs font-mono text-gray-600">
+              <span className="text-xs font-mono text-gray-400">
                 {String(idx + startIndex + 1).padStart(2, "0")}
               </span>
               <span
@@ -54,7 +54,7 @@ const BlogPostCardList = ({
               </span>
             </div>
 
-            <span className="text-xs font-mono text-gray-500">
+            <span className="text-xs font-mono text-gray-400">
               {post.date} · {post.readTime}
             </span>
           </div>
@@ -63,10 +63,10 @@ const BlogPostCardList = ({
             {post.title}
           </h2>
 
-          <p className="text-gray-500 mt-2 line-clamp-2">{post.excerpt}</p>
+          <p className="text-gray-400 mt-2 line-clamp-2">{post.excerpt}</p>
 
           <div className="flex justify-end mt-4">
-            <span className="inline-flex items-center gap-2 text-sm text-gray-500 group-hover:text-white transition-colors">
+            <span className="inline-flex items-center gap-2 text-sm text-gray-400 group-hover:text-white transition-colors">
               {readMoreLabel}
               <ArrowRight
                 size={14}

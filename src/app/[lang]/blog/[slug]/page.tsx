@@ -1,3 +1,6 @@
+import RelatedContent from "@/components/layout/RelatedContent";
+import { getRelatedProjectsForPost } from "@/lib/related-content";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import type { ComponentType } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -109,7 +112,6 @@ export default async function BlogPostPage({
   searchParams,
 }: BlogPostPageProps) {
   const { lang, slug } = await params;
-  const resolvedSearchParams = searchParams ? await searchParams : {};
 
   const [dict, post] = await Promise.all([
     getDictionary(lang as Locale),
@@ -122,15 +124,16 @@ export default async function BlogPostPage({
       getPostBySlug(slug, "en"),
     ]);
 
-    const availableLang = koPost ? "ko" : enPost ? "en" : null;
+    const availableLang = koPost && !koPost.hidden ? "ko" : enPost && !enPost.hidden ? "en" : null;
     if (!availableLang) {
       notFound();
     }
+    const resolvedSearchParams = searchParams ? await searchParams : {};
     const queryString = toQueryString(resolvedSearchParams);
     redirect(`/${availableLang}/blog/${slug}${queryString}`);
   }
 
-  const allPosts = await getAllPosts(lang);
+  const [allPosts, relatedProjects] = await Promise.all([getAllPosts(lang), getRelatedProjectsForPost(slug, post.lang)]);
   const postSource = await getPostSourceBySlug(slug, lang);
   const tocItems = postSource ? extractTocItems(postSource) : [];
 
@@ -182,17 +185,7 @@ export default async function BlogPostPage({
       <article id="blog-post-content" className="min-w-0">
         {/* 헤더 */}
         <header className="mb-12">
-          <Link
-            href={`/${lang}/blog`}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
-            tabIndex={0}
-            aria-label={dict.blog.back_to_blog}
-          >
-            <ArrowLeft size={16} />
-            <span className="text-sm font-mono uppercase tracking-widest">
-              {dict.blog.back_to_blog}
-            </span>
-          </Link>
+          <Breadcrumbs lang={post.lang} items={[{ name: lang === "ko" ? "홈" : "Home", path: "/" + lang }, { name: lang === "ko" ? "기술 블로그" : "Blog", path: "/" + lang + "/blog" }, { name: post.title, path: "/" + post.lang + "/blog/" + slug }]} />
 
           <div className="flex items-center gap-4 mb-4">
             <span
@@ -206,8 +199,8 @@ export default async function BlogPostPage({
             >
               {post.category}
             </span>
-            <span className="text-sm text-gray-500 font-mono">
-              {post.date} · {post.readTime} {dict.blog.read_time}
+            <span className="text-sm text-gray-400 font-mono">
+              <time dateTime={post.date}>{post.date}</time> · {post.readTime} {dict.blog.read_time}
             </span>
           </div>
 
@@ -219,6 +212,10 @@ export default async function BlogPostPage({
             {post.excerpt}
           </p>
 
+          <p className="mt-5 text-sm text-zinc-400">
+            {lang === "ko" ? "작성자 " : "By "}
+            <Link href={"/" + post.lang + "/profile"} className="rounded text-zinc-200 hover:text-white focus-visible:ring-2 focus-visible:ring-white/40">{jsonLd.author.name}</Link>
+          </p>
           <hr className="border-gray-800 mt-8" />
         </header>
 
@@ -241,8 +238,11 @@ export default async function BlogPostPage({
         {/* 댓글 */}
         <Giscus lang={lang as 'ko' | 'en'} />
 
+        <RelatedContent title={lang === "ko" ? "관련 프로젝트" : "Related projects"}
+          items={relatedProjects.map(project => ({ href: "/" + project.lang + "/projects/" + project.slug, title: project.title, description: project.adCopy }))} />
+
         {/* 네비게이션 */}
-        <nav className="mt-16 pt-8 border-t border-gray-800">
+        <nav aria-label={lang === "ko" ? "블로그 글 탐색" : "Blog post navigation"} className="mt-16 pt-8 border-t border-gray-800">
           <div className="flex justify-between items-center gap-4">
             {prevPost ? (
               <Link
@@ -251,7 +251,7 @@ export default async function BlogPostPage({
                 tabIndex={0}
                 aria-label={`${dict.blog.previous}: ${prevPost.title}`}
               >
-                <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
+                <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
                   <ArrowLeft size={12} />
                   {dict.blog.previous}
                 </span>
@@ -270,7 +270,7 @@ export default async function BlogPostPage({
                 tabIndex={0}
                 aria-label={`${dict.blog.next}: ${nextPost.title}`}
               >
-                <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center justify-end gap-2">
+                <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center justify-end gap-2">
                   {dict.blog.next}
                   <ArrowRight size={12} />
                 </span>

@@ -3,6 +3,7 @@ import test from "node:test";
 import { SOCIAL_LINK_MAP } from "@/constants";
 import {
   buildBlogSchema,
+  buildBreadcrumbSchema,
   buildSitePerson,
   buildWebsiteSchema,
   safeJsonLdStringify,
@@ -23,7 +24,7 @@ test("builds one canonical Korean public Person identity", () => {
     SOCIAL_LINK_MAP.linkedin.href,
     SOCIAL_LINK_MAP.x.href,
   ]);
-  assert.equal(person.image, `${baseUrl}/images/profile-photo.png`);
+  assert.equal(person.image, `${baseUrl}/images/profile-portrait.webp`);
   assert.deepEqual(person.hasOccupation, {
     "@type": "Occupation",
     name: "소프트웨어 엔지니어",
@@ -104,4 +105,17 @@ test("rejects non-serializable JSON-LD root values", () => {
       error instanceof TypeError &&
       error.message === "JSON-LD payload must be serializable."
   );
+});
+
+
+test("breadcrumb schema describes the same canonical path users navigate", () => {
+  const schema = buildBreadcrumbSchema(baseUrl, [
+    { name: "홈", path: "/ko" },
+    { name: "프로젝트", path: "/ko/projects" },
+    { name: "맘마", path: "/ko/projects/mamma" },
+  ]);
+  assert.equal(schema["@type"], "BreadcrumbList");
+  assert.deepEqual(schema.itemListElement.map(item => item.position), [1, 2, 3]);
+  assert.equal(schema.itemListElement[2].item, baseUrl + "/ko/projects/mamma");
+  assert.throws(() => buildBreadcrumbSchema(baseUrl, [{ name: "External", path: "//example.com" }]), /relative/);
 });

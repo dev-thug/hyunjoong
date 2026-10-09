@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, type CSSProperties, type PointerEvent, type ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type PointerEvent, type ReactNode } from 'react';
 import { SPOTLIGHT } from '@/constants';
 
 /**
@@ -13,9 +13,13 @@ interface SpotlightTextProps {
 
 const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
   const decorativeText = typeof children === 'string' ? children : undefined;
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLSpanElement>(null);
   const rafIdRef = useRef<number | null>(null);
   const pendingPositionRef = useRef<{ x: number; y: number } | null>(null);
+
+  useEffect(() => () => {
+    if (rafIdRef.current !== null) window.cancelAnimationFrame(rafIdRef.current);
+  }, []);
 
   const applySpotlightStyle = (x: number, y: number, opacity: number) => {
     if (!containerRef.current) return;
@@ -29,16 +33,18 @@ const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
     rafIdRef.current = window.requestAnimationFrame(() => {
       rafIdRef.current = null;
       const pendingPosition = pendingPositionRef.current;
-      if (!pendingPosition) return;
-      applySpotlightStyle(pendingPosition.x, pendingPosition.y, 1);
+      if (!pendingPosition || !containerRef.current) return;
+      // Read layout once per frame, before writing styles, rather than for
+      // every pointer event (which can arrive faster than display refresh).
+      const rect = containerRef.current.getBoundingClientRect();
+      applySpotlightStyle(pendingPosition.x - rect.left, pendingPosition.y - rect.top, 1);
       pendingPositionRef.current = null;
     });
   };
 
-  const handlePointerMove = (e: PointerEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    pendingPositionRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  const handlePointerMove = (e: PointerEvent<HTMLSpanElement>) => {
+    if (e.pointerType === "touch" || !containerRef.current) return;
+    pendingPositionRef.current = { x: e.clientX, y: e.clientY };
     scheduleSpotlightUpdate();
   };
 
@@ -73,7 +79,7 @@ const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
   };
 
   return (
-    <div
+    <span
       ref={containerRef}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
@@ -101,7 +107,7 @@ const SpotlightText = ({ children, className = '' }: SpotlightTextProps) => {
       >
         {decorativeText === undefined ? children : null}
       </span>
-    </div>
+    </span>
   );
 };
 

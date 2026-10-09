@@ -42,10 +42,21 @@ export const toHeadingId = (value: string): string => {
   return normalized || "section";
 };
 
+/** Each document owns its counter, including during concurrent server rendering. */
+export const createHeadingIdGenerator = () => {
+  const counts = new Map<string, number>();
+  return (text: string): string => {
+    const baseId = toHeadingId(text);
+    const count = (counts.get(baseId) ?? 0) + 1;
+    counts.set(baseId, count);
+    return count === 1 ? baseId : `${baseId}-${count}`;
+  };
+};
+
 export const extractTocItems = cache((source: string): TocItem[] => {
   const lines = source.split(/\r?\n/);
   const tocItems: TocItem[] = [];
-  const idCounts = new Map<string, number>();
+  const getHeadingId = createHeadingIdGenerator();
 
   let activeFenceMarker: string | null = null;
 
@@ -87,11 +98,7 @@ export const extractTocItems = cache((source: string): TocItem[] => {
       continue;
     }
 
-    const baseId = toHeadingId(text);
-    const nextCount = (idCounts.get(baseId) ?? 0) + 1;
-    idCounts.set(baseId, nextCount);
-
-    const id = nextCount === 1 ? baseId : `${baseId}-${nextCount}`;
+    const id = getHeadingId(text);
     tocItems.push({ id, text, level });
   }
 

@@ -1,41 +1,70 @@
 export const metadata = {
+  updatedAt: "2026-10-09",
   id: "p1",
-  title: "Specify — Developer Documentation Automation",
-  adCopy: "Connect code changes to documentation, with evidence and updates your team can review.",
-  description: "An AI documentation product connecting GitHub repositories with developer docs and team knowledge. Retrieval and code-change analysis support API guides, onboarding docs, and ADRs.",
+  title: "Specify — Keeping Documentation in Step with Code",
+  adCopy: "Built to reduce the searching and updating that follows a code change.",
+  description: "Specify grew from my experience spending about four hours aligning documents after a feature change during medical-device software certification preparation. It connects GitHub changes with the relevant developer documents and prepares updates.",
   highlight: "Specify · AI Documentation · 2026",
   image: "/images/projects/specify-cover.webp",
   serviceUrl: "https://specify.app/en",
-  tags: ["GitHub", "RAG", "AI Agents", "AWS", "Amazon Bedrock"],
+  tags: ["Next.js", "Yjs", "TipTap", "RAG", "Serverless", "MCP", "Amazon Bedrock"],
   metrics: [
-    { label: "Source", value: "GitHub" },
-    { label: "Grounding", value: "RAG" },
-    { label: "Updates", value: "Evidence & review" },
+    { label: "Development", value: "Solo founder" },
+    { label: "Starting point", value: "GitHub changes" },
+    { label: "Document workflow", value: "Find · update · review" },
   ],
   lang: "en",
 };
 
-## Closing the gap between code and documentation
+## Half a day of document work after one feature change
 
-Specify addresses a familiar engineering problem: code changes while API guides and onboarding docs drift behind. The product brings drafting and change review into one workflow.
+At a medical-device software startup, I worked on both development and certification preparation. For more than six months, I helped structure, write, and maintain documentation against development standards.
 
-## Workflow
+The hardest part was not starting a document. It was **keeping several documents aligned with code that kept changing**.
 
-1. Connect a GitHub repository and project documents.
-2. Retrieve team knowledge to ground document drafts.
-3. Read code changes and identify affected documents.
-4. Review the evidence and proposed differences.
+After a feature changed, I had to find the relevant documents, identify the affected passages, and check whether the same explanation appeared elsewhere. When someone else had written a document, finding it could be a task in itself.
 
-## Engineering focus
+For one feature change, this work took **about four hours**. Finishing the code meant starting a separate round of documentation work.
 
-Developer documents and team knowledge form the retrieval corpus. Code is read directly from the repository. Keeping these inputs distinct makes the supporting sources easier to inspect.
+## The same search happened after every change
 
-New projects begin without automatic application. Subsequent updates follow project settings and policy, keeping evidence and review central to the experience.
+A carefully written document still needed checking after the next update. Maintenance depended on the person who knew where it lived and why it had been written. When that person changed, the search started again.
 
-## Applications
+Developers in other small teams described similar pressure in conversations: little time to write documentation, updates only when something was urgently needed, or development continuing without enough documentation.
 
-API references, integration guides, architecture decision records, onboarding manuals, and release notes.
+The problem I wanted to address became concrete: **find the related documents, locate the passages that need changing, and bring them back into line with the code**.
 
-[Current product](https://specify.app/en) · [Documentation](https://docs.specify.app)
+## Making code changes the starting point
 
-_Updated October 9, 2026, against the public product description._
+I built Specify from that experience. It connects GitHub changes with a team's developer documents to reduce the maintenance work that follows a code update.
+
+The workflow has four steps.
+
+1. **Connect the sources.** Bring together a GitHub repository, existing documents, and product information.
+2. **Read the change.** Analyze what changed when code is pushed.
+3. **Find the affected documents.** Locate relevant passages and prepare updates in their existing context.
+4. **Review and apply.** Inspect the evidence and proposed changes. Automatic application follows the project's settings.
+
+Existing material is retrieved through RAG to provide context for drafting and updating documents. API references, internal wikis, onboarding guides, and release notes can all be affected by the same code change.
+
+## One change makes the problem easier to see
+
+Suppose a webhook policy changes from three retries to five. The code may be complete, but if the integration guide still says “three retries,” the next developer will work from the old policy.
+
+Someone needs to find that explanation, compare it with the updated code, and correct it. I am building Specify to continue that work from the code change itself.
+
+The screenshot below shows a manually written retry-policy demo document in the live editor. It illustrates editing, document status, and sharing controls; it is not a screenshot of an automatically applied update.
+
+<ProjectScreenshots lang="en" images={[
+  {
+    "src": "/images/projects/screens/specify-editor.webp",
+    "alt": "Live Specify editor with a retry-policy demo document",
+    "caption": "A manually written retry-policy example in the production editor. The interface is in Korean.",
+    "width": 1280,
+    "height": 650
+  }
+]} />
+
+Documentation changes alongside code, both during certification preparation and throughout product maintenance. I want the searching and comparison I experienced to become work a team does not have to restart after every update.
+
+[Try Specify](https://specify.app/en) · [Product documentation](https://docs.specify.app)

@@ -7,21 +7,21 @@
   --heading-decorative-opacity: 0.4;
   /* Section background decorative text (e.g. Projects "WORKS"); purely visual */
   --heading-decorative-bg-opacity: 0.1;
-  --font-korean-system: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+  --font-korean-system: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR";
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter), var(--font-noto-sans-kr), var(--font-korean-system);
+  --font-sans: var(--font-inter), var(--font-korean-system), var(--font-noto-sans-kr), system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    var(--font-noto-sans-kr), var(--font-korean-system), monospace;
+    var(--font-korean-system), var(--font-noto-sans-kr), monospace;
   /* Intentionally re-exposes the Next.js font CSS variable as a Tailwind v4 design token */
   --font-montserrat: var(--font-montserrat);
 }
 
 body {
-  font-family: var(--font-inter), var(--font-noto-sans-kr), var(--font-korean-system);
+  font-family: var(--font-inter), var(--font-korean-system), var(--font-noto-sans-kr), system-ui, sans-serif;
   background-color: #050505;
   color: #ffffff;
   overflow-x: hidden;
@@ -75,7 +75,7 @@ body {
 
 /* Font Classes */
 .font-montserrat {
-  font-family: var(--font-montserrat), var(--font-noto-sans-kr), sans-serif;
+  font-family: var(--font-montserrat), var(--font-korean-system), var(--font-noto-sans-kr), sans-serif;
 }
 
 .spotlight-copy::before {
@@ -287,5 +287,39 @@ body {
   }
   .heading-decorative, .heading-decorative-bg {
     color: #000000 !important;
+  }
+}
+
+/* A calmer reading rhythm for project case studies, without changing blog prose. */
+.project-prose h2 {
+  margin-top: 3.5rem;
+  margin-bottom: 1.25rem;
+  font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+  font-weight: 500;
+  line-height: 1.5;
+  scroll-margin-top: 7rem;
+}
+.project-prose h3 {
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  scroll-margin-top: 7rem;
+}
+.project-prose p,
+.project-prose li {
+  font-size: 1rem;
+  line-height: 1.95;
+  color: #c4c4cc;
+}
+.project-prose > h2:first-child {
+  margin-top: 0;
+}
+.project-prose li + li {
+  margin-top: 0.65rem;
+}
+@media (min-width: 768px) {
+  .project-prose p,
+  .project-prose li {
+    font-size: 1.0625rem;
   }
 }

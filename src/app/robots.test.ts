@@ -14,7 +14,7 @@ const withVercelEnv = (value: string | undefined, run: () => void) => {
   }
 };
 
-test("allows production crawling without hiding noindex query pages", () => {
+test("keeps production crawl access public without inventing bot-specific policy", () => {
   withVercelEnv("production", () => {
     const result = robots();
     assert.deepEqual(result.rules, [{ userAgent: "*", allow: "/" }]);
@@ -22,9 +22,10 @@ test("allows production crawling without hiding noindex query pages", () => {
   });
 });
 
-test("blocks non-production deployments from indexing", () => {
+test("keeps previews crawlable so noindex headers can be observed", () => {
   withVercelEnv("preview", () => {
     const result = robots();
-    assert.deepEqual(result.rules, [{ userAgent: "*", disallow: "/" }]);
+    assert.deepEqual(result.rules, [{ userAgent: "*", allow: "/" }]);
+    assert.equal(result.sitemap, undefined);
   });
 });

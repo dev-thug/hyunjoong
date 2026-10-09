@@ -131,6 +131,9 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
         message: dict.error,
         fieldErrors,
       });
+      const firstInvalidField = Object.keys(fieldErrors)[0];
+      const control = form.elements.namedItem(firstInvalidField);
+      if (control instanceof HTMLElement) control.focus();
       return;
     }
 
@@ -195,6 +198,7 @@ const ContactForm = ({ dict, lang }: ContactFormProps) => {
 
     return (
       <p
+        role={error ? "alert" : undefined}
         id={createContactFieldErrorId(field)}
         className={createFieldErrorClassName(Boolean(error))}
       >

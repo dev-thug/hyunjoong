@@ -32,7 +32,6 @@ const ProjectsSection = async ({ dict, lang }: ProjectsSectionProps) => {
               index={index}
               lang={lang}
               caseStudyLabel={dict.projects.case_study}
-              viewProjectAriaTemplate={dict.projects.view_project_aria}
             />
           ))}
         </div>

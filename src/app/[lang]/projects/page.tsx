@@ -1,4 +1,5 @@
-import Link from "next/link";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import Link from "@/components/IntentLink";
 import Image from "next/image";
 import { getAllProjects } from "@/lib/projects";
 import { getDictionary } from "@/get-dictionary";
@@ -43,7 +44,8 @@ export default async function ProjectsPage({
   ]);
 
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
+      <Breadcrumbs lang={lang} items={[{ name: lang === "ko" ? "홈" : "Home", path: "/" + lang }, { name: dict.nav.projects, path: "/" + lang + "/projects" }]} />
       {/* 헤더 */}
       <div className="mb-12 md:mb-16 pt-6 md:pt-8">
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-light font-montserrat heading-decorative select-none">
@@ -61,18 +63,18 @@ export default async function ProjectsPage({
             key={project.id}
             href={`/${lang}/projects/${project.slug}`}
             className="group block p-4 sm:p-8 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-all duration-300"
-            aria-label={dict.projects.view_project_aria.replace("{title}", project.title)}
           >
             <div className="flex flex-col md:flex-row gap-8">
               {/* 이미지 */}
-              <div className="md:w-1/3 aspect-[16/10] rounded-lg overflow-hidden bg-gray-900 relative">
+              <div className="w-full md:w-1/3 self-start  rounded-lg overflow-hidden bg-gray-900 relative" style={{ aspectRatio: project.slug === "genomic-prediction-app" ? "1440 / 804" : "16 / 10" }}>
                 <Image
                   src={project.image}
                   alt={lang === "ko" ? `${project.title} 프로젝트 대표 이미지` : `Showcase image for ${project.title}`}
                   fill
-                  sizes="(max-width: 768px) 100vw, (max-width: 1400px) 33vw, 420px"
-                  preload={idx === 0}
-                  className="object-contain transition-all duration-500"
+                  sizes="(max-width: 767px) calc(100vw - 4rem), (max-width: 1399px) calc(33.333vw - 32px), 420px"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  fetchPriority={idx === 0 ? "high" : undefined}
+                  className={"object-cover " + " md:grayscale group-hover:grayscale-0 group-focus-visible:grayscale-0 transition-all duration-500"}
                 />
               </div>
 
@@ -81,7 +83,7 @@ export default async function ProjectsPage({
                 <div>
                   <div className="flex items-center gap-4 mb-4">
                     <span
-                      className="text-xs font-mono text-gray-600"
+                      className="text-xs font-mono text-gray-400"
                       aria-hidden="true"
                     >
                       {String(idx + 1).padStart(2, "0")}
@@ -110,7 +112,7 @@ export default async function ProjectsPage({
                     ))}
                   </div>
 
-                  <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-gray-500 group-hover:text-white transition-colors">
+                  <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-gray-400 group-hover:text-white transition-colors">
                     {dict.projects.view_project}
                     <ArrowRight
                       size={14}

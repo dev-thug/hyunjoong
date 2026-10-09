@@ -14,3 +14,17 @@ test("keeps the home canonical out of the shared locale layout", () => {
   assert.doesNotMatch(layout, /canonical:\s*`\$\{baseUrl\}\/\$\{lang\}`/);
   assert.match(home, /canonical:\s*`\$\{baseUrl\}\/\$\{lang\}`/);
 });
+
+test("uses the exact localized home title and description for social metadata", () => {
+  const home = readFileSync(homePath, "utf8");
+
+  assert.match(home, /title:\s*\{\s*absolute:\s*searchMetadata\.title\s*\}/);
+  assert.match(
+    home,
+    /openGraph:\s*\{[\s\S]*?title:\s*searchMetadata\.title,[\s\S]*?description:\s*searchMetadata\.description/
+  );
+  assert.match(
+    home,
+    /twitter:\s*\{[\s\S]*?title:\s*searchMetadata\.title,[\s\S]*?description:\s*searchMetadata\.description/
+  );
+});

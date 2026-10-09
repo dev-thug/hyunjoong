@@ -1,5 +1,7 @@
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import { Mail, Github, Linkedin, Twitter } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { getContactHref, SOCIAL_LINK_MAP } from "@/constants";
 import { getPublicProfile } from "@/data/public-profile";
 import { getDictionary } from "@/get-dictionary";
@@ -75,7 +77,8 @@ export default async function ProfilePage({
         dangerouslySetInnerHTML={{ __html: profilePageJsonLdScript }}
       />
       <div>
-        <h1 className="sr-only">{dict.profile.meta_title}</h1>
+        <Breadcrumbs lang={lang} items={[{ name: lang === "ko" ? "홈" : "Home", path: "/" + lang }, { name: lang === "ko" ? "프로필" : "Profile", path: "/" + lang + "/profile" }]} />
+        <h1 className="sr-only">{profile.name + " | " + profile.jobTitle}</h1>
         {/* 헤더 */}
         <div className="mb-12 md:mb-16 pt-6 md:pt-8">
           <p
@@ -88,9 +91,23 @@ export default async function ProfilePage({
 
         {/* 소개 섹션 */}
         <section className="mb-16 md:mb-24" aria-labelledby="profile-about-heading">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16">
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] items-center gap-8 md:gap-12 lg:gap-16">
+            <figure className="w-full max-w-[280px] mx-auto">
+              <div className="relative aspect-square w-full overflow-hidden rounded-full border border-white/10 bg-zinc-900">
+                <Image
+                  src="/images/profile-avatar.webp"
+                  alt={lang === "ko" ? "초원과 산을 배경으로 촬영한 김현중의 프로필 사진" : "Portrait of Hyunjoong Kim with a meadow and mountains in the background"}
+                  fill
+                  loading="eager"
+                  fetchPriority="high"
+                  sizes="(max-width: 328px) calc(100vw - 48px), 280px"
+                  className="object-cover"
+                />
+              </div>
+            </figure>
+
             <div>
-              <span className="text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-4 md:mb-6 flex items-center gap-3">
+              <span className="text-[10px] font-mono text-gray-400 tracking-[0.2em] uppercase mb-4 md:mb-6 flex items-center gap-3">
                 <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
                 {dict.profile.about_heading}
               </span>
@@ -104,9 +121,6 @@ export default async function ProfilePage({
                   {dict.profile.intro_heading_suffix}
                 </span>
               </h2>
-            </div>
-
-            <div className="flex flex-col justify-end">
               <p className="text-sm md:text-base lg:text-lg text-gray-400 font-light leading-relaxed mb-6">
                 {profile.introParagraphs[0]}
               </p>
@@ -119,7 +133,7 @@ export default async function ProfilePage({
 
         {/* 현재 집중 */}
         <section className="mb-16 md:mb-24" aria-labelledby="current-focus-heading">
-          <span className="text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
+          <span className="text-[10px] font-mono text-gray-400 tracking-[0.2em] uppercase mb-6 flex items-center gap-3">
             <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
             {dict.profile.current_focus_heading}
           </span>
@@ -146,10 +160,10 @@ export default async function ProfilePage({
 
         {/* 스킬 섹션 */}
         <section className="mb-16 md:mb-24">
-          <span className="text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-8 md:mb-12 flex items-center gap-3">
+          <h2 className="text-[10px] font-mono text-gray-400 tracking-[0.2em] uppercase mb-8 md:mb-12 flex items-center gap-3">
             <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
             {dict.profile.tech_stack_heading}
-          </span>
+          </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {skills.map((skill) => (
@@ -177,10 +191,10 @@ export default async function ProfilePage({
 
         {/* 경력 섹션 */}
         <section className="mb-16 md:mb-24">
-          <span className="text-[10px] font-mono text-gray-500 tracking-[0.2em] uppercase mb-8 md:mb-12 flex items-center gap-3">
+          <h2 className="text-[10px] font-mono text-gray-400 tracking-[0.2em] uppercase mb-8 md:mb-12 flex items-center gap-3">
             <span className="w-6 md:w-8 h-[1px] bg-gray-700" />
             {dict.profile.experience_heading}
-          </span>
+          </h2>
 
           <div className="space-y-6 md:space-y-8">
             {experiences.map((exp) => (
@@ -189,7 +203,7 @@ export default async function ProfilePage({
                 className="group flex flex-col md:flex-row gap-4 md:gap-8 p-5 md:p-6 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 transition-all"
               >
                 <div className="md:w-1/4">
-                  <span className="text-xs font-mono text-gray-500">
+                  <span className="text-xs font-mono text-gray-400">
                     {exp.period}
                   </span>
                 </div>
@@ -201,7 +215,7 @@ export default async function ProfilePage({
                     href={exp.companyUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-gray-500 block mb-2 hover:text-white transition-colors"
+                    className="text-sm text-gray-400 block mb-2 hover:text-white transition-colors"
                     aria-label={dict.profile.visit_company_website_aria.replace("{company}", exp.company)}
                   >
                     {exp.company}
@@ -217,10 +231,10 @@ export default async function ProfilePage({
         <section className="pt-8 md:pt-12 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 md:gap-8">
             <div>
-              <h3 className="text-xl md:text-2xl font-light text-white mb-2">
+              <h2 className="text-xl md:text-2xl font-light text-white mb-2">
                 {dict.profile.cta_title}
-              </h3>
-              <p className="text-sm text-gray-500">
+              </h2>
+              <p className="text-sm text-gray-400">
                 {dict.profile.cta_subtitle}
               </p>
             </div>
@@ -229,7 +243,7 @@ export default async function ProfilePage({
               <Link
                 href={getContactHref(lang)}
                 className="inline-flex items-center gap-3 px-5 py-3 bg-white text-black rounded-full font-mono text-xs uppercase tracking-wider hover:bg-gray-200 transition-colors"
-                aria-label={dict.profile.open_contact_form_aria}
+                aria-label={dict.profile.get_in_touch_cta + " — " + dict.profile.open_contact_form_aria}
               >
                 <Mail size={14} />
                 {dict.profile.get_in_touch_cta}
@@ -240,7 +254,7 @@ export default async function ProfilePage({
                   href={SOCIAL_LINK_MAP.github.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all"
                   aria-label={SOCIAL_LINK_MAP.github.ariaLabel}
                 >
                   <Github size={18} />
@@ -249,7 +263,7 @@ export default async function ProfilePage({
                   href={SOCIAL_LINK_MAP.linkedin.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all"
                   aria-label={SOCIAL_LINK_MAP.linkedin.ariaLabel}
                 >
                   <Linkedin size={18} />
@@ -258,7 +272,7 @@ export default async function ProfilePage({
                   href={SOCIAL_LINK_MAP.x.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-500 hover:text-white hover:border-white/20 transition-all"
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-white/20 transition-all"
                   aria-label={SOCIAL_LINK_MAP.x.ariaLabel}
                 >
                   <Twitter size={18} />

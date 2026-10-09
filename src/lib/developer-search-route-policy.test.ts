@@ -38,3 +38,34 @@ test("connects valid blog pagination metadata to its page-number policy", () => 
   assert.match(source, /description:\s*searchMetadata\.description/);
   assert.match(source, /absoluteTitle:\s*true/);
 });
+
+test("keeps the unfiltered blog listing independent from search parameters", () => {
+  const source = readRoute("blog/page.tsx");
+
+  assert.doesNotMatch(source, /searchParams/);
+  assert.match(
+    source,
+    /getPostsPage\(lang,\s*1,\s*BLOG_POSTS_PAGE_SIZE\)/
+  );
+});
+
+test("keeps numbered archives independent from search parameters", () => {
+  const source = readRoute("blog/page/[page]/page.tsx");
+
+  assert.doesNotMatch(source, /searchParams/);
+  assert.match(
+    source,
+    /getPostsPage\(lang,\s*parsedPage,\s*BLOG_POSTS_PAGE_SIZE\)/
+  );
+});
+
+test("isolates filtered blog search as noindex server-rendered content", () => {
+  const source = readRoute("blog/search/page.tsx");
+
+  assert.match(source, /searchParams/);
+  assert.match(source, /parseSearchQuery\(/);
+  assert.match(source, /noIndex:\s*true/);
+  assert.match(source, /path:\s*["']\/blog["']/);
+  assert.doesNotMatch(source, /buildBlogSchema|safeJsonLdStringify/);
+  assert.match(source, /getPostsPage\(lang,\s*1,\s*Number\.MAX_SAFE_INTEGER,\s*query\)/);
+});

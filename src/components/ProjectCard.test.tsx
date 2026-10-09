@@ -9,7 +9,6 @@ test("does not preload homepage project images ahead of the text LCP", () => {
       index={0}
       lang="ko"
       caseStudyLabel="CASE STUDY"
-      viewProjectAriaTemplate="{title} 보기"
       project={{
         id: "example",
         slug: "example",
