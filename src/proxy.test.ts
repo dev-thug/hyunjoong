@@ -26,3 +26,9 @@ test("continues to exclude Next internals, API routes, and static files", () => 
   assert.equal(matchesLocaleProxy("/api/contact"), false);
   assert.equal(matchesLocaleProxy("/images/favicon-96x96.png"), false);
 });
+
+test("serves WebP project covers and app previews without locale redirects", () => {
+  assert.equal(matchesLocaleProxy("/images/projects/specify-ko.webp"), false);
+  assert.equal(matchesLocaleProxy("/images/projects/mamma-chat.webp"), false);
+  assert.equal(matchesLocaleProxy("/images/projects/petty-en.webp"), false);
+});

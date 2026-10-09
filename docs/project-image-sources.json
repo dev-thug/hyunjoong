@@ -1,0 +1,70 @@
+{
+  "reviewedAt": "2026-10-09",
+  "images": [
+    {
+      "file": "/images/projects/specify-ko.webp",
+      "source": "https://specify.app/ko",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/specify-en.webp",
+      "source": "https://specify.app/en",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/mamma.webp",
+      "source": "https://mamma.im",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/petty-ko.webp",
+      "source": "https://petty.im",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/petty-en.webp",
+      "source": "https://petty.im/en",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/yejin.webp",
+      "source": "https://yejin.clinic",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/genomic-ko.webp",
+      "source": "public/images/ko/genomic.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/genomic-en.webp",
+      "source": "public/images/en/genomic.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/mamma-record.webp",
+      "source": "mamma-im/public/preview/record.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/mamma-chat.webp",
+      "source": "mamma-im/public/preview/chat.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/mamma-growth.webp",
+      "source": "mamma-im/public/preview/growth.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/petty-phones-ko.webp",
+      "source": "petty-im/public/assets/app-phones.webp",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/petty-phones-en.webp",
+      "source": "petty-im/public/assets/app-phones-en.webp",
+      "kind": "existing-project-asset"
+    }
+  ]
+}

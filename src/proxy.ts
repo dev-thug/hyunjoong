@@ -69,6 +69,6 @@ export const config = {
   // Every document path is locale-tagged before rendering so global 404 can
   // select a server-rendered language. Internal/API/static paths stay excluded.
   matcher: [
-    "/((?!api|_next|_vercel|favicon.ico|.*\\.(?:avif|bmp|css|gif|ico|jpe?g|js|map|mjs|png|svg|txt|webmanifest|woff2?|xml)).*)",
+    "/((?!api|_next|_vercel|favicon.ico|.*\\.(?:avif|bmp|css|gif|ico|jpe?g|js|map|mjs|png|svg|txt|webmanifest|webp|woff2?|xml)).*)",
   ],
 };

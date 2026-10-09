@@ -37,7 +37,7 @@ test("separates Korean search intent across existing proof pages", () => {
 
   assert.equal(profile.title, "김현중 개발자 프로필 | 풀스택·백엔드·AWS 경력");
   assert.match(profile.description, /React·Next\.js.*Node\.js·Python.*AWS/);
-  assert.equal(projects.title, "김현중 개발자 포트폴리오 | 웹·AI·AWS 프로젝트");
+  assert.equal(projects.title, "김현중 프로젝트 | 웹·AI·AWS");
   assert.match(projects.description, /AI 에이전트 프로젝트/);
   assert.doesNotMatch(projects.description, /구현 사례|배포 사례|운영 사례/);
   assert.match(projects.keywords.join(" "), /개발자 포트폴리오/);

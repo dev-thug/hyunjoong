@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Project } from "@/types";
+import type { Project } from "@/types";
 import { ArrowUpRight } from "lucide-react";
 
 interface ProjectCardProps {
@@ -34,7 +34,7 @@ const ProjectCard = ({
                 className="text-[10px] md:text-xs font-mono text-gray-400"
                 aria-hidden="true"
               >
-                NO. 0{index + 1}
+                NO. {String(index + 1).padStart(2, "0")}
               </span>
               <div className="h-px w-8 md:w-12 bg-gray-800" />
               <span className="text-[10px] md:text-xs font-mono text-gray-400 uppercase tracking-widest truncate">
@@ -60,7 +60,7 @@ const ProjectCard = ({
             className="mt-6 md:mt-12 flex flex-wrap gap-2 md:gap-3"
             aria-label={lang === "ko" ? "프로젝트 기술 태그" : "Project tags"}
           >
-            {project.tags.map((tag) => (
+            {project.tags.slice(0, 6).map((tag) => (
               <span
                 key={tag}
                 className="glass-panel px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[9px] md:text-[10px] uppercase tracking-widest text-gray-300 hover:text-white transition-colors bg-noise"
@@ -72,7 +72,7 @@ const ProjectCard = ({
         </div>
 
         {/* 이미지 영역 */}
-        <div className="lg:w-7/12 order-1 lg:order-2 relative h-[220px] md:h-[350px] lg:h-[450px] xl:h-[500px] overflow-hidden rounded-lg md:rounded-sm group-hover:rounded-xl md:group-hover:rounded-2xl transition-all duration-700">
+        <div className="lg:w-7/12 order-1 lg:order-2 relative aspect-[16/10] overflow-hidden rounded-lg md:rounded-sm group-hover:rounded-xl md:group-hover:rounded-2xl transition-all duration-700">
           <div className="absolute inset-0 bg-gray-900">
             <Image
               src={project.image}
@@ -82,9 +82,9 @@ const ProjectCard = ({
                   : `Showcase image for ${project.title}`
               }
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 58vw, 50vw"
+              sizes="(max-width: 1024px) 100vw, (max-width: 1400px) 58vw, 780px"
               loading="lazy"
-              className="object-cover opacity-100 md:opacity-60 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              className="object-contain group-hover:scale-[1.02] transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)]"
             />
           </div>
 

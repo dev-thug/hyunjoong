@@ -120,11 +120,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         <Link
           href={`/${lang}/projects`}
           className="inline-flex items-center gap-2 text-gray-400 hover:text-white focus-visible:ring-2 focus-visible:ring-white/20 outline-none rounded-md transition-colors duration-200 mb-8"
-          aria-label={dict.projects.back_to_portfolio_aria}
+          aria-label={dict.projects.back_to_projects_aria}
         >
           <ArrowLeft size={16} aria-hidden="true" />
           <span className="text-sm font-mono uppercase tracking-widest">
-            {dict.projects.back_to_portfolio}
+            {dict.projects.back_to_projects}
           </span>
         </Link>
 
@@ -146,20 +146,20 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       </header>
 
       {/* 메인 이미지 */}
-      <div className="mb-12 rounded-2xl overflow-hidden relative aspect-video bg-gray-900">
+      <div className="mb-12 rounded-2xl overflow-hidden relative aspect-[16/10] bg-gray-900">
         <Image
           src={project.image}
-          alt={`Main showcase image for ${project.title}`}
+          alt={lang === "ko" ? `${project.title} 프로젝트 화면` : `Showcase image for ${project.title}`}
           fill
           priority
           sizes="(max-width: 1280px) 100vw, 1024px"
-          className="object-cover"
+          className="object-contain"
         />
       </div>
 
       {/* 메트릭스 */}
       <section
-        className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8"
         aria-label={lang === "ko" ? "프로젝트 핵심 항목" : "Project metrics"}
       >
         {project.metrics.map((metric) => (
@@ -167,7 +167,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             key={metric.label}
             className="p-6 rounded-xl border border-gray-800 bg-white/5"
           >
-            <span className="text-3xl md:text-4xl font-bold text-white">
+            <span className="text-xl md:text-2xl break-words font-semibold text-white">
               {metric.value}
             </span>
             <p className="text-xs font-mono text-gray-500 uppercase tracking-wider mt-2">

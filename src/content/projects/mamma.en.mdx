@@ -1,63 +1,45 @@
 export const metadata = {
   id: "p2",
-  title: "Mamma - Data-Driven Parenting Agent",
-  adCopy:
-    "A mobile parenting tool connecting daily logs, AI summaries, local discovery, and community",
-  description:
-    "A mobile product that structures recurring childcare logs such as feeding, sleep, and diapers, then connects AI-assisted summaries with local-place discovery and community support.",
-  highlight: "Mamma · Parenting Product · 2026",
+  title: "Mamma — Record-Aware Parenting Agent",
+  adCopy: "Connect everyday care logs, growth reports, and record-aware MammaTalk conversations.",
+  description: "A parenting app with child-specific care logs, live timers, growth reports, and developmental checklists. MammaTalk uses age and saved records to support conversations, with apps for iOS and Android.",
+  highlight: "Mamma · Parenting Agent · 2026",
+  image: "/images/projects/mamma.webp",
   serviceUrl: "https://mamma.im",
-  image: "/images/en/mamma.png",
-  tags: [
-    "Parenting Tech",
-    "AI Analysis",
-    "Growth Tracking",
-    "Community",
-    "Location Discovery",
-    "Mobile App",
-  ],
+  tags: ["Next.js", "TypeScript", "AWS Amplify Gen2", "Expo", "TanStack Query", "AI Agents"],
   metrics: [
-    { label: "Core Logs", value: "Feeding · Sleep · Diaper" },
-    { label: "AI Support", value: "Pattern Summaries" },
-    { label: "Local Layer", value: "Places · Community" },
+    { label: "Care logs", value: "12+ types" },
+    { label: "Apps", value: "iOS · Android" },
+    { label: "AI assistant", value: "MammaTalk" },
   ],
   lang: "en",
 };
 
-**A mobile product that connects repetitive childcare logs to useful next steps**
+## Care records as conversation context
 
-Mamma is designed to help parents record daily childcare events and review accumulated context before deciding what to do next. It connects logging, AI-assisted summaries, growth checklists, local-place discovery, and community interaction in one workflow.
+Mamma reduces the need to repeatedly explain a child's situation. Child-specific feeding, sleep, diaper, and growth records provide context for MammaTalk alongside the child's age.
 
-## Core Capabilities
+## Current features
 
-- **Low-friction logging:** Structure feeding, sleep, diaper, medication, temperature, and activity records
-- **Summaries and patterns:** Review daily snapshots and recurring patterns across accumulated logs
-- **Growth checklists:** Keep age-specific checkpoints alongside daily records
-- **Local discovery:** Find nearby kids cafes, playgrounds, museums, and culture centers
-- **Community:** Exchange practical experience and information through feeds and comments
-- **AI assistance:** Organize questions and suggested follow-up checks from user-provided context
+- **Quick logs:** More than 12 care categories, including temperature and medication
+- **Timers:** Track ongoing feeding and sleep sessions
+- **Reports:** Height, weight, and care statistics over time
+- **Development:** Age-based checklists
+- **Multiple children:** Separate profiles and records
+- **MammaTalk:** AI conversations grounded in saved records
 
-## Product Structure
+## Web and mobile architecture
 
-**1. Logging & Summary Layer**
+The product uses a Next.js, React, and TypeScript web app with an AWS Amplify Gen2 backend. TanStack Query manages server state. An Expo native shell connects the web product to the iOS and Android experience.
 
-- Store core childcare events in a consistent structure
-- Present daily snapshots designed to reduce the effort of reviewing raw logs
+## App screens
 
-**2. Analysis & Decision Layer**
+<ImageGallery columns={3} images={[
+  { src: "/images/projects/mamma-record.webp", alt: "Mamma daily care records", caption: "Daily care records" },
+  { src: "/images/projects/mamma-chat.webp", alt: "MammaTalk conversation screen", caption: "Record-aware conversations" },
+  { src: "/images/projects/mamma-growth.webp", alt: "Mamma growth report", caption: "Growth trends and reports" }
+]} />
 
-- Summarize sleep, feeding, and activity flows
-- Focus on useful follow-up checks instead of static charts alone
+[Visit Mamma](https://mamma.im)
 
-**3. Local & Community Layer**
-
-- Organize outing candidates through map-based place discovery
-- Provide a space for parents in similar situations to exchange experience and information
-
-## Key Features
-
-Quick logging, AI-assisted summaries, growth checklists, local play map, parenting community, and contextual question support
-
----
-
-_Designed for families who want emotional support and data-informed parenting decisions._
+_Updated October 9, 2026, using public features and current web and native repository documentation. Screenshots show the Korean app._

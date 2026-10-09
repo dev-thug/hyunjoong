@@ -1,0 +1,41 @@
+export const metadata = {
+  id: "p3",
+  title: "Petty — Stories with AI Characters",
+  adCopy: "Meet characters and build your own stories through ongoing AI conversations.",
+  description: "A hybrid app for AI character conversations, roleplay, and storytelling. Character discovery, conversation history, and streamed responses connect the web and mobile experience.",
+  highlight: "Petty · Character AI · 2026",
+  image: "/images/projects/petty-en.webp",
+  serviceUrl: "https://petty.im/en",
+  tags: ["Next.js", "Capacitor", "AWS Amplify Gen2", "SSE", "TanStack Query", "Zustand"],
+  metrics: [
+    { label: "Experience", value: "Characters & stories" },
+    { label: "Responses", value: "SSE Streaming" },
+    { label: "App shell", value: "Capacitor" },
+  ],
+  lang: "en",
+};
+
+## Conversations that become stories
+
+Petty lets people discover characters across romance, fantasy, contemporary fiction, and science fiction, then become the protagonist of their own conversations. Discovery and returning to a saved conversation form one product journey.
+
+## Features
+
+- **Discovery:** Choose characters by interest and genre
+- **Roleplay:** Continue stories using character and conversation context
+- **History:** Save and revisit conversations
+- **Streaming:** Display replies as they are generated
+
+## Engineering
+
+The hybrid app combines a Next.js static export with Capacitor. AWS Amplify Gen2 provides data and authentication. TanStack Query and Zustand separate server state from UI state.
+
+A Lambda-based SSE endpoint handles chat authentication and conversation ownership before streaming model responses. Amplify Data persists messages, while the UI connects saved history with the current reply.
+
+## Official app preview
+
+<BlogImage src="/images/projects/petty-phones-en.webp" alt="Petty character discovery and conversation preview" width={1200} height={801} size="full" caption="App preview used on the official landing page" />
+
+[Visit Petty](https://petty.im/en) · [Open web app](https://app.petty.im)
+
+_Updated October 9, 2026, from the official introduction and current application architecture documentation._

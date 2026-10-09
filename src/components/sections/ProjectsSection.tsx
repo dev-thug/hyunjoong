@@ -20,7 +20,7 @@ const ProjectsSection = async ({ dict, lang }: ProjectsSectionProps) => {
             {dict.projects.title}
           </h2>
           <span className="text-[10px] md:text-xs font-mono text-gray-400 relative z-10">
-            2023 — 2026
+            {String(projects.length).padStart(2, "0")} {lang === "ko" ? "개의 프로젝트" : "PROJECTS"}
           </span>
         </div>
 

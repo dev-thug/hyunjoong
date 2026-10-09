@@ -1,0 +1,41 @@
+export const metadata = {
+  id: "p3",
+  title: "페티 — AI 캐릭터와 만드는 이야기",
+  adCopy: "취향에 맞는 캐릭터를 만나고, 이어지는 대화로 나만의 이야기를 만들어갑니다.",
+  description: "AI 캐릭터와 대화하며 역할극과 스토리를 즐기는 하이브리드 앱입니다. 캐릭터 탐색, 대화 이력과 스트리밍 응답을 연결하고 웹과 모바일에서 일관된 대화 경험을 구성합니다.",
+  highlight: "Petty · Character AI · 2026",
+  image: "/images/projects/petty-ko.webp",
+  serviceUrl: "https://petty.im",
+  tags: ["Next.js", "Capacitor", "AWS Amplify Gen2", "SSE", "TanStack Query", "Zustand"],
+  metrics: [
+    { label: "경험", value: "캐릭터·스토리" },
+    { label: "응답", value: "SSE Streaming" },
+    { label: "앱 구조", value: "Capacitor" },
+  ],
+  lang: "ko",
+};
+
+## 대화가 다음 이야기로 이어지는 경험
+
+페티는 로맨스·판타지·현대·SF 등 다양한 캐릭터를 만나고, 사용자가 주인공이 되어 이야기를 이어가는 제품입니다. 캐릭터를 고르는 순간부터 대화 이력을 다시 여는 흐름까지 하나의 경험으로 설계했습니다.
+
+## 주요 기능
+
+- **캐릭터 탐색:** 취향과 장르에 맞는 캐릭터 선택
+- **대화와 역할극:** 캐릭터 설정과 대화 맥락을 바탕으로 이야기 전개
+- **이어지는 기록:** 대화 이력을 저장하고 다시 확인
+- **스트리밍 응답:** 생성되는 답변을 순차적으로 표시
+
+## 구현 구조
+
+Next.js 정적 출력과 Capacitor를 결합한 하이브리드 앱입니다. AWS Amplify Gen2가 데이터·인증 기반을 제공하며, TanStack Query와 Zustand로 서버 상태와 화면 상태를 나눠 관리합니다.
+
+채팅은 Lambda 기반 SSE 경로를 사용합니다. 서버에서 인증과 대화 소유권을 확인하고 모델 응답을 스트리밍하며, 메시지 이력은 Amplify Data에 저장합니다. 화면은 저장된 이력과 진행 중인 응답을 연결합니다.
+
+## 공식 앱 미리보기
+
+<BlogImage src="/images/projects/petty-phones-ko.webp" alt="페티 캐릭터 탐색과 대화 앱 미리보기" width={1200} height={800} size="full" caption="공식 랜딩페이지에서 사용하는 앱 소개 이미지" />
+
+[페티 방문하기](https://petty.im) · [웹앱 열기](https://app.petty.im)
+
+_2026년 10월 9일 공식 소개 자료와 앱 저장소의 현재 아키텍처 문서를 기준으로 작성했습니다._

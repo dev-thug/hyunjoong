@@ -9,7 +9,7 @@ import { getDeveloperSearchMetadata } from "@/lib/metadata/developer-search";
 import { buildLocalizedPageMetadata } from "@/lib/metadata/localized-page";
 
 /**
- * 포트폴리오(프로젝트 목록) 페이지 메타데이터 (다국어)
+ * 프로젝트 목록 페이지 메타데이터 (다국어)
  */
 export async function generateMetadata({
   params,
@@ -29,7 +29,7 @@ export async function generateMetadata({
 }
 
 /**
- * 포트폴리오(프로젝트 목록) 페이지
+ * 프로젝트 목록 페이지
  */
 export default async function ProjectsPage({
   params,
@@ -55,23 +55,24 @@ export default async function ProjectsPage({
       </div>
 
       {/* 프로젝트 목록 */}
-      <section className="space-y-8" aria-label="Project list">
+      <section className="space-y-8" aria-label={dict.projects.list_aria}>
         {projects.map((project, idx) => (
           <Link
             key={project.id}
             href={`/${lang}/projects/${project.slug}`}
-            className="group block p-8 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-all duration-300"
+            className="group block p-4 sm:p-8 rounded-xl border border-transparent hover:border-white/10 hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-all duration-300"
             aria-label={dict.projects.view_project_aria.replace("{title}", project.title)}
           >
             <div className="flex flex-col md:flex-row gap-8">
               {/* 이미지 */}
-              <div className="md:w-1/3 aspect-video rounded-lg overflow-hidden bg-gray-900 relative">
+              <div className="md:w-1/3 aspect-[16/10] rounded-lg overflow-hidden bg-gray-900 relative">
                 <Image
                   src={project.image}
-                  alt={`Cover image for ${project.title}`}
+                  alt={lang === "ko" ? `${project.title} 프로젝트 화면` : `Showcase image for ${project.title}`}
                   fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover opacity-100 md:grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1400px) 33vw, 420px"
+                  preload={idx === 0}
+                  className="object-contain transition-all duration-500"
                 />
               </div>
 
@@ -94,7 +95,7 @@ export default async function ProjectsPage({
                     {project.title}
                   </h2>
 
-                  <p className="text-gray-500 line-clamp-2">{project.adCopy}</p>
+                  <p className="text-gray-400 leading-relaxed">{project.adCopy}</p>
                 </div>
 
                 <div className="flex items-center justify-between mt-6">

@@ -49,7 +49,7 @@ const DEVELOPER_SEARCH_METADATA: Record<
       ],
     },
     projects: {
-      title: "김현중 개발자 포트폴리오 | 웹·AI·AWS 프로젝트",
+      title: "김현중 프로젝트 | 웹·AI·AWS",
       description:
         "Next.js·TypeScript 웹 제품, Node.js·Python 백엔드, AWS 클라우드와 AI 에이전트 프로젝트를 담은 김현중 개발자 포트폴리오.",
       keywords: [
@@ -113,7 +113,7 @@ const DEVELOPER_SEARCH_METADATA: Record<
       ],
     },
     projects: {
-      title: "Hyunjoong Kim Developer Portfolio | Web, AI & AWS Projects",
+      title: "Hyunjoong Kim Projects | Web, AI & AWS",
       description:
         "Developer portfolio featuring Next.js and TypeScript web products, Node.js and Python backend systems, AWS cloud architecture, and AI agent projects.",
       keywords: [

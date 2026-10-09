@@ -1,72 +1,41 @@
 export const metadata = {
   id: "p1",
-  title: "Specify.app: SDLC documentation that stays aligned with code",
-  description:
-    "The product hypothesis and validation record for Specify.app, which generates SDLC documentation from code and business context and traces change impact to keep evidence current.",
-  tags: ["AI Agents", "SDLC", "Documentation", "Change Impact", "Compliance"],
-  highlight: "Specify.app · Market Validation · 2026",
-  image: "/images/en/specify.png",
-  serviceUrl: "https://specify.app",
+  title: "Specify — Developer Documentation Automation",
+  adCopy: "Connect code changes to documentation, with evidence and updates your team can review.",
+  description: "An AI documentation product connecting GitHub repositories with developer docs and team knowledge. Retrieval and code-change analysis support API guides, onboarding docs, and ADRs.",
+  highlight: "Specify · AI Documentation · 2026",
+  image: "/images/projects/specify-en.webp",
+  serviceUrl: "https://specify.app/en",
+  tags: ["GitHub", "RAG", "AI Agents", "AWS", "Amazon Bedrock"],
   metrics: [
-    { label: "Initial segment", value: "10–100 person software teams" },
-    { label: "Timing condition", value: "GS or delivery within 3–6 months" },
-    { label: "Operating principle", value: "Evidence and approvals first" },
+    { label: "Source", value: "GitHub" },
+    { label: "Grounding", value: "RAG" },
+    { label: "Updates", value: "Evidence & review" },
   ],
-  adCopy:
-    "Documentation should change when the code does. Specify.app connects code and business context to generate SDLC documentation and trace change impact.",
   lang: "en",
 };
 
-# Specify.app
+## Closing the gap between code and documentation
 
-## Where the problem started
+Specify addresses a familiar engineering problem: code changes while API guides and onboarding docs drift behind. The product brings drafting and change review into one workflow.
 
-While working directly with medical-device software certification documentation, I experienced how quickly code and evidence drift apart. When features and architecture changed, requirements, design, test, and operational documents still had to be found and updated separately, with no reliable way to know what had been missed.
+## Workflow
 
-The problem is not limited to certification. The same code-documentation gap appears in onboarding, customer and audit responses, and delivery to public agencies or large enterprises.
+1. Connect a GitHub repository and project documents.
+2. Retrieve team knowledge to ground document drafts.
+3. Read code changes and identify affected documents.
+4. Review the evidence and proposed differences.
 
-## Product hypothesis
+## Engineering focus
 
-Specify.app is being designed to connect code with business context, generate SDLC documentation, trace which requirements, designs, and tests are affected by a code change, and preserve the resulting review and approval history.
+Developer documents and team knowledge form the retrieval corpus. Code is read directly from the repository. Keeping these inputs distinct makes the supporting sources easier to inspect.
 
-The current validation focuses on three hypotheses:
+New projects begin without automatic application. Subsequent updates follow project settings and policy, keeping evidence and review central to the experience.
 
-- Software teams without dedicated documentation staff face substantial rework when they reconcile evidence immediately before certification or delivery.
-- Ongoing change-impact detection, revision proposals, and approval history create more operational value than one-off document generation.
-- Trustworthy evidence and auditable state transitions matter more to a buying decision than generic AI-generated documentation.
+## Applications
 
-## Initial validation segment
+API references, integration guides, architecture decision records, onboarding manuals, and release notes.
 
-The first segment under validation is Korean software teams with all of the following conditions:
+[Current product](https://specify.app/en) · [Documentation](https://docs.specify.app)
 
-- 10–100 people
-- A GS Grade 1 certification or public/enterprise delivery deadline within 3–6 months
-- No dedicated documentation team
-- Fragmented ownership and approval history between code changes and document updates
-
-This is a working ICP being tested through customer interviews and paid commitments, not a claim of proven market traction.
-
-## Target workflow
-
-1. Connect source code, requirements, and existing documentation.
-2. Detect which design, test, and operational documents are affected by a change.
-3. Propose revisions with traceable evidence.
-4. Preserve human review and approval history.
-5. Surface missing or stale evidence before certification or delivery.
-
-The priority is not autonomous text generation. It is evidence that a reviewer can inspect, explicit approval boundaries, and an auditable change history.
-
-## Business-model hypothesis
-
-The entry point is a certification or delivery documentation project that reveals the customer's process and evidence. The longer-term model is a subscription for change-impact detection and continuous documentation maintenance, with a potential channel for consulting partners who deliver these projects.
-
-## Current status and evidence standard
-
-Specify.app is in market validation. This page does not present unverified customer counts, conversion rates, or time savings as results. The status will change only when supported by evidence such as:
-
-- Repeated observations from real customer interviews
-- Concrete reactions to price
-- A paid pilot or purchasing commitment
-- Before-and-after operating metrics measured on the same basis
-
-[Visit Specify.app](https://specify.app)
+_Updated October 9, 2026, against the public product description._

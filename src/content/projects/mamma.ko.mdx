@@ -1,62 +1,45 @@
 export const metadata = {
   id: "p2",
-  title: "Mamma - 데이터 기반 육아 에이전트",
-  adCopy: "육아 기록, AI 요약, 장소 탐색, 커뮤니티를 연결한 모바일 육아 도구",
-  description:
-    "수유·수면·기저귀 등 반복되는 육아 기록을 구조화하고, 누적 기록의 AI 요약과 장소 탐색·커뮤니티를 하나의 흐름으로 연결한 모바일 제품입니다.",
-  highlight: "Mamma · Parenting Product · 2026",
+  title: "맘마 — 기록을 읽는 AI 육아 에이전트",
+  adCopy: "수유·수면 기록부터 성장 리포트와 맘마톡까지, 아이의 일상을 하나의 흐름으로 연결합니다.",
+  description: "아이별 육아 기록, 실시간 타이머, 성장 리포트와 발달 체크를 제공하는 육아 앱입니다. 맘마톡은 아이의 월령과 저장된 기록을 참고해 답하며, iOS·Android 앱에서 사용할 수 있습니다.",
+  highlight: "Mamma · Parenting Agent · 2026",
+  image: "/images/projects/mamma.webp",
   serviceUrl: "https://mamma.im",
-  image: "/images/ko/mamma.png",
-  tags: [
-    "Parenting Tech",
-    "AI Analysis",
-    "Growth Tracking",
-    "Community",
-    "Location Discovery",
-    "Mobile App",
-  ],
+  tags: ["Next.js", "TypeScript", "AWS Amplify Gen2", "Expo", "TanStack Query", "AI Agents"],
   metrics: [
-    { label: "핵심 기록", value: "수유·수면·기저귀" },
-    { label: "AI 지원", value: "패턴 요약" },
-    { label: "생활권", value: "장소·커뮤니티" },
+    { label: "기록", value: "12종+" },
+    { label: "앱", value: "iOS · Android" },
+    { label: "AI 대화", value: "맘마톡" },
   ],
   lang: "ko",
 };
 
-**반복되는 육아 기록을 실행 가능한 다음 행동으로 연결하는 모바일 제품**
+## 기록을 상담의 맥락으로
 
-Mamma는 부모가 일상적인 육아 이벤트를 빠르게 기록하고, 축적된 내용을 요약해 다음 행동을 판단할 수 있도록 설계한 제품입니다. 기록만 보관하는 데 그치지 않고 AI 요약, 성장 체크, 주변 장소 탐색, 커뮤니티를 하나의 사용 흐름으로 연결합니다.
+매번 아이의 상태를 처음부터 설명하는 부담을 줄이는 데 집중했습니다. 수유·수면·기저귀와 성장 기록을 아이별로 모으고, 맘마톡이 월령과 실제 기록을 참고하도록 연결합니다.
 
-## 핵심 기능
+## 현재 제품 기능
 
-- **낮은 마찰의 기록:** 수유·수면·기저귀·투약·체온·활동을 구조화해 입력
-- **요약과 패턴 확인:** 하루 단위 요약과 누적 기록을 통해 반복 패턴 파악
-- **성장 체크:** 월령별 체크 항목과 기록을 함께 확인
-- **생활권 탐색:** 키즈카페·놀이터·박물관·문화센터 등 주변 장소 탐색
-- **커뮤니티:** 부모 간 경험과 정보를 교환하는 피드·댓글 흐름
-- **AI 보조:** 사용자가 입력한 기록 맥락을 바탕으로 질문과 다음 확인 항목을 정리
+- **빠른 기록:** 수유, 수면, 기저귀, 체온, 투약 등 12종 이상의 항목
+- **타이머:** 진행 중인 수유·수면 시간과 종료 기록
+- **성장 리포트:** 키·체중 변화와 기간별 기록 통계
+- **발달 체크:** 월령별 체크리스트와 영역별 확인
+- **여러 아이 관리:** 아이별 프로필과 독립적인 기록
+- **맘마톡:** 저장된 기록을 참고하는 AI 대화
 
-## Product Structure
+## 웹과 모바일을 함께 운영하는 구조
 
-**1. 기록과 요약 레이어**
+Next.js·React·TypeScript 웹앱과 AWS Amplify Gen2 백엔드를 중심으로 구성했습니다. TanStack Query로 서버 상태를 관리하고, Expo 기반 네이티브 셸이 웹 제품을 연결해 iOS·Android 경험을 제공합니다.
 
-- 육아 이벤트를 일관된 구조로 저장
-- 하루 단위 요약으로 기록을 다시 훑는 부담을 줄이도록 설계
+## 앱 화면
 
-**2. 분석과 의사결정 레이어**
+<ImageGallery columns={3} images={[
+  { src: "/images/projects/mamma-record.webp", alt: "맘마 오늘의 육아 기록 화면", caption: "아이별 오늘의 기록" },
+  { src: "/images/projects/mamma-chat.webp", alt: "맘마톡 AI 상담 화면", caption: "기록을 참고하는 맘마톡" },
+  { src: "/images/projects/mamma-growth.webp", alt: "맘마 성장 리포트 화면", caption: "성장 추이와 리포트" }
+]} />
 
-- 수면·수유·활동 기록의 흐름을 요약
-- 정적인 차트보다 다음에 확인할 항목을 보여주는 경험에 집중
+[맘마 방문하기](https://mamma.im)
 
-**3. 장소와 커뮤니티 레이어**
-
-- 지도 기반 장소 탐색으로 외출 후보를 정리
-- 비슷한 상황의 부모가 경험과 정보를 교환할 수 있는 흐름 제공
-
-## Key Features
-
-빠른 기록, AI 요약, 성장 체크, 놀이지도, 육아 커뮤니티, 맥락 기반 질문 보조
-
----
-
-_Designed for families who want emotional support and data-informed parenting decisions._
+_2026년 10월 9일 공개 기능과 현재 웹·네이티브 저장소 문서를 대조해 갱신했습니다._
