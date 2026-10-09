@@ -98,7 +98,7 @@ export default async function ProjectsPage({
                   <p className="text-gray-400 leading-relaxed">{project.adCopy}</p>
                 </div>
 
-                <div className="flex items-center justify-between mt-6">
+                <div className="flex items-center justify-between gap-4 mt-6">
                   <div className="flex flex-wrap gap-2">
                     {project.tags.slice(0, 3).map((tag) => (
                       <span
@@ -110,7 +110,7 @@ export default async function ProjectsPage({
                     ))}
                   </div>
 
-                  <span className="inline-flex items-center gap-2 text-sm text-gray-500 group-hover:text-white transition-colors">
+                  <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-sm text-gray-500 group-hover:text-white transition-colors">
                     {dict.projects.view_project}
                     <ArrowRight
                       size={14}
