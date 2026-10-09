@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import robots from "./robots";
+import { getSiteBaseUrl } from "@/lib/site-config";
 
 const withVercelEnv = (value: string | undefined, run: () => void) => {
   const previous = process.env.VERCEL_ENV;
@@ -18,7 +19,7 @@ test("keeps production crawl access public without inventing bot-specific policy
   withVercelEnv("production", () => {
     const result = robots();
     assert.deepEqual(result.rules, [{ userAgent: "*", allow: "/" }]);
-    assert.equal(result.sitemap, "https://hyunjoong.kim/sitemap.xml");
+    assert.equal(result.sitemap, `${getSiteBaseUrl()}/sitemap.xml`);
   });
 });
 
