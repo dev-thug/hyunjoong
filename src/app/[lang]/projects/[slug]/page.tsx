@@ -149,7 +149,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       <div className="mb-12 rounded-2xl overflow-hidden relative aspect-[16/10] bg-gray-900">
         <Image
           src={project.image}
-          alt={lang === "ko" ? `${project.title} 프로젝트 화면` : `Showcase image for ${project.title}`}
+          alt={lang === "ko" ? `${project.title} 프로젝트 대표 이미지` : `Showcase image for ${project.title}`}
           fill
           priority
           sizes="(max-width: 1280px) 100vw, 1024px"

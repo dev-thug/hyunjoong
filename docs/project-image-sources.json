@@ -2,29 +2,22 @@
   "reviewedAt": "2026-10-09",
   "images": [
     {
-      "file": "/images/projects/specify-ko.webp",
-      "source": "https://specify.app/ko",
-      "kind": "public-page-screenshot"
+      "file": "/images/projects/petty-cover.webp",
+      "source": "OpenAI image_gen (built-in)",
+      "kind": "generated-project-cover",
+      "promptRef": "docs/project-cover-prompts.json#assets.petty"
     },
     {
-      "file": "/images/projects/specify-en.webp",
-      "source": "https://specify.app/en",
-      "kind": "public-page-screenshot"
+      "file": "/images/projects/mamma-cover.webp",
+      "source": "OpenAI image_gen (built-in)",
+      "kind": "generated-project-cover",
+      "promptRef": "docs/project-cover-prompts.json#assets.mamma"
     },
     {
-      "file": "/images/projects/mamma.webp",
-      "source": "https://mamma.im",
-      "kind": "public-page-screenshot"
-    },
-    {
-      "file": "/images/projects/petty-ko.webp",
-      "source": "https://petty.im",
-      "kind": "public-page-screenshot"
-    },
-    {
-      "file": "/images/projects/petty-en.webp",
-      "source": "https://petty.im/en",
-      "kind": "public-page-screenshot"
+      "file": "/images/projects/specify-cover.webp",
+      "source": "OpenAI image_gen (built-in)",
+      "kind": "generated-project-cover",
+      "promptRef": "docs/project-cover-prompts.json#assets.specify"
     },
     {
       "file": "/images/projects/yejin.webp",

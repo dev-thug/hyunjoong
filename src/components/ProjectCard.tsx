@@ -78,7 +78,7 @@ const ProjectCard = ({
               src={project.image}
               alt={
                 lang === "ko"
-                  ? `${project.title} 프로젝트 화면`
+                  ? `${project.title} 프로젝트 대표 이미지`
                   : `Showcase image for ${project.title}`
               }
               fill

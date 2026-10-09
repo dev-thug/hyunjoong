@@ -68,7 +68,7 @@ export default async function ProjectsPage({
               <div className="md:w-1/3 aspect-[16/10] rounded-lg overflow-hidden bg-gray-900 relative">
                 <Image
                   src={project.image}
-                  alt={lang === "ko" ? `${project.title} 프로젝트 화면` : `Showcase image for ${project.title}`}
+                  alt={lang === "ko" ? `${project.title} 프로젝트 대표 이미지` : `Showcase image for ${project.title}`}
                   fill
                   sizes="(max-width: 768px) 100vw, (max-width: 1400px) 33vw, 420px"
                   preload={idx === 0}
