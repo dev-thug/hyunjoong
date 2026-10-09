@@ -2,7 +2,7 @@ import type { NavLink, SocialLink } from "@/types/navigation";
 import type { Locale } from "@/i18n-config";
 
 export type NavLabels = {
-  portfolio: string;
+  projects: string;
   intelligence: string;
   profile: string;
   contact: string;
@@ -14,7 +14,7 @@ export type NavLabels = {
  */
 export function getNavLinks(lang: Locale, labels: NavLabels): NavLink[] {
   return [
-    { href: `/${lang}/projects`, label: labels.portfolio },
+    { href: `/${lang}/projects`, label: labels.projects },
     { href: `/${lang}/blog`, label: labels.intelligence },
     { href: `/${lang}/profile`, label: labels.profile },
   ];

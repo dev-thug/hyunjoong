@@ -34,6 +34,12 @@ const COLUMN_CLASSES: Record<ColumnCount, string> = {
   4: "grid-cols-2 sm:grid-cols-3 md:grid-cols-4",
 };
 
+const IMAGE_SIZES: Record<ColumnCount, string> = {
+  2: "(max-width: 639px) 100vw, (max-width: 767px) 50vw, calc(42.5ch - 4px)",
+  3: "(max-width: 639px) 100vw, (max-width: 767px) 50vw, calc(28.333ch - 6px)",
+  4: "(max-width: 639px) 50vw, (max-width: 767px) 33.333vw, calc(21.25ch - 6px)",
+};
+
 /**
  * 이미지 갤러리 컴포넌트
  * 여러 이미지를 그리드 형태로 표시
@@ -60,7 +66,7 @@ const ImageGallery = ({
                 width={600}
                 height={400}
                 className="block w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
-                sizes={`(max-width: 640px) 100vw, (max-width: 768px) 50vw, ${Math.round(100 / columns)}vw`}
+                sizes={IMAGE_SIZES[columns]}
               />
             </div>
             {image.caption && (

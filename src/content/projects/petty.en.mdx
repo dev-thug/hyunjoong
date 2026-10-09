@@ -1,0 +1,74 @@
+export const metadata = {
+  updatedAt: "2026-10-09",
+  id: "p3",
+  title: "Petty — Your Story, One Conversation at a Time",
+  adCopy: "Meet a character and create the next scene together.",
+  description: "Petty is an AI character conversation app for roleplay and storytelling. It connects character and story context, conversation memory, and reply suggestions. Responses stream from an OpenRouter-backed model across the web and mobile experience.",
+  highlight: "Petty · Character AI · 2026",
+  image: "/images/projects/petty-cover.webp",
+  serviceUrl: "https://petty.im/en",
+  tags: ["Next.js", "Capacitor", "Serverless", "OpenRouter", "SSE", "TanStack Query", "Zustand"],
+  metrics: [
+    { label: "Development", value: "Solo founder" },
+    { label: "Conversation models", value: "OpenRouter" },
+    { label: "App shell", value: "Web · Capacitor" },
+  ],
+  lang: "en",
+};
+
+## A conversation with a next scene
+
+Petty is less about asking a question and receiving an answer than continuing a story with a character. A consistent voice, a recognizable setting, and a connection to earlier conversations help make the next scene worth discovering.
+
+I am building the journey from finding a character to chatting and returning to saved history. Planning, design, development, and operations are handled independently.
+
+## Starting with a character
+
+Users choose a character and story, then begin a conversation within that setting. They can return to previous conversations or regenerate a response to explore another direction.
+
+Reply suggestions and choices provide a way forward when it is difficult to decide what to say. They use recent conversation context and accumulated memory rather than unrelated prompts.
+
+## Fast delivery, comfortable reading
+
+Conversation generation uses an OpenRouter-backed model. Lambda verifies authentication and conversation ownership before sending content over SSE, then persists the completed message and state.
+
+Model output and reading speed are different concerns. The UI has a separate display queue: the beginning appears immediately, and the rest continues at a readable pace. Server persistence and completion do not wait for that animation.
+
+This lets me address time to first text separately from the problem of a large block arriving all at once.
+
+## Keeping longer conversations coherent
+
+A long history cannot all be sent to the model unchanged. Recent messages are combined with accumulated memory, and regeneration preserves previous response versions.
+
+Output language and speaker markers are checked separately. These checks help reduce unexpected language changes and keep displayed text aligned with what is saved.
+
+Failed or interrupted turns remain distinct from completed conversations, and usage handling follows those states. The experience depends on reliable history and state as well as generated prose.
+
+## Shared foundations for web and mobile
+
+The app uses a Next.js static export and Capacitor, connected to an AWS serverless data and authentication backend. TanStack Query and Zustand separate server data from screen state.
+
+Provider calls and transport sit behind a conversation contract. Screens work with messages and stream events, while adapters connect models and persistence. Changing a model should not require rewriting the conversation UI.
+
+## Live story discovery screens
+
+The current app’s home and a public story detail page, showing discovery and review before starting a conversation. Screens show the Korean app.
+
+<ProjectScreenshots lang="en" images={[
+  {
+    "src": "/images/projects/screens/petty-home.webp",
+    "alt": "Petty live story discovery",
+    "caption": "Finding stories through recommendations and genres.",
+    "width": 480,
+    "height": 900
+  },
+  {
+    "src": "/images/projects/screens/petty-story.webp",
+    "alt": "Petty live story detail",
+    "caption": "Reviewing a story and its characters before starting a conversation.",
+    "width": 480,
+    "height": 900
+  }
+]} />
+
+[Try Petty](https://petty.im/en) · [Open web app](https://app.petty.im)

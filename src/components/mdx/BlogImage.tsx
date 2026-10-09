@@ -93,10 +93,10 @@ const BlogImage = ({
       width={imageWidth}
       height={imageHeight}
       className={imageClasses}
-      priority={priority}
+      preload={priority}
       sizes={
         size === "full"
-          ? "100vw"
+          ? "(max-width: 767px) 100vw, (max-width: 1023px) 85ch, min(calc(100vw - 320px), 85ch)"
           : `(max-width: ${imageWidth}px) 100vw, ${imageWidth}px`
       }
       style={{

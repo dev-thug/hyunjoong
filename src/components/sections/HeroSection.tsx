@@ -29,14 +29,14 @@ const HeroSection = ({ dict }: HeroSectionProps) => {
           <div className="absolute top-1/2 left-0 w-full h-[1px] bg-white/5 -z-10 hidden md:block animate-fade-up delay-0" />
 
           <h1 className="text-[13vw] md:text-[15vw] font-medium font-montserrat leading-[0.85] md:leading-[0.8] tracking-tighter select-none w-full">
-            <div className="flex justify-start">
+            <span className="flex justify-start">
               <SpotlightText>{dict.hero.title_beyond}</SpotlightText>
-            </div>
-            <div className="flex justify-end pr-[2vw] md:pr-[5vw]">
+            </span>{" "}
+            <span className="flex justify-end pr-[2vw] md:pr-[5vw]">
               <SpotlightText className="italic font-light">
                 {dict.hero.title_code}
               </SpotlightText>
-            </div>
+            </span>
           </h1>
         </div>
 

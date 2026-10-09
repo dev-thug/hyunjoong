@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
+import { shouldNoIndexDeployment } from './src/lib/indexing-policy';
 
 /**
  * Content Security Policy
@@ -44,6 +45,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1440, 1920, 2048, 3840],
     remotePatterns: [],
   },
   experimental: {
@@ -54,7 +56,14 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/(.*)',
-        headers: securityHeaders,
+        headers: [
+          ...securityHeaders,
+          ...(shouldNoIndexDeployment() ? [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] : []),
+        ],
+      },
+      {
+        source: '/api/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
       {
         source: '/ko/:path*',

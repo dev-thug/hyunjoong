@@ -21,7 +21,7 @@ interface BlogTocProps {
 const getItemClassName = (item: TocItem, isActive: boolean): string => {
   const base =
     "block rounded-md px-2.5 py-1.5 text-[13px] leading-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20";
-  const depthClass = item.level === 3 ? "ml-2 text-gray-500" : "text-gray-400";
+  const depthClass = item.level === 3 ? "ml-2 text-gray-400" : "text-gray-400";
   const activeClass = isActive
     ? "bg-white/8 text-white border-l-2 border-white/40"
     : "hover:bg-white/5 hover:text-gray-200";
@@ -147,7 +147,7 @@ export default function BlogToc({
           aria-label={labels.tocTitle}
           className="glass-panel rounded-lg border border-white/10 p-3"
         >
-          <h2 className="mb-2 text-[11px] font-mono uppercase tracking-wider text-gray-500">
+          <h2 className="mb-2 text-[11px] font-mono uppercase tracking-wider text-gray-400">
             {labels.tocTitle}
           </h2>
           <ul className="space-y-1">{tocList}</ul>

@@ -1,16 +1,17 @@
 export const metadata = {
-  id: "p3",
+  updatedAt: "2026-10-09",
+  id: "p4",
   title: "Genome Analysis Platform",
   adCopy:
     "An event-driven serverless system for large-scale genomic data processing",
   description:
     "A platform combining AWS Batch, EFS, Lambda, and event-driven messaging to run genomic sequencing analysis in parallel and orchestrate report generation.",
-  highlight: "Fortuna Helix · Fullstack · 2023 - Present",
-  image: "/images/en/genomic.png",
+  highlight: "Fortuna Helix · Fullstack · 2023.12–2026.05",
+  image: "/images/projects/genomic-en.webp",
   tags: [
-    "NextJS",
+    "Next.js",
     "NestJS",
-    "Fast API",
+    "FastAPI",
     "TypeScript",
     "Python",
     "AWS Batch",
@@ -69,3 +70,9 @@ NextJS, NestJS, FastAPI, TypeScript, Python, AWS Batch, Lambda, Step Functions, 
 ---
 
 _Developed with NestJS, AWS Batch, and an event-driven serverless architecture._
+
+## Design decisions
+
+Long-running analysis and short state transitions have separate execution boundaries. Batch handles computation, Lambda handles triggers and orchestration, and messaging decouples report generation. EFS holds shared files while S3 stores final artifacts.
+
+_Implementation notes reviewed October 9, 2026. The image is the previously published platform screen._

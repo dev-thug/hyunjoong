@@ -1,9 +1,9 @@
 {
   "nav": {
-    "portfolio": "포트폴리오",
     "intelligence": "인텔리전스",
     "profile": "프로필",
-    "contact": "연락"
+    "contact": "연락",
+    "projects": "프로젝트"
   },
   "hero": {
     "title_beyond": "BEYOND",
@@ -14,7 +14,7 @@
     "architecture": "소프트웨어 엔지니어",
     "intelligence_subtitle": "풀스택 · 클라우드",
     "meta_title": "김현중 | 소프트웨어 엔지니어",
-    "meta_description": "사업에 도움이 되는 소프트웨어를 만드는 엔지니어 김현중의 포트폴리오와 기술 블로그.",
+    "meta_description": "소프트웨어 엔지니어이자 Specify 창업자인 김현중이 Specify·맘마·페티를 1인으로 운영하며 제품과 소프트웨어 개발 경험을 기록합니다.",
     "meta_title_template": "%s | 김현중",
     "open_for_ventures": "새로운 협업을 환영합니다"
   },
@@ -27,13 +27,11 @@
     "focus_value": "고객 / 팀"
   },
   "projects": {
-    "title_bg": "PORTFOLIO",
-    "title": "주요 프로젝트",
-    "meta_title": "Portfolio",
-    "meta_description": "웹·AI·클라우드 소프트웨어와 기술 케이스 스터디를 담은 프로젝트 포트폴리오.",
-    "page_subtitle": "웹·AI·클라우드 소프트웨어와 기술 케이스 스터디를 기록합니다.",
-    "back_to_portfolio": "포트폴리오로 돌아가기",
-    "back_to_portfolio_aria": "포트폴리오 목록으로 돌아가기",
+    "title_bg": "PROJECTS",
+    "title": "프로젝트",
+    "meta_title": "프로젝트",
+    "meta_description": "직접 만든 AI 제품과 웹·클라우드 시스템의 구현 과정을 소개합니다.",
+    "page_subtitle": "직접 만든 AI 제품과 웹·클라우드 시스템의 구현 과정을 소개합니다.",
     "view_project": "프로젝트 보기",
     "overview_heading": "프로젝트 개요",
     "previous": "이전 프로젝트",
@@ -41,7 +39,10 @@
     "visit_service": "서비스 방문",
     "visit_service_aria": "{title} 서비스 방문 (새 탭에서 열림)",
     "case_study": "케이스 스터디",
-    "view_project_aria": "{title} 프로젝트 보기"
+    "view_project_aria": "{title} 프로젝트 보기",
+    "back_to_projects": "프로젝트로 돌아가기",
+    "back_to_projects_aria": "프로젝트 목록으로 돌아가기",
+    "list_aria": "프로젝트 목록"
   },
   "blog": {
     "page_title": "Blog",
@@ -77,7 +78,7 @@
     "intro_para_1": "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
     "intro_para_2": "고객이 제품을 막힘없이 쓰고, 팀이 중요한 일에 더 많은 시간을 쓸 수 있다면 소프트웨어는 레버리지가 됩니다.",
     "current_focus_heading": "현재 집중",
-    "current_focus_cta": "GitHub에서 보기",
+    "current_focus_cta": "스페시파이 방문하기",
     "tech_stack_heading": "기술 스택",
     "experience_heading": "경력",
     "cta_title": "함께 일해요",

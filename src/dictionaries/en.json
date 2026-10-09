@@ -1,9 +1,9 @@
 {
   "nav": {
-    "portfolio": "Portfolio",
     "intelligence": "Intelligence",
     "profile": "Profile",
-    "contact": "Contact"
+    "contact": "Contact",
+    "projects": "Projects"
   },
   "hero": {
     "title_beyond": "BEYOND",
@@ -14,7 +14,7 @@
     "architecture": "Software Engineer",
     "intelligence_subtitle": "Full-Stack · Cloud",
     "meta_title": "Hyunjoong Kim | Software Engineer",
-    "meta_description": "Portfolio and technical writing by software engineer Hyunjoong Kim, focused on software that creates leverage for businesses.",
+    "meta_description": "Hyunjoong Kim is a software engineer and founder of Specify. He independently operates Specify, Mamma, and Petty, and writes about building software products.",
     "meta_title_template": "%s | Hyunjoong Kim",
     "open_for_ventures": "Open to collaboration"
   },
@@ -27,13 +27,11 @@
     "focus_value": "Customers / Teams"
   },
   "projects": {
-    "title_bg": "PORTFOLIO",
-    "title": "Selected Projects",
-    "meta_title": "Portfolio",
-    "meta_description": "A portfolio of web, AI, and cloud software with technical case studies.",
-    "page_subtitle": "Selected work across web, AI, and cloud software, with technical case studies.",
-    "back_to_portfolio": "Back to Portfolio",
-    "back_to_portfolio_aria": "Go back to portfolio list",
+    "title_bg": "PROJECTS",
+    "title": "Projects",
+    "meta_title": "Projects",
+    "meta_description": "AI products and web and cloud systems, with the engineering behind them.",
+    "page_subtitle": "AI products and web and cloud systems, with the engineering behind them.",
     "view_project": "View Project",
     "overview_heading": "Project Overview",
     "previous": "Previous Project",
@@ -41,7 +39,10 @@
     "visit_service": "Visit Service",
     "visit_service_aria": "Visit {title} service (opens in new tab)",
     "case_study": "Case Study",
-    "view_project_aria": "View project: {title}"
+    "view_project_aria": "View project: {title}",
+    "back_to_projects": "Back to Projects",
+    "back_to_projects_aria": "Go back to project list",
+    "list_aria": "Project list"
   },
   "blog": {
     "page_title": "Blog",
@@ -77,7 +78,7 @@
     "intro_para_1": "I build products and systems for the web and cloud.",
     "intro_para_2": "Software becomes leverage when customers can use a product without getting stuck and teams have more time for important work.",
     "current_focus_heading": "Current Focus",
-    "current_focus_cta": "View GitHub",
+    "current_focus_cta": "Visit Specify",
     "tech_stack_heading": "Tech Stack",
     "experience_heading": "Experience",
     "cta_title": "Let's work together",

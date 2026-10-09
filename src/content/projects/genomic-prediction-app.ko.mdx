@@ -1,15 +1,16 @@
 export const metadata = {
-  id: "p3",
+  updatedAt: "2026-10-09",
+  id: "p4",
   title: "유전체 분석-예측 플랫폼",
   adCopy: "대용량 유전체 데이터 처리를 위한 이벤트 기반 서버리스 시스템",
   description:
     "AWS Batch, EFS, Lambda와 이벤트 기반 메시징을 결합해 유전체 시퀀싱 분석 작업을 병렬 실행하고 리포트 생성까지 오케스트레이션하는 플랫폼입니다.",
-  highlight: "Fortuna Helix · Fullstack · 2023 - Present",
-  image: "/images/ko/genomic.png",
+  highlight: "Fortuna Helix · Fullstack · 2023.12–2026.05",
+  image: "/images/projects/genomic-ko.webp",
   tags: [
-    "NextJS",
+    "Next.js",
     "NestJS",
-    "Fast API",
+    "FastAPI",
     "TypeScript",
     "Python",
     "AWS Batch",
@@ -68,3 +69,9 @@ NextJS, NestJS, FastAPI, TypeScript, Python, AWS Batch, Lambda, Step Functions, 
 ---
 
 _Developed with NestJS, AWS Batch, and an event-driven serverless architecture._
+
+## 설계에서의 판단
+
+오래 실행되는 분석 작업과 짧은 상태 전환을 분리하는 것이 핵심입니다. Batch는 계산을, Lambda는 트리거와 오케스트레이션을 맡고, 메시징으로 리포트 생성 단계를 분리합니다. 공유 파일은 EFS, 최종 산출물은 S3로 용도를 나눠 작업 간 데이터 흐름을 명확하게 구성했습니다.
+
+_2026년 10월 9일 기존 구현 기록을 정리했습니다. 이미지는 기존에 공개한 플랫폼 화면입니다._

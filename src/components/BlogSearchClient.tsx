@@ -89,7 +89,7 @@ const BlogSearchClient = ({
             type="search"
             defaultValue={normalizedQuery}
             placeholder={labels.searchPlaceholder}
-            className="w-full rounded-lg border border-gray-700/80 bg-black/20 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-500 outline-none transition-colors focus-visible:border-white/30 focus-visible:ring-2 focus-visible:ring-white/20"
+            className="w-full rounded-lg border border-gray-700/80 bg-black/20 px-3 py-2.5 text-sm text-gray-100 placeholder:text-gray-400 outline-none transition-colors focus-visible:border-white/30 focus-visible:ring-2 focus-visible:ring-white/20"
           />
 
           {hasQuery ? (
@@ -104,7 +104,7 @@ const BlogSearchClient = ({
           ) : null}
         </form>
 
-        <p className="mt-3 text-xs font-mono uppercase tracking-wider text-gray-500" aria-live="polite">
+        <p className="mt-3 text-xs font-mono uppercase tracking-wider text-gray-400" aria-live="polite">
           {resultsText}
         </p>
       </section>

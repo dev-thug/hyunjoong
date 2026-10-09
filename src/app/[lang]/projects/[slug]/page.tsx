@@ -1,8 +1,13 @@
+import RelatedContent from "@/components/layout/RelatedContent";
+import { getRelatedPostsForProject } from "@/lib/related-content";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Link from "next/link";
 import Image from "next/image";
+import { extractTocItems } from "@/lib/toc";
 import { notFound } from "next/navigation";
 import {
   getProjectBySlug,
+  getProjectSourceBySlug,
   getAllProjects,
   generateProjectParams,
   getAvailableProjectLocales,
@@ -74,7 +79,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
   // Defer prev/next list fetch until after the 404 guard so missing pages
   // don't pay for reading every project MDX file.
-  const allProjects = await getAllProjects(lang);
+  const [allProjects, source, relatedPosts] = await Promise.all([
+    getAllProjects(lang),
+    getProjectSourceBySlug(slug, lang),
+    getRelatedPostsForProject(slug, lang),
+  ]);
+  const sections = source ? extractTocItems(source).filter((item) => item.level === 2) : [];
 
   const baseUrl = getSiteBaseUrl();
   const projectUrl = `${baseUrl}/${lang}/projects/${slug}`;
@@ -86,6 +96,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     url: projectUrl,
     image: toAbsoluteSiteUrl(project.image),
     inLanguage: lang,
+    mainEntityOfPage: projectUrl,
+    ...(project.updatedAt ? { dateModified: project.updatedAt } : {}),
     creator: buildSitePerson(baseUrl, lang),
     isPartOf: { "@id": `${baseUrl}/#website` },
     ...(project.serviceUrl ? { sameAs: [project.serviceUrl] } : {}),
@@ -114,124 +126,92 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: projectJsonLdScript }}
       />
-      <article className="max-w-5xl mx-auto">
-      {/* 헤더 */}
-      <header className="mb-12">
-        <Link
-          href={`/${lang}/projects`}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white focus-visible:ring-2 focus-visible:ring-white/20 outline-none rounded-md transition-colors duration-200 mb-8"
-          aria-label={dict.projects.back_to_portfolio_aria}
-        >
-          <ArrowLeft size={16} aria-hidden="true" />
-          <span className="text-sm font-mono uppercase tracking-widest">
-            {dict.projects.back_to_portfolio}
-          </span>
-        </Link>
+      <main id="main-content" tabIndex={-1} className="mx-auto max-w-6xl pb-8">
+        <Breadcrumbs lang={lang} items={[{ name: lang === "ko" ? "홈" : "Home", path: "/" + lang }, { name: dict.nav.projects, path: "/" + lang + "/projects" }, { name: project.title, path: "/" + lang + "/projects/" + slug }]} />
 
-        <div className="flex items-center gap-4 mb-4">
-          <span className="text-xs font-mono text-gray-400 uppercase tracking-wider">
-            {project.highlight}
-          </span>
-        </div>
-
-        <h1 className="text-4xl md:text-6xl font-bold font-montserrat text-white leading-tight">
-          {project.title}
-        </h1>
-
-        <p className="text-xl text-gray-400 mt-4 leading-relaxed">
-          {project.adCopy}
-        </p>
-
-        <hr className="border-gray-800 mt-8" />
-      </header>
-
-      {/* 메인 이미지 */}
-      <div className="mb-12 rounded-2xl overflow-hidden relative aspect-video bg-gray-900">
-        <Image
-          src={project.image}
-          alt={`Main showcase image for ${project.title}`}
-          fill
-          priority
-          sizes="(max-width: 1280px) 100vw, 1024px"
-          className="object-cover"
-        />
-      </div>
-
-      {/* 메트릭스 */}
-      <section
-        className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8"
-        aria-label={lang === "ko" ? "프로젝트 핵심 항목" : "Project metrics"}
-      >
-        {project.metrics.map((metric) => (
-          <div
-            key={metric.label}
-            className="p-6 rounded-xl border border-gray-800 bg-white/5"
-          >
-            <span className="text-3xl md:text-4xl font-bold text-white">
-              {metric.value}
-            </span>
-            <p className="text-xs font-mono text-gray-500 uppercase tracking-wider mt-2">
-              {metric.label}
-            </p>
+        <header className="grid items-center gap-8 border-b border-white/10 pb-10 md:gap-12 md:pb-14 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="min-w-0">
+            <p className="mb-3 text-xs leading-6 tracking-wide text-zinc-400">{project.highlight}</p>
+            <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs leading-6 text-zinc-400">
+              <Link href={"/" + lang + "/profile"} className="rounded hover:text-white focus-visible:ring-2 focus-visible:ring-white/40">{projectJsonLd.creator.name}</Link>
+              {project.updatedAt && <time dateTime={project.updatedAt}>{lang === "ko" ? "업데이트 " : "Updated "}{project.updatedAt}</time>}
+            </div>
+            <h1 className="break-keep text-balance font-montserrat text-3xl font-medium leading-[1.2] tracking-tight text-white sm:text-4xl xl:text-5xl">
+              {project.title}
+            </h1>
+            <p className="mt-5 max-w-xl break-keep text-base leading-8 text-zinc-300 md:text-lg">{project.adCopy}</p>
+            {project.serviceUrl && (
+              <a
+                href={project.serviceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-7 inline-flex min-h-11 items-center gap-3 rounded-full border border-white/20 bg-white/5 px-5 py-2.5 text-sm text-white transition-colors hover:bg-white/15 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                aria-label={dict.projects.visit_service_aria.replace("{title}", project.title)}
+              >
+                {dict.projects.visit_service}
+                <ExternalLink size={14} aria-hidden="true" />
+              </a>
+            )}
           </div>
-        ))}
-      </section>
+          <div className="relative  w-full self-start overflow-hidden rounded-xl border border-white/10 bg-zinc-950 lg:self-center" style={{ aspectRatio: project.slug === "genomic-prediction-app" ? "1440 / 804" : "16 / 10" }}>
+            <Image
+              src={project.image}
+              alt={lang === "ko" ? `${project.title} 프로젝트 대표 이미지` : `Cover illustration for ${project.title}`}
+              fill
+              loading="eager"
+              fetchPriority="high"
+              sizes="(max-width: 1024px) 100vw, 560px"
+              className={"object-cover " + ""}
+            />
+          </div>
+        </header>
 
-      {/* 태그 */}
-      <div
-        className="flex flex-wrap gap-3 mb-12"
-        aria-label={lang === "ko" ? "사용 기술" : "Technologies used"}
-      >
-        {project.tags.map((tag) => (
-          <span
-            key={tag}
-            className="px-4 py-2 rounded-full text-sm border border-gray-700 text-gray-300 bg-white/5"
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
+        <div className="grid gap-10 pt-10 md:pt-14 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-14 xl:gap-20">
+          <aside className="min-w-0" aria-label={lang === "ko" ? "프로젝트 정보와 목차" : "Project information and contents"}>
+            <div className="space-y-8 lg:sticky lg:top-28 lg:max-h-[calc(100svh-8rem)] lg:overflow-y-auto lg:pr-2">
+              {sections.length > 0 && (
+                <nav aria-label={lang === "ko" ? "본문 목차" : "On this page"}>
+                  <h2 className="mb-4 text-sm font-medium text-white">{lang === "ko" ? "이 프로젝트 이야기" : "In this project"}</h2>
+                  <ol className="flex gap-x-5 overflow-x-auto pb-2 lg:block lg:space-y-3 lg:overflow-visible lg:pb-0">
+                    {sections.map((section) => (
+                      <li key={section.id} className="shrink-0">
+                        <a href={`#${section.id}`} className="block whitespace-nowrap rounded text-sm leading-6 text-zinc-400 lg:whitespace-normal transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40">{section.text}</a>
+                      </li>
+                    ))}
+                  </ol>
+                </nav>
+              )}
+              <dl className="grid grid-cols-3 gap-4 border-t border-white/10 pt-6 lg:grid-cols-1">
+                {project.metrics.map((metric) => (
+                  <div key={metric.label}>
+                    <dt className="text-xs leading-5 text-zinc-400">{metric.label}</dt>
+                    <dd className="mt-1 text-sm font-medium leading-6 text-zinc-200">{metric.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="border-t border-white/10 pt-6">
+                <h2 className="mb-3 text-xs text-zinc-400">{lang === "ko" ? "사용 기술" : "Built with"}</h2>
+                <ul className="flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <li key={tag} className="rounded-md border border-white/10 px-2 py-1 text-xs leading-5 text-zinc-400">{tag}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </aside>
 
-      {/* 서비스 바로가기: 태그 아래 가로로 길게 */}
-      {project.serviceUrl && (
-        <a
-          href={project.serviceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-3 w-full py-4 px-6 rounded-xl border-2 border-white/25 bg-white/10 text-white hover:bg-white/20 hover:border-white/40 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:outline-none transition-all duration-200 touch-action-manipulation mb-12"
-          aria-label={dict.projects.visit_service_aria.replace("{title}", project.title)}
-        >
-          <span className="text-base font-bold">{dict.projects.visit_service}</span>
-          <ExternalLink size={20} aria-hidden="true" className="shrink-0" />
-        </a>
-      )}
-
-      {/* 상세 설명 */}
-      <section
-        className="prose-custom mb-16"
-        aria-labelledby="overview-heading"
-      >
-        <h2
-          id="overview-heading"
-          className="text-2xl font-light text-white mb-6"
-        >
-          {dict.projects.overview_heading}
-        </h2>
-        <div className="text-gray-400 leading-relaxed text-lg">
-          {project.description}
+          <div className="min-w-0 max-w-[70ch]">
+            <section aria-labelledby="overview-heading" className="mb-10 border-b border-white/10 pb-8">
+              <h2 id="overview-heading" className="mb-4 text-sm font-medium text-zinc-400">{dict.projects.overview_heading}</h2>
+              <p className="break-keep text-lg leading-8 text-zinc-200 md:text-xl md:leading-9">{project.description}</p>
+            </section>
+            <section className="prose-custom project-prose" aria-label={lang === "ko" ? "프로젝트 상세 문서" : "Detailed project documentation"}>
+              <ProjectContent />
+            </section>
+            <RelatedContent title={lang === "ko" ? "관련 기술 글" : "Related engineering notes"}
+              items={relatedPosts.map(post => ({ href: "/" + post.lang + "/blog/" + post.slug, title: post.title, description: post.excerpt }))} />
+          </div>
         </div>
-      </section>
-
-      {/* MDX 본문 콘텐츠 */}
-      <hr className="border-gray-800 my-8" aria-hidden="true" />
-      <section
-        className="prose-custom mb-16"
-        aria-label={
-          lang === "ko" ? "프로젝트 상세 문서" : "Detailed project documentation"
-        }
-      >
-        <ProjectContent />
-      </section>
 
       {/* 네비게이션 */}
       <nav
@@ -245,7 +225,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors duration-200"
               aria-label={`${dict.projects.previous}: ${prevProject.title}`}
             >
-              <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center gap-2">
                 <ArrowLeft size={12} aria-hidden="true" />
                 {dict.projects.previous}
               </span>
@@ -263,7 +243,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               className="group flex-1 p-4 rounded-lg border border-gray-800 hover:border-gray-700 focus-visible:ring-2 focus-visible:ring-white/20 outline-none transition-colors duration-200 text-right"
               aria-label={`${dict.projects.next}: ${nextProject.title}`}
             >
-              <span className="text-xs text-gray-500 uppercase tracking-widest flex items-center justify-end gap-2">
+              <span className="text-xs text-gray-400 uppercase tracking-widest flex items-center justify-end gap-2">
                 {dict.projects.next}
                 <ArrowRight size={12} aria-hidden="true" />
               </span>
@@ -276,7 +256,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )}
         </div>
       </nav>
-      </article>
+      </main>
     </>
   );
 }

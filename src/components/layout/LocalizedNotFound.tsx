@@ -40,7 +40,7 @@ const LocalizedNotFound = ({ locale }: LocalizedNotFoundProps) => {
   const copy = notFoundCopy[lang];
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col items-center justify-center bg-black text-white overflow-hidden bg-noise">
+    <main id="main-content" tabIndex={-1} className="relative min-h-screen w-full flex flex-col items-center justify-center bg-black text-white overflow-hidden bg-noise">
       <div className="absolute inset-0 z-0 opacity-20">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[140px] animate-pulse" />
         <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px]" />

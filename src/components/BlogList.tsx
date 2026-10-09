@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from '@/components/IntentLink';
 import { ArrowRight } from 'lucide-react';
 import type { PostMetadata } from '@/types';
 
@@ -20,7 +20,7 @@ const BlogList = ({ posts, lang, startIndex = 0 }: BlogListProps) => {
           href={`/${lang}/blog`}
           className="text-[10px] md:text-xs font-mono text-gray-400 hover:text-white transition-colors"
           tabIndex={0}
-          aria-label={lang === 'ko' ? '모든 블로그 글 보기' : 'View all blog posts'}
+          aria-label={lang === 'ko' ? 'ARCHIVE — 모든 블로그 글 보기' : 'ARCHIVE — View all blog posts'}
         >
           ARCHIVE
         </Link>
@@ -33,11 +33,6 @@ const BlogList = ({ posts, lang, startIndex = 0 }: BlogListProps) => {
             href={`/${lang}/blog/${post.slug}`}
             className="group relative rounded-lg md:rounded-xl transition-all duration-500 cursor-pointer p-4 md:p-6 lg:p-8 border border-transparent hover:glass-panel hover:glass-interactive hover:bg-noise block"
             tabIndex={0}
-            aria-label={
-              lang === 'ko'
-                ? `블로그 글 읽기: ${post.title}`
-                : `Read blog post: ${post.title}`
-            }
           >
             <div className="flex flex-col gap-3 md:gap-4 lg:flex-row lg:items-baseline lg:justify-between lg:gap-6 relative z-10">
                 

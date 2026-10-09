@@ -1,0 +1,104 @@
+{
+  "reviewedAt": "2026-10-09",
+  "images": [
+    {
+      "file": "/images/projects/petty-cover.webp",
+      "source": "OpenAI image_gen (built-in)",
+      "kind": "generated-project-cover",
+      "promptRef": "docs/project-cover-prompts.json#assets.petty"
+    },
+    {
+      "file": "/images/projects/mamma-cover.webp",
+      "source": "OpenAI image_gen (built-in)",
+      "kind": "generated-project-cover",
+      "promptRef": "docs/project-cover-prompts.json#assets.mamma"
+    },
+    {
+      "file": "/images/projects/specify-cover.webp",
+      "source": "OpenAI image_gen (built-in)",
+      "kind": "generated-project-cover",
+      "promptRef": "docs/project-cover-prompts.json#assets.specify"
+    },
+    {
+      "file": "/images/projects/yejin.webp",
+      "source": "https://yejin.clinic",
+      "kind": "public-page-screenshot"
+    },
+    {
+      "file": "/images/projects/genomic-ko.webp",
+      "source": "public/images/ko/genomic.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/genomic-en.webp",
+      "source": "public/images/en/genomic.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/mamma-record.webp",
+      "source": "mamma-im/public/preview/record.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/mamma-chat.webp",
+      "source": "mamma-im/public/preview/chat.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/mamma-growth.webp",
+      "source": "mamma-im/public/preview/growth.png",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/petty-phones-ko.webp",
+      "source": "petty-im/public/assets/app-phones.webp",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/petty-phones-en.webp",
+      "source": "petty-im/public/assets/app-phones-en.webp",
+      "kind": "existing-project-asset"
+    },
+    {
+      "file": "/images/projects/screens/specify-editor.webp",
+      "source": "https://specify.app",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/mamma-record.webp",
+      "source": "https://app.mamma.im/record",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/mamma-feeding.webp",
+      "source": "https://app.mamma.im/record/new/feeding",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/petty-home.webp",
+      "source": "https://app.petty.im/home",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/projects/screens/petty-story.webp",
+      "source": "https://app.petty.im/stories/profile",
+      "kind": "live-app-screenshot",
+      "capturedAt": "2026-10-09",
+      "note": "Cropped to exclude private file names, unrelated tabs, or the identifying child header where applicable. No live records were submitted."
+    },
+    {
+      "file": "/images/profile-avatar.webp",
+      "source": "User-provided profile photograph",
+      "kind": "optimized-profile-crop",
+      "note": "724 × 724 crop matches the previously displayed circular portrait. Original retained as profile-portrait.webp."
+    }
+  ]
+}

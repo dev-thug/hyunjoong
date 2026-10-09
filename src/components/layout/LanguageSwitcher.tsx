@@ -50,7 +50,7 @@ const LanguageSwitcher = ({ isScrolled = false }: LanguageSwitcherProps) => {
     <button
       type="button"
       onClick={handleLanguageChange}
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 group hover:bg-white/10 ${
+      className={`flex min-h-11 items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300 group hover:bg-white/10 ${
         isScrolled ? "text-gray-200" : "text-gray-400"
       } hover:text-white`}
       aria-label={`Switch to ${targetLabel}`}

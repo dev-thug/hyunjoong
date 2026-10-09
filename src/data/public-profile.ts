@@ -1,6 +1,6 @@
 import type { Locale } from "@/i18n-config";
 
-export const PUBLIC_PROFILE_REVIEWED_AT = "2026-08-11";
+export const PUBLIC_PROFILE_REVIEWED_AT = "2026-10-09";
 
 export interface PublicProfileSkillGroup {
   readonly category: string;
@@ -51,10 +51,10 @@ export const PUBLIC_PROFILE = {
       description:
         "고객과 팀을 위한 제품과 시스템을 만드는 소프트웨어 엔지니어.",
       currentFocus: {
-        title: "제품과 시스템을 만듭니다",
+        title: "제품과 비즈니스를 함께 만듭니다",
         description:
-          "지금은 제품 개발과 기술 방향, AWS 클라우드 시스템을 함께 다루는 일에 집중하고 있습니다.",
-        href: "https://github.com/dev-thug",
+          "Specify·맘마·페티를 1인으로 운영하며, 기획·디자인·개발·마케팅·영업을 연결해 서비스가 실제 사업 성과로 이어지도록 만들고 있습니다.",
+        href: "https://specify.app",
       },
       introParagraphs: [
         "웹과 클라우드 환경에서 제품과 시스템을 만듭니다.",
@@ -80,12 +80,20 @@ export const PUBLIC_PROFILE = {
       ],
       experiences: [
         {
-          period: "2023.12 — 현재",
+          period: "2026.07 — 현재",
+          title: "Founder",
+          company: "스페시파이(specify)",
+          companyUrl: "https://specify.app",
+          description:
+            "Specify·맘마·페티를 1인으로 운영합니다. 비즈니스 임팩트를 만들기 위해 기획·디자인·개발부터 마케팅·영업까지 직접 실행하고 있습니다.",
+        },
+        {
+          period: "2023.12 — 2026.05",
           title: "테크 리드 · 풀스택/AWS 개발자",
           company: "Fortuna Helix",
           companyUrl: "https://fortunahelix.com/",
           description:
-            "백엔드와 AWS 클라우드 개발을 주도하며 기술 방향과 제품 출시를 이끌고 있습니다.",
+            "백엔드와 AWS 클라우드 개발을 주도하며 기술 방향과 제품 출시를 이끌었습니다.",
         },
         {
           period: "2021.12 — 2023.12",
@@ -111,10 +119,10 @@ export const PUBLIC_PROFILE = {
       description:
         "Software engineer building products and systems for customers and teams.",
       currentFocus: {
-        title: "Building products and systems",
+        title: "Building products and businesses",
         description:
-          "Right now, I work across product development, technical direction, and AWS cloud systems.",
-        href: "https://github.com/dev-thug",
+          "I run Specify, Mamma, and Petty independently, connecting product planning, design, development, marketing, and sales to turn services into business results.",
+        href: "https://specify.app",
       },
       introParagraphs: [
         "I build products and systems for the web and cloud.",
@@ -140,12 +148,20 @@ export const PUBLIC_PROFILE = {
       ],
       experiences: [
         {
-          period: "2023.12 — Present",
+          period: "2026.07 — Present",
+          title: "Founder",
+          company: "Specify",
+          companyUrl: "https://specify.app",
+          description:
+            "I run Specify, Mamma, and Petty as a solo founder, handling product planning, design, development, marketing, and sales to create business impact.",
+        },
+        {
+          period: "2023.12 — 2026.05",
           title: "Tech Leader, Full-Stack & AWS Cloud Developer",
           company: "Fortuna Helix",
           companyUrl: "https://fortunahelix.com/",
           description:
-            "Leading backend and AWS cloud development while driving technical direction and product delivery.",
+            "Led backend and AWS cloud development, technical direction, and product delivery.",
         },
         {
           period: "2021.12 — 2023.12",

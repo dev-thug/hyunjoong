@@ -1,63 +1,68 @@
 export const metadata = {
+  updatedAt: "2026-10-09",
   id: "p2",
-  title: "Mamma - Data-Driven Parenting Agent",
-  adCopy:
-    "A mobile parenting tool connecting daily logs, AI summaries, local discovery, and community",
-  description:
-    "A mobile product that structures recurring childcare logs such as feeding, sleep, and diapers, then connects AI-assisted summaries with local-place discovery and community support.",
-  highlight: "Mamma · Parenting Product · 2026",
+  title: "Mamma — A Parenting App That Understands Care Records",
+  adCopy: "Make everyday care logs useful when families need to understand their child.",
+  description: "Mamma brings care logs, timers, growth reports, and developmental checklists together. MammaTalk uses the child’s age and saved records as conversation context. I develop and operate the web, iOS, and Android experiences independently.",
+  highlight: "Mamma · Parenting Agent · 2026",
+  image: "/images/projects/mamma-cover.webp",
   serviceUrl: "https://mamma.im",
-  image: "/images/en/mamma.png",
-  tags: [
-    "Parenting Tech",
-    "AI Analysis",
-    "Growth Tracking",
-    "Community",
-    "Location Discovery",
-    "Mobile App",
-  ],
+  tags: ["Next.js", "TypeScript", "Serverless", "Expo", "TanStack Query", "AI Agents"],
   metrics: [
-    { label: "Core Logs", value: "Feeding · Sleep · Diaper" },
-    { label: "AI Support", value: "Pattern Summaries" },
-    { label: "Local Layer", value: "Places · Community" },
+    { label: "Development", value: "Solo founder" },
+    { label: "Platforms", value: "Web · iOS · Android" },
+    { label: "Core experience", value: "Care logs → MammaTalk" },
   ],
   lang: "en",
 };
 
-**A mobile product that connects repetitive childcare logs to useful next steps**
+## The value comes after the record
 
-Mamma is designed to help parents record daily childcare events and review accumulated context before deciding what to do next. It connects logging, AI-assisted summaries, growth checklists, local-place discovery, and community interaction in one workflow.
+A care log becomes useful when a parent needs to find something again: the last feeding time, a recent sleep pattern, or a developmental item worth checking. Saving the data is only the first step.
 
-## Core Capabilities
+Mamma starts with these everyday questions. Quick logs feed into timers, reports, and MammaTalk conversations. I work on planning, design, web and mobile development, and operations as a solo founder.
 
-- **Low-friction logging:** Structure feeding, sleep, diaper, medication, temperature, and activity records
-- **Summaries and patterns:** Review daily snapshots and recurring patterns across accumulated logs
-- **Growth checklists:** Keep age-specific checkpoints alongside daily records
-- **Local discovery:** Find nearby kids cafes, playgrounds, museums, and culture centers
-- **Community:** Exchange practical experience and information through feeds and comments
-- **AI assistance:** Organize questions and suggested follow-up checks from user-provided context
+## Quick input, separate records for each child
 
-## Product Structure
+Parents can record feeding, sleep, diapers, temperature, medication, bathing, and other care activities. Timers track ongoing sessions, while reports bring together growth measurements and statistics over time.
 
-**1. Logging & Summary Layer**
+Each child has a separate profile so records and growth information stay distinct. Developmental checklists are organized around age and can be reviewed alongside previous records.
 
-- Store core childcare events in a consistent structure
-- Present daily snapshots designed to reduce the effort of reviewing raw logs
+Community and the play map serve different needs from quick logging. They have their own space for sharing experiences and finding places to visit, rather than interrupting the recording flow.
 
-**2. Analysis & Decision Layer**
+## How MammaTalk reads care records
 
-- Summarize sleep, feeding, and activity flows
-- Focus on useful follow-up checks instead of static charts alone
+An assistant should not make parents explain everything again when the app already holds the relevant records. MammaTalk receives recent records and developmental context for the selected child, with tools available to look up more detail.
 
-**3. Local & Community Layer**
+The server verifies the user’s access and fixes the child scope before reading records. Notes inside those records are treated as user data, not instructions for the agent.
 
-- Organize outing candidates through map-based place discovery
-- Provide a space for parents in similar situations to exchange experience and information
+The current local implementation uses Amazon Bedrock and the Amplify conversation runtime. My focus is on connecting answers to the available context and making the next thing to check understandable.
 
-## Key Features
+## One product across web and mobile
 
-Quick logging, AI-assisted summaries, growth checklists, local play map, parenting community, and contextual question support
+The Next.js web app connects to an AWS serverless backend. TanStack Query manages server data, while user and child changes clear the state that should no longer remain on screen.
 
----
+An Expo native shell hosts the web experience. Device features connect through a bridge, and frequently visited tabs preserve their screens and scroll position. Shared flows remain in the web product, with native capabilities added where needed.
 
-_Designed for families who want emotional support and data-informed parenting decisions._
+## Live recording screens
+
+Captured in the current Korean app, showing how care records are reviewed and entered. Open either image to view the original.
+
+<ProjectScreenshots lang="en" images={[
+  {
+    "src": "/images/projects/screens/mamma-record.webp",
+    "alt": "Mamma live daily records",
+    "caption": "Daily summary, quick logging, and the timeline.",
+    "width": 380,
+    "height": 675
+  },
+  {
+    "src": "/images/projects/screens/mamma-feeding.webp",
+    "alt": "Mamma live feeding entry",
+    "caption": "Selecting feeding type, duration, and the child’s state.",
+    "width": 380,
+    "height": 675
+  }
+]} />
+
+[Try Mamma](https://mamma.im)

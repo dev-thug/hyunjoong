@@ -1,72 +1,70 @@
 export const metadata = {
+  updatedAt: "2026-10-09",
   id: "p1",
-  title: "Specify.app: SDLC documentation that stays aligned with code",
-  description:
-    "The product hypothesis and validation record for Specify.app, which generates SDLC documentation from code and business context and traces change impact to keep evidence current.",
-  tags: ["AI Agents", "SDLC", "Documentation", "Change Impact", "Compliance"],
-  highlight: "Specify.app · Market Validation · 2026",
-  image: "/images/en/specify.png",
-  serviceUrl: "https://specify.app",
+  title: "Specify — Keeping Documentation in Step with Code",
+  adCopy: "Built to reduce the searching and updating that follows a code change.",
+  description: "Specify grew from my experience spending about four hours aligning documents after a feature change during medical-device software certification preparation. It connects GitHub changes with the relevant developer documents and prepares updates.",
+  highlight: "Specify · AI Documentation · 2026",
+  image: "/images/projects/specify-cover.webp",
+  serviceUrl: "https://specify.app/en",
+  tags: ["Next.js", "Yjs", "TipTap", "RAG", "Serverless", "MCP", "Amazon Bedrock"],
   metrics: [
-    { label: "Initial segment", value: "10–100 person software teams" },
-    { label: "Timing condition", value: "GS or delivery within 3–6 months" },
-    { label: "Operating principle", value: "Evidence and approvals first" },
+    { label: "Development", value: "Solo founder" },
+    { label: "Starting point", value: "GitHub changes" },
+    { label: "Document workflow", value: "Find · update · review" },
   ],
-  adCopy:
-    "Documentation should change when the code does. Specify.app connects code and business context to generate SDLC documentation and trace change impact.",
   lang: "en",
 };
 
-# Specify.app
+## Half a day of document work after one feature change
 
-## Where the problem started
+At a medical-device software startup, I worked on both development and certification preparation. For more than six months, I helped structure, write, and maintain documentation against development standards.
 
-While working directly with medical-device software certification documentation, I experienced how quickly code and evidence drift apart. When features and architecture changed, requirements, design, test, and operational documents still had to be found and updated separately, with no reliable way to know what had been missed.
+The hardest part was not starting a document. It was **keeping several documents aligned with code that kept changing**.
 
-The problem is not limited to certification. The same code-documentation gap appears in onboarding, customer and audit responses, and delivery to public agencies or large enterprises.
+After a feature changed, I had to find the relevant documents, identify the affected passages, and check whether the same explanation appeared elsewhere. When someone else had written a document, finding it could be a task in itself.
 
-## Product hypothesis
+For one feature change, this work took **about four hours**. Finishing the code meant starting a separate round of documentation work.
 
-Specify.app is being designed to connect code with business context, generate SDLC documentation, trace which requirements, designs, and tests are affected by a code change, and preserve the resulting review and approval history.
+## The same search happened after every change
 
-The current validation focuses on three hypotheses:
+A carefully written document still needed checking after the next update. Maintenance depended on the person who knew where it lived and why it had been written. When that person changed, the search started again.
 
-- Software teams without dedicated documentation staff face substantial rework when they reconcile evidence immediately before certification or delivery.
-- Ongoing change-impact detection, revision proposals, and approval history create more operational value than one-off document generation.
-- Trustworthy evidence and auditable state transitions matter more to a buying decision than generic AI-generated documentation.
+Developers in other small teams described similar pressure in conversations: little time to write documentation, updates only when something was urgently needed, or development continuing without enough documentation.
 
-## Initial validation segment
+The problem I wanted to address became concrete: **find the related documents, locate the passages that need changing, and bring them back into line with the code**.
 
-The first segment under validation is Korean software teams with all of the following conditions:
+## Making code changes the starting point
 
-- 10–100 people
-- A GS Grade 1 certification or public/enterprise delivery deadline within 3–6 months
-- No dedicated documentation team
-- Fragmented ownership and approval history between code changes and document updates
+I built Specify from that experience. It connects GitHub changes with a team's developer documents to reduce the maintenance work that follows a code update.
 
-This is a working ICP being tested through customer interviews and paid commitments, not a claim of proven market traction.
+The workflow has four steps.
 
-## Target workflow
+1. **Connect the sources.** Bring together a GitHub repository, existing documents, and product information.
+2. **Read the change.** Analyze what changed when code is pushed.
+3. **Find the affected documents.** Locate relevant passages and prepare updates in their existing context.
+4. **Review and apply.** Inspect the evidence and proposed changes. Automatic application follows the project's settings.
 
-1. Connect source code, requirements, and existing documentation.
-2. Detect which design, test, and operational documents are affected by a change.
-3. Propose revisions with traceable evidence.
-4. Preserve human review and approval history.
-5. Surface missing or stale evidence before certification or delivery.
+Existing material is retrieved through RAG to provide context for drafting and updating documents. API references, internal wikis, onboarding guides, and release notes can all be affected by the same code change.
 
-The priority is not autonomous text generation. It is evidence that a reviewer can inspect, explicit approval boundaries, and an auditable change history.
+## One change makes the problem easier to see
 
-## Business-model hypothesis
+Suppose a webhook policy changes from three retries to five. The code may be complete, but if the integration guide still says “three retries,” the next developer will work from the old policy.
 
-The entry point is a certification or delivery documentation project that reveals the customer's process and evidence. The longer-term model is a subscription for change-impact detection and continuous documentation maintenance, with a potential channel for consulting partners who deliver these projects.
+Someone needs to find that explanation, compare it with the updated code, and correct it. I am building Specify to continue that work from the code change itself.
 
-## Current status and evidence standard
+The screenshot below shows a manually written retry-policy demo document in the live editor. It illustrates editing, document status, and sharing controls; it is not a screenshot of an automatically applied update.
 
-Specify.app is in market validation. This page does not present unverified customer counts, conversion rates, or time savings as results. The status will change only when supported by evidence such as:
+<ProjectScreenshots lang="en" images={[
+  {
+    "src": "/images/projects/screens/specify-editor.webp",
+    "alt": "Live Specify editor with a retry-policy demo document",
+    "caption": "A manually written retry-policy example in the production editor. The interface is in Korean.",
+    "width": 1280,
+    "height": 650
+  }
+]} />
 
-- Repeated observations from real customer interviews
-- Concrete reactions to price
-- A paid pilot or purchasing commitment
-- Before-and-after operating metrics measured on the same basis
+Documentation changes alongside code, both during certification preparation and throughout product maintenance. I want the searching and comparison I experienced to become work a team does not have to restart after every update.
 
-[Visit Specify.app](https://specify.app)
+[Try Specify](https://specify.app/en) · [Product documentation](https://docs.specify.app)

@@ -3,6 +3,7 @@ import Negotiator from 'negotiator';
 import { NextRequest, NextResponse } from 'next/server';
 import { i18n, type Locale } from './i18n-config';
 import { getLocaleFromPathname } from './lib/pathname-locale';
+import { resolveBlogSearchRoute } from './lib/blog-search-routing';
 
 const getLocale = (request: NextRequest): string => {
   const acceptLanguage = request.headers.get("accept-language") ?? "";
@@ -57,8 +58,31 @@ export function proxy(request: NextRequest) {
   }
 
   const requestLocale = getLocaleFromPathname(pathname);
+  const blogSearchDecision = resolveBlogSearchRoute(
+    pathname,
+    request.nextUrl.searchParams.getAll("q")
+  );
+
+  if (blogSearchDecision?.type === "redirect") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = blogSearchDecision.pathname;
+    redirectUrl.search = "";
+    if (blogSearchDecision.query) {
+      redirectUrl.searchParams.set("q", blogSearchDecision.query);
+    }
+    return NextResponse.redirect(redirectUrl);
+  }
+
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-request-locale", requestLocale);
+
+  if (blogSearchDecision?.type === "rewrite") {
+    const rewriteUrl = request.nextUrl.clone();
+    rewriteUrl.pathname = blogSearchDecision.pathname;
+    return NextResponse.rewrite(rewriteUrl, {
+      request: { headers: requestHeaders },
+    });
+  }
 
   return NextResponse.next({
     request: { headers: requestHeaders },
@@ -67,8 +91,9 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   // Every document path is locale-tagged before rendering so global 404 can
-  // select a server-rendered language. Internal/API/static paths stay excluded.
+  // select a server-rendered language. Internal/API/static paths, including
+  // root machine-readable text/XML routes and image files, stay excluded.
   matcher: [
-    "/((?!api|_next|_vercel|favicon.ico|.*\\.(?:avif|bmp|css|gif|ico|jpe?g|js|map|mjs|png|svg|txt|webmanifest|woff2?|xml)).*)",
+    "/((?!api|_next|_vercel|favicon.ico|.*\\.(?:avif|bmp|css|gif|ico|jpe?g|js|map|mjs|png|svg|txt|webmanifest|webp|woff2?|xml)).*)",
   ],
 };

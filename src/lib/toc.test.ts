@@ -7,7 +7,7 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { extractTocItems } from "./toc";
+import { createHeadingIdGenerator, extractTocItems } from "./toc";
 
 test("extracts h2/h3 headings with stable unique ids", () => {
   const mdx = `
@@ -43,4 +43,14 @@ test("ignores fenced blocks and strips inline markdown in heading text", () => {
     { id: "bold-and-code-link", text: "Bold and code Link", level: 2 },
     { id: "deep-dive", text: "Deep Dive", level: 3 },
   ]);
+});
+
+
+test("heading IDs stay isolated when multiple documents render interleaved", () => {
+  const firstDocument = createHeadingIdGenerator();
+  const secondDocument = createHeadingIdGenerator();
+  assert.equal(firstDocument("Key Technologies"), "key-technologies");
+  assert.equal(secondDocument("Key Technologies"), "key-technologies");
+  assert.equal(firstDocument("Key Technologies"), "key-technologies-2");
+  assert.equal(secondDocument("Key Technologies"), "key-technologies-2");
 });

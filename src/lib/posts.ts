@@ -367,6 +367,10 @@ export const generatePostParams = async (): Promise<
   );
 };
 
+/** Hidden means unlisted/noindex; it must not be advertised as an indexable alternate. */
+export const getIndexablePostLocales = (posts: readonly ({ lang: string; hidden?: boolean } | null)[]): string[] =>
+  [...new Set(posts.filter((post): post is { lang: string; hidden?: boolean } => post !== null && !post.hidden && isSafePostLang(post.lang)).map(post => post.lang))];
+
 export const getAvailablePostLocales = cache(
   async (slug: string): Promise<string[]> => {
     if (!isSafePostSlug(slug)) {
@@ -374,8 +378,7 @@ export const getAvailablePostLocales = cache(
     }
 
     const identifiers = await getPostIdentifiers();
-    return identifiers
-      .filter((item) => item.slug === slug)
-      .map((item) => item.lang);
+    const translations = await Promise.all(identifiers.filter(item => item.slug === slug).map(item => getPostBySlug(item.slug, item.lang)));
+    return getIndexablePostLocales(translations);
   }
 );
