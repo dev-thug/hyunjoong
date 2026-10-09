@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { buildLocalizedPageMetadata } from "./localized-page";
+import { getSiteBaseUrl } from "@/lib/site-config";
+
+const baseUrl = getSiteBaseUrl();
 
 test("emits hreflang only for locales where a paginated route exists", () => {
   const metadata = buildLocalizedPageMetadata({
@@ -12,8 +15,8 @@ test("emits hreflang only for locales where a paginated route exists", () => {
   });
 
   assert.deepEqual(metadata.alternates?.languages, {
-    ko: "https://hyunjoong.kim/ko/blog/page/6",
-    "x-default": "https://hyunjoong.kim/ko/blog/page/6",
+    ko: `${baseUrl}/ko/blog/page/6`,
+    "x-default": `${baseUrl}/ko/blog/page/6`,
   });
   assert.equal(metadata.twitter?.creator, "@de0978");
 });
@@ -27,9 +30,9 @@ test("keeps both locale alternates by default", () => {
   });
 
   assert.deepEqual(metadata.alternates?.languages, {
-    ko: "https://hyunjoong.kim/ko/profile",
-    en: "https://hyunjoong.kim/en/profile",
-    "x-default": "https://hyunjoong.kim/ko/profile",
+    ko: `${baseUrl}/ko/profile`,
+    en: `${baseUrl}/en/profile`,
+    "x-default": `${baseUrl}/ko/profile`,
   });
 });
 

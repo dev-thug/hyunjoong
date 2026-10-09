@@ -39,9 +39,9 @@ test("builds a short bilingual discovery file with canonical source links", asyn
   const documents = buildAiDiscoveryDocuments(data);
 
   assert.match(documents.summary, /^# Hyunjoong Kim/m);
-  assert.match(documents.summary, /\[한국어 프로필\]\(https:\/\/hyunjoong\.kim\/ko\/profile\)/);
-  assert.match(documents.summary, /\[English profile\]\(https:\/\/hyunjoong\.kim\/en\/profile\)/);
-  assert.match(documents.summary, /\[Complete public-page index\]\(https:\/\/hyunjoong\.kim\/llms-full\.txt\)/);
+  assert.ok(documents.summary.includes(`[한국어 프로필](${data.baseUrl}/ko/profile)`));
+  assert.ok(documents.summary.includes(`[English profile](${data.baseUrl}/en/profile)`));
+  assert.ok(documents.summary.includes(`[Complete public-page index](${data.baseUrl}/llms-full.txt)`));
   assert.match(documents.summary, /does not guarantee.*index or cite a page/i);
   assert.ok(documents.summary.length < documents.full.length);
   for (const lang of ["ko", "en"]) {

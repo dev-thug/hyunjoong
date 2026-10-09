@@ -4,8 +4,9 @@ import { PUBLIC_PROFILE_REVIEWED_AT } from "@/data/public-profile";
 import { BLOG_POSTS_PAGE_SIZE, getAllPosts } from "@/lib/posts";
 import { getAllProjects } from "@/lib/projects";
 import sitemap from "./sitemap";
+import { getSiteBaseUrl } from "@/lib/site-config";
 
-const baseUrl = "https://hyunjoong.kim";
+const baseUrl = getSiteBaseUrl();
 
 const withVercelEnv = async <T>(
   value: string | undefined,

@@ -7,7 +7,7 @@ export const NOT_FOUND_METADATA_TITLE = `Not Found | ${SITE_NAME}`;
 // Memoize at module load so OG/sitemap/JSON-LD callers don't re-read env + run
 // the trailing-slash regex on every metadata call.
 const RESOLVED_BASE_URL = (
-  process.env.NEXT_PUBLIC_BASE_URL || DEFAULT_BASE_URL
+  process.env.NEXT_PUBLIC_BASE_URL?.trim() || DEFAULT_BASE_URL
 ).replace(/\/+$/, "");
 
 // One-time dev-mode warning: missing NEXT_PUBLIC_BASE_URL will silently
