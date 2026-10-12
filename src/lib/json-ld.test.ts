@@ -54,8 +54,8 @@ test("builds one domain-level WebSite identity linked to the canonical Person", 
   const website = buildWebsiteSchema({ baseUrl });
 
   assert.equal(website["@id"], `${baseUrl}/#website`);
-  assert.equal(website.name, "Hyunjoong Kim");
-  assert.equal(website.alternateName, "김현중");
+  assert.equal(website.name, "김현중");
+  assert.equal(website.alternateName, "Hyunjoong Kim");
   assert.equal(website.url, baseUrl);
   assert.deepEqual(website.author, { "@id": `${baseUrl}/#person` });
   assert.deepEqual(website.publisher, { "@id": `${baseUrl}/#person` });

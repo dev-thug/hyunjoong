@@ -212,6 +212,11 @@ const validatePostFile = async (absolutePath: string): Promise<ValidationIssue[]
     });
   }
 
+  const updatedAt = parseStringField(metadataBlock, "updatedAt");
+  if (/\bupdatedAt\s*:/.test(metadataBlock) && (!parseContentDate(updatedAt) || (updatedAt && parsedFields.date && updatedAt < parsedFields.date))) {
+    issues.push({ filePath: relativePath, level: "ERROR", message: "updatedAt must be a valid ISO date on or after publication." });
+  }
+
   const hidden = parseBooleanField(metadataBlock, "hidden");
   const rawHiddenMatch = metadataBlock.match(/hidden:\s*([^,\n]+)/);
   if (rawHiddenMatch && hidden === undefined) {

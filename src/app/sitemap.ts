@@ -173,11 +173,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // `post.date` is the visible publication date, not an update timestamp. Omit
-  // lastModified until content metadata exposes a reviewed update date.
+  // Only explicit editorial update dates are lastModified signals.
   const blogPages: MetadataRoute.Sitemap = allPosts.map((post) => {
     return {
       url: `${baseUrl}/${post.lang}/blog/${post.slug}`,
+      ...(post.updatedAt ? { lastModified: toValidDate(post.updatedAt) ?? undefined } : {}),
       changeFrequency: "monthly" as const,
       priority: 0.8,
       alternates: buildContentAlternates(

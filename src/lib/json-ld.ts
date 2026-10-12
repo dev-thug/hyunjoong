@@ -1,7 +1,7 @@
 import { SOCIAL_LINK_MAP } from "@/constants";
 import { PUBLIC_PROFILE, getPublicProfile } from "@/data/public-profile";
 import type { Locale } from "@/i18n-config";
-import { SITE_NAME } from "@/lib/site-config";
+import { SITE_NAME, SITE_ALTERNATE_NAME } from "@/lib/site-config";
 
 // Escapes `<` to its JSON unicode form so that an inline <script> tag
 // embedding this output cannot be terminated by `</script>` inside the
@@ -103,7 +103,7 @@ export const buildWebsiteSchema = ({ baseUrl }: WebsiteSchemaOptions) => {
     "@type": "WebSite",
     "@id": `${normalizedBaseUrl}/#website`,
     name: SITE_NAME,
-    alternateName: PUBLIC_PROFILE.localized.ko.name,
+    alternateName: SITE_ALTERNATE_NAME,
     url: normalizedBaseUrl,
     author: { "@id": `${normalizedBaseUrl}/#person` },
     publisher: { "@id": `${normalizedBaseUrl}/#person` },

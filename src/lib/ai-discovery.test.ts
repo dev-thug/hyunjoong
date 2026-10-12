@@ -93,3 +93,14 @@ test("filters hidden posts from both discovery files and escapes markdown links"
   assert.doesNotMatch(documents.full, /hidden-post|Hidden \[draft\] post/);
   assert.ok(documents.full.includes("[Visible \\[draft\\] post]"));
 });
+
+test("distinguishes explicit editorial updates from publication dates", () => {
+  const documents = buildAiDiscoveryDocuments({
+    baseUrl: "https://hyunjoong.kim",
+    posts: [post({ updatedAt: "2026-10-12" })],
+    projects: [],
+  });
+  assert.match(documents.full, /2026-09-10 publication date\. Updated 2026-10-12\./);
+  const unchanged = buildAiDiscoveryDocuments({ baseUrl: "https://hyunjoong.kim", posts: [post()], projects: [] });
+  assert.doesNotMatch(unchanged.full, /Updated \d{4}/);
+});

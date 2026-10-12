@@ -68,7 +68,7 @@ const BlogImage = ({
     rounded && "rounded-xl",
     shadow && "shadow-lg shadow-black/20",
     "transition-transform duration-300",
-    href && "group-hover:scale-[1.02]",
+    "group-hover:scale-[1.02]",
   ]
     .filter(Boolean)
     .join(" ");
@@ -106,18 +106,16 @@ const BlogImage = ({
     />
   );
 
-  const wrappedImage = href ? (
+  const wrappedImage = (
     <Link
-      href={href}
-      className="group block overflow-hidden rounded-xl focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:outline-none"
-      target={href.startsWith("http") ? "_blank" : undefined}
-      rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+      href={href ?? src}
+      className={`group block overflow-hidden rounded-xl focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:outline-none ${href ? "" : "cursor-zoom-in"}`}
+      target={!href || href.startsWith("http") ? "_blank" : undefined}
+      rel={!href || href.startsWith("http") ? "noopener noreferrer" : undefined}
       aria-label={caption ?? alt}
     >
       {imageElement}
     </Link>
-  ) : (
-    <div className="overflow-hidden rounded-xl">{imageElement}</div>
   );
 
   return (

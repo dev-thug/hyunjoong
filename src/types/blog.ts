@@ -15,6 +15,8 @@ export interface Post {
   readonly excerpt: string;
   readonly category: PostCategory;
   readonly date: string;
+  readonly updatedAt?: string;
+  readonly image?: string;
   readonly readTime: string;
   // keywords is normalized from a comma-separated string in MDX metadata
   readonly keywords?: string[];

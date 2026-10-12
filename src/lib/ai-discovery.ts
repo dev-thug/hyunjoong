@@ -62,7 +62,7 @@ const formatPost = (baseUrl: string, post: Post): string =>
   makeLink(
     post.title,
     sectionUrl(baseUrl, post.lang, "blog", post.slug),
-    `${post.date} publication date. ${post.excerpt}`
+    `${post.date} publication date.${post.updatedAt ? ` Updated ${post.updatedAt}.` : ""} ${post.excerpt}`
   );
 
 const formatProject = (baseUrl: string, project: Project): string =>
@@ -130,7 +130,7 @@ const buildFullIndex = (data: AiDiscoveryData): string => {
     "",
     "> A complete index of public profile, project, and published article pages in Korean and English.",
     "",
-    "This file lists page titles and summaries; it is not a full-text export. Follow each link for the canonical page and its complete content. Blog dates below are publication dates, not last-modified dates.",
+    "This file lists page titles and summaries; it is not a full-text export. Follow each link for the canonical page and its complete content. Dates are labeled as publication dates; explicit editorial updates are labeled separately.",
     "",
     "## Profiles",
     ...buildProfileLinks(baseUrl),

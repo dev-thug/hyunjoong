@@ -20,10 +20,10 @@ interface BlogTocProps {
 
 const getItemClassName = (item: TocItem, isActive: boolean): string => {
   const base =
-    "block rounded-md px-2.5 py-1.5 text-[13px] leading-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20";
-  const depthClass = item.level === 3 ? "ml-2 text-gray-400" : "text-gray-400";
+    "block rounded-md px-2.5 py-1.5 text-sm leading-6 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20";
+  const depthClass = item.level === 3 ? "ml-3 text-slate-400" : "font-medium text-slate-300";
   const activeClass = isActive
-    ? "bg-white/8 text-white border-l-2 border-white/40"
+    ? "bg-white/6 text-zinc-100"
     : "hover:bg-white/5 hover:text-gray-200";
   return `${base} ${depthClass} ${activeClass}`;
 };
@@ -123,7 +123,7 @@ export default function BlogToc({
       <div className="mb-6 lg:hidden">
         <button
           type="button"
-          className="glass-panel w-full rounded-lg border border-white/10 px-3 py-2.5 text-left text-[11px] font-mono uppercase tracking-wider text-gray-300"
+          className="w-full rounded-lg border border-slate-600 bg-slate-800/60 px-4 py-3 text-left text-sm font-semibold text-slate-100"
           aria-expanded={isExpanded}
           aria-controls={panelId}
           onClick={() => setIsExpanded((prev) => !prev)}
@@ -145,9 +145,9 @@ export default function BlogToc({
       <aside className="hidden lg:block lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-auto">
         <nav
           aria-label={labels.tocTitle}
-          className="glass-panel rounded-lg border border-white/10 p-3"
+          className="rounded-xl border border-white/10 bg-zinc-900/60 p-4"
         >
-          <h2 className="mb-2 text-[11px] font-mono uppercase tracking-wider text-gray-400">
+          <h2 className="mb-3 text-sm font-semibold text-slate-200">
             {labels.tocTitle}
           </h2>
           <ul className="space-y-1">{tocList}</ul>

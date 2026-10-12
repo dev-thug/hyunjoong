@@ -1,5 +1,6 @@
 import type { NavLink, SocialLink } from "@/types/navigation";
 import type { Locale } from "@/i18n-config";
+import { SITE_NAME } from "@/lib/site-config";
 
 export type NavLabels = {
   projects: string;
@@ -62,7 +63,7 @@ export const SOCIAL_LINKS: readonly SocialLink[] = [
  * 브랜드 정보
  */
 export const BRAND = {
-  NAME: "Hyunjoong Kim",
+  NAME: SITE_NAME,
   TITLE: "Software Engineer",
   LOCATION: "DESIGNED IN SEOUL",
   ESTABLISHED_YEAR: "2025",

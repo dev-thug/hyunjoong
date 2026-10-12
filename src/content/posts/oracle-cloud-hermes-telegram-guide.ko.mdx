@@ -1,0 +1,189 @@
+export const metadata = {
+  title: "오라클 클라우드 평생 무료 서버 생성부터 Antigravity + Hermes 에이전트 텔레그램 연동 완벽 가이드",
+  excerpt:
+    "오라클 클라우드 Always Free 인스턴스를 만들고 Antigravity로 SSH 접속, NousResearch Hermes Agent 설치와 hermes doctor 확인, 텔레그램 봇 연동까지 진행하는 실전 가이드입니다.",
+  category: "Engineering",
+  date: "2026-10-12",
+  readTime: "12 min",
+  lang: "ko",
+  keywords: [
+    "오라클 클라우드",
+    "Oracle Cloud Always Free",
+    "Ubuntu 26.04",
+    "Antigravity",
+    "NousResearch Hermes Agent",
+    "hermes doctor",
+    "Telegram Bot",
+    "OCI Ampere A1",
+  ],
+  hidden: false,
+};
+
+요즘 로컬 PC를 계속 켜두지 않고도 24시간 나만의 AI 비서나 자동화 봇을 돌리기 위해 클라우드 VPS(가상 서버)를 찾는 분들이 많습니다.
+
+하지만 매달 나가는 서버 유지비가 부담스러우셨을 텐데요. 이번 포스팅에서는 <strong>오라클 클라우드 평생 무료(Always Free) 인스턴스</strong>를 생성하고, 복잡한 터미널 명령어 대신 <strong>AI 코딩 에이전트인 안티그래피티(Antigravity)</strong>를 활용해 5분 만에 SSH 접속부터 <strong>헤르메스(Hermes) 에이전트</strong> 설치, <strong>텔레그램 봇 연동</strong>까지 한 번에 끝내는 실전 가이드를 정리해 드립니다.
+
+---
+
+### 🛠️ 준비물
+- 오라클 클라우드 계정 (Free Tier)
+- Antigravity (AI 코딩 에이전트 환경)
+- 텔레그램 계정 (BotFather를 통한 봇 토큰 발급)
+
+---
+
+## 1. 오라클 클라우드 평생 무료 인스턴스 생성하기
+
+웹 콘솔에서 클릭 몇 번으로 가장 안전하고 확실하게 무료 인스턴스를 생성해 보겠습니다.
+
+> ⚠️ <strong>최신 오라클 무료 티어(Always Free) 정책 변경 주의사항</strong>  
+> 기존 Ampere A1 Compute(ARM)의 무료 한도(4코어, 24GB RAM)가 최근 정책 변경으로 <strong>최대 2 OCPU / 12GB RAM (총 부트 볼륨 200GB)</strong> 수준으로 조정되었습니다.  
+> 추가 과금이 발생하지 않도록 반드시 <strong>2코어 / 12GB RAM / 200GB 볼륨</strong> 이하 스펙으로 맞춰주셔야 평생 무료로 안전하게 사용하실 수 있습니다.
+
+> 💡 <strong>꿀팁: "용량 부족(Out of host capacity)" 에러가 뜬다면?</strong>  
+> 오라클 무료 ARM 인스턴스는 인기가 너무 많아서 생성 시 <em>"호스트 용량이 부족합니다"</em>라는 메시지가 뜨며 생성이 안 될 때가 많습니다.  
+> <strong>해결 방법</strong>: 오라클 계정을 <strong>PAYG (Pay As You Go, 유료 계정/결제 카드 등록)</strong>로 업그레이드하시면 우선 할당 권한을 받아 즉시 생성할 수 있습니다!  
+> 💳 <em>유료 계정으로 전환하더라도 앞서 말씀드린 <strong>Always Free 한도(2코어 / 12GB RAM / 200GB 볼륨)</strong> 내에서만 사용하시면 <strong>요금이 절대 청구되지 않고 0원(무료)</strong>으로 유지되니 안심하고 카드 등록하셔도 됩니다.</em>
+
+---
+
+### 1-1. 인스턴스 생성 및 OS / 무료 스펙 선택
+
+오라클 클라우드 콘솔에 로그인한 뒤 상단 메뉴에서 <strong>[컴퓨트] > [인스턴스] > [인스턴스 생성]</strong>을 클릭합니다.
+
+1. <strong>운영체제(Image)</strong>: 가볍고 패키지 호환성이 최신인 <strong>Ubuntu 26.xx 미니멀 (aarch64 / ARM64)</strong> 이미지를 선택합니다.
+2. <strong>컴퓨트 구성(Shape)</strong>: `Ampere (VM.Standard.A1.Flex)`를 선택하고, 무료 한도에 맞춰 <strong>2 OCPU / 12GB RAM</strong>으로 슬라이더를 조절합니다.
+3. <strong>부트 볼륨</strong>: 기본 200GB 이내로 유지되어 있는지 확인합니다.
+
+<BlogImage
+  src="/images/blog/oracle-hermes/01-oci-ampere-ubuntu-arm64.png"
+  alt="Oracle Cloud에서 Ubuntu 26.04 Minimal aarch64 이미지와 VM.Standard.A1.Flex 2 OCPU, 12GB RAM 구성을 선택한 화면"
+  width={1200}
+  height={860}
+  size="full"
+  caption="2 OCPU / 12GB RAM 스펙 설정 및 Ubuntu 26 미니멀 aarch64 OS 이미지를 선택한 화면 캡처"
+/>
+
+---
+
+### 1-2. SSH 키 페어 생성 및 전용 키 다운로드 (필수!)
+
+서버에 비밀번호 없이 안전하게 접속하기 위해 SSH 키가 필수입니다.
+
+화면의 <strong>[SSH 키]</strong> 섹션에서 <strong>[자동으로 키 페어 생성]</strong>을 선택한 뒤, <strong>[전용 키 저장]</strong> 버튼을 눌러 프라이빗 키(`.key` 파일)를 로컬 PC의 안전한 위치에 다운로드합니다. 이 키 파일은 분실 시 다시 다운로드할 수 없으니 꼭 잘 보관해 두세요.
+
+<BlogImage
+  src="/images/blog/oracle-hermes/02-oci-ssh-key-download.png"
+  alt="Oracle Cloud 인스턴스 생성 화면에서 자동 SSH 키 쌍을 생성하고 프라이빗 키를 다운로드하는 모습"
+  width={1200}
+  height={808}
+  size="full"
+  caption="SSH 키 페어 생성 및 전용 키 다운로드 버튼이 보이는 화면 캡처"
+/>
+
+---
+
+### 1-3. 인스턴스 생성 완료 및 공용 IP 확인
+
+화면 맨 아래의 <strong>[생성]</strong> 버튼을 누르면 인스턴스 프로비저닝이 시작됩니다. 1~2분 정도 기다리면 주황색 아이콘이 초록색 <strong>'실행 중(Running)'</strong>으로 변경됩니다.
+
+인스턴스 상세 정보 페이지에서 앞으로 접속에 사용할 <strong>공용 IP 주소(Public IP)</strong>를 복사해 둡니다.
+
+<BlogImage
+  src="/images/blog/oracle-hermes/03-oci-instance-running.png"
+  alt="Ubuntu 26.04 Minimal aarch64 OCI 인스턴스가 실행 중이고 공용 IP가 표시된 상세 페이지"
+  width={1200}
+  height={802}
+  size="full"
+  caption="인스턴스 생성이 완료되어 초록색 '실행 중' 상태와 공용 IP 주소가 표시된 상세 페이지 캡처"
+/>
+
+---
+
+## 2. Antigravity로 10초 만에 SSH 접속 & 기본 환경 세팅
+
+원래대로라면 로컬 터미널에서 `chmod 400`, `ssh -i ...` 명령어 치고, 접속 유지 설정하고, 패키지 업데이트하느라 한참 걸리지만, <strong>AI 에이전트(Antigravity)</strong>를 켜면 프롬프트 한 번으로 끝납니다.
+
+### 2-1. SSH 접속 및 권한 원클릭 설정
+
+안티그래피티를 켜고 방금 다운로드받은 키 파일 위치와 함께 아래 프롬프트를 입력해 주세요. <em>(IP 주소는 본인의 오라클 인스턴스 공용 IP를 넣어주시면 됩니다)</em>
+
+```text
+OCI 인스턴스에 SSH로 접속 테스트하고 연결 계속유지해줘,
+패키지 업데이트도 같이 진행해줘.
+공용 Ip 129.146.174.210
+```
+
+안티그래피티가 알아서 SSH 프라이빗 키 권한을 맞추고 세션을 열어 접속 테스트와 연결 유지를 처리한 뒤, 원격 서버의 최신 패키지 업데이트까지 자동으로 진행해 줍니다.
+
+<BlogImage
+  src="/images/blog/oracle-hermes/04-antigravity-ssh-connection.png"
+  alt="Antigravity에서 OCI 서버 SSH 연결 테스트를 완료하고 Keep-Alive 설정을 적용하는 과정"
+  width={940}
+  height={1018}
+  size="full"
+  caption="안티그래피티 인터페이스에서 OCI 서버로 SSH 접속 테스트를 완료하고 연결 유지 설정을 처리하는 화면 캡처"
+/>
+
+---
+
+## 3. 헤르메스(Hermes) 에이전트 원클릭 세팅
+
+서버 기본 환경이 준비되었으니, 24시간 돌아갈 똑똑한 나만의 AI 비서 <strong>NousResearch Hermes Agent</strong>를 올릴 차례입니다.
+
+공식 문서 기준의 안전한 설치와 무결성 검증을 위해 안티그래피티에 아래 프롬프트를 그대로 입력합니다.
+
+#### 💬 Antigravity에 입력할 프롬프트 복사하기
+```text
+NousResearch Hermes Agent를 설치하고 초기 설정을 도와줘.  
+먼저 OS와 아키텍처, 메모리·디스크 여유 공간을 확인하고 공식 문서와 설치 스크립트가 일치하는지 검토해줘. 공식 설치 방법을 사용하고, 설치 후 hermes 명령과 hermes doctor로 설치 상태를 확인해줘.
+```
+
+안티그래피티가 자동으로 ARM64(aarch64) 아키텍처와 여유 리소스를 점검하고, 공식 가이드에 맞춰 Hermes Agent를 설치한 뒤 `hermes doctor` 헬스체크까지 완벽하게 수행해 줍니다.
+
+<BlogImage
+  src="/images/blog/oracle-hermes/05-hermes-install-doctor.png"
+  alt="Antigravity에서 Hermes Agent의 ARM64 호환성과 리소스를 점검하고 hermes doctor를 실행하는 화면"
+  width={940}
+  height={1015}
+  size="full"
+  caption="Antigravity에서 Hermes Agent 설치 후 hermes doctor 명령어로 상태를 확인하는 터미널 및 로그 화면 캡처"
+/>
+
+---
+
+## 4. 텔레그램(Telegram) 연동 & 백그라운드 24시간 구동
+
+스마트폰 텔레그램 메신저로 언제 어디서든 헤르메스 에이전트와 대화하고 명령을 내릴 수 있도록 봇을 연결합니다.
+
+1. <strong>텔레그램 봇 토큰 발급</strong>: 텔레그램에서 `@BotFather`를 검색해 `/newbot` 명령어로 새 봇을 만들고 <strong>HTTP API Token</strong>을 받습니다.
+2. <strong>설정값 주입</strong>: 헤르메스 `.env` 파일에 텔레그램 봇 토큰과 LLM API 키(OpenAI, Anthropic, Gemini 등)를 넣어줍니다.
+3. <strong>24시간 무중단 데몬 설정</strong>: 터미널 창을 닫아도 꺼지지 않도록 안티그래피티에게 백그라운드 등록을 요청합니다.
+   > <em>"헤르메스 에이전트를 systemd 서비스로 등록해서 백그라운드에서 상시 구동되게 해줘. 서버 재부팅 시에도 자동 시작되도록 세팅해줘."</em>
+
+설정이 끝나면 텔레그램에서 내 봇을 찾아 메시지를 보내봅니다.
+
+<BlogImage
+  src="/images/blog/oracle-hermes/06-hermes-telegram-bot.png"
+  alt="Telegram에서 Hermes Agent 봇과 첫 대화를 나누고 gateway systemd 서비스 상태를 확인한 화면"
+  width={940}
+  height={1015}
+  size="full"
+  caption="스마트폰 또는 PC 텔레그램 대화방에서 헤르메스 봇과 첫 대화를 나누고 정상 응답을 받은 화면 캡처"
+/>
+
+---
+
+## 💡 마치며
+
+- <strong>오라클 최신 무료 정책 준수</strong>: 2코어 12GB RAM 200GB 스펙 + Ubuntu 26 미니멀(aarch64)로 비용 0원 유지
+- <strong>가용성 부족 완벽 해결</strong>: PAYG(카드 등록) 전환으로 인스턴스 생성 실패 없이 즉시 할당 (무료 한도 내 0원 청구)
+- <strong>AI 에이전트(Antigravity) 활용</strong>: SSH 접속 유지 및 `hermes doctor` 검증까지 원클릭 자동화
+- <strong>24시간 개인 AI 비서 완성</strong>: 텔레그램으로 언제 어디서든 대화하고 작업 요청 가능
+
+비용 부담 없이 든든한 12GB 램 스펙의 개인용 AI 서버가 완성되었습니다! 세팅 과정에서 막히거나 궁금한 점이 있으시다면 언제든 댓글로 남겨주세요. 😊
+
+---
+
+## 🏷️ 추천 태그 (SEO)
+`#오라클클라우드` `#오라클무료서버` `#AlwaysFree` `#오라클스펙변경` `#오라클용량부족` `#PAYG` `#Ubuntu26` `#aarch64` `#Antigravity` `#안티그래피티` `#NousResearch` `#HermesAgent` `#헤르메스에이전트` `#hermesdoctor` `#텔레그램봇` `#개인AI서버`
