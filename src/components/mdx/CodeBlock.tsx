@@ -2,6 +2,7 @@
 
 import { Check, Copy } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
 
 interface CodeBlockProps {
   children: React.ReactNode;
@@ -12,6 +13,9 @@ interface CodeBlockProps {
  * 복사 기능, 언어 표시, 그리고 전문적인 엔지니어링 블로그 스타일 UI 포함
  */
 const CodeBlock = ({ children }: CodeBlockProps) => {
+  const params = useParams<{ lang?: string }>();
+  const isKorean = params?.lang === "ko";
+  const [copyError, setCopyError] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -28,14 +32,15 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
   const getLanguage = () => {
     if (React.isValidElement(children)) {
       const props = children.props as { className?: string };
-      if (props.className && props.className.startsWith('language-')) {
-        return props.className.replace('language-', '').toUpperCase();
-      }
+      const match = props.className?.match(/(?:^|\s)language-([\w-]+)/);
+      if (match) return match[1];
     }
     return null;
   };
 
   const language = getLanguage();
+  const isProse = ["text", "plaintext", "txt"].includes(language ?? "");
+  const label = isProse ? (isKorean ? "프롬프트" : "Prompt") : language ?? (isKorean ? "코드" : "Code");
 
   // 컴포넌트 트리에서 텍스트만 추출하는 헬퍼 함수
   const extractText = (node: React.ReactNode): string => {
@@ -57,17 +62,28 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
     return '';
   };
 
-  const canCopy =
-    typeof navigator !== 'undefined' &&
-    typeof navigator.clipboard?.writeText === 'function';
-
   const handleCopy = async () => {
-    if (!canCopy) return;
     const text = extractText(children);
     if (!text) return;
 
     try {
-      await navigator.clipboard.writeText(text);
+      if (typeof navigator.clipboard?.writeText === "function") {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const previousFocus = document.activeElement;
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.cssText = "position:fixed;left:-9999px;top:0";
+        document.body.appendChild(textarea);
+        try {
+          textarea.select();
+          if (!document.execCommand("copy")) throw new Error("Copy unavailable");
+        } finally {
+          textarea.remove();
+          if (previousFocus instanceof HTMLElement) previousFocus.focus();
+        }
+      }
+      setCopyError(false);
       setIsCopied(true);
       if (timerRef.current) {
         clearTimeout(timerRef.current);
@@ -78,53 +94,25 @@ const CodeBlock = ({ children }: CodeBlockProps) => {
       }, 2000);
     } catch (err) {
       console.error('Failed to copy text:', err);
+      setCopyError(true);
     }
   };
 
   return (
-    <div className="group relative mb-8 rounded-xl bg-[#09090b] border border-zinc-800/50 shadow-2xl overflow-hidden">
-      {/* Code Block Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-[#09090b]/80 border-b border-zinc-800/50 backdrop-blur-md">
-        <div className="flex items-center gap-1.5" aria-hidden="true">
-          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700/50" />
-          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700/50" />
-          <div className="w-2.5 h-2.5 rounded-full bg-zinc-700/50" />
-          {language && (
-            <span className="ml-2 text-[10px] font-bold tracking-widest text-zinc-500 font-mono">
-              {language}
-            </span>
-          )}
-        </div>
-        
-        <button
-          type="button"
-          onClick={handleCopy}
-          disabled={!canCopy}
-          className="flex items-center gap-1.5 px-2 py-1 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:outline-none transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-zinc-400"
-          aria-label={isCopied ? 'Copied' : 'Copy code'}
-        >
-          {isCopied ? (
-            <>
-              <Check size={12} className="text-emerald-400" aria-hidden="true" />
-              <span className="text-[10px] font-medium text-emerald-400">COPIED</span>
-            </>
-          ) : (
-            <>
-              <Copy size={12} aria-hidden="true" />
-              <span className="text-[10px] font-medium">COPY</span>
-            </>
-          )}
+    <div className={`code-block${isProse ? " code-block--prose" : ""}`}>
+      <div className="code-block-header">
+        <span className="code-block-label">{label}</span>
+        <button type="button" onClick={handleCopy} className="code-copy-button"
+          aria-label={isKorean ? "내용 복사" : "Copy content"}>
+          {isCopied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+          <span>{isCopied ? (isKorean ? "복사 완료" : "Copied") : (isKorean ? "복사" : "Copy")}</span>
         </button>
       </div>
-
-      {/* Code Content */}
-      <pre className="p-5 overflow-x-auto font-mono text-[13.5px] leading-[1.6] text-zinc-300 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+      <pre className="code-block-content" tabIndex={isProse ? undefined : 0}>
         {children}
       </pre>
-
-      {/* Screen reader announcement for copy success */}
-      <span role="status" aria-live="polite" className="sr-only">
-        {isCopied ? 'Copied to clipboard' : ''}
+      <span role="status" aria-live="polite" className={copyError ? "code-copy-error" : "sr-only"}>
+        {copyError ? (isKorean ? "내용을 선택해서 직접 복사해 주세요." : "Select the text to copy manually.") : isCopied ? (isKorean ? "클립보드에 복사했습니다" : "Copied to clipboard") : ""}
       </span>
     </div>
   );

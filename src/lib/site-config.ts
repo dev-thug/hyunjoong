@@ -1,5 +1,6 @@
 export const DEFAULT_BASE_URL = "https://hyunjoong.kim";
-export const SITE_NAME = "Hyunjoong Kim";
+export const SITE_NAME = "김현중";
+export const SITE_ALTERNATE_NAME = "Hyunjoong Kim";
 export const DEFAULT_OG_IMAGE = "/images/og-profile.png";
 export const NOT_FOUND_METADATA_TITLE = `Not Found | ${SITE_NAME}`;
 

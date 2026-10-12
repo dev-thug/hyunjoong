@@ -1,5 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
+import { parseContentDate } from "@/lib/content-date";
+import { resolvePostImage } from "@/lib/post-discovery";
 import { cache } from "react";
 import type { Post, PostCategory } from "@/types/blog";
 import {
@@ -30,6 +32,8 @@ interface ParsedPostMetadata {
   excerpt?: string;
   category?: string;
   date?: string;
+  updatedAt?: string;
+  image?: string;
   readTime?: string;
   lang?: string;
   keywords?: string | string[];
@@ -85,6 +89,8 @@ const parseMetadataFromContent = (
     excerpt: parseQuotedString(metadataBlock, "excerpt"),
     category: parseQuotedString(metadataBlock, "category"),
     date: parseQuotedString(metadataBlock, "date"),
+    updatedAt: parseContentDate(parseQuotedString(metadataBlock, "updatedAt")),
+    image: parseQuotedString(metadataBlock, "image"),
     readTime: parseQuotedString(metadataBlock, "readTime"),
     lang: parseQuotedString(metadataBlock, "lang"),
     keywords:
@@ -185,6 +191,8 @@ export const getPostBySlug = cache(
       excerpt: metadata.excerpt,
       category: metadata.category,
       date: metadata.date,
+      ...(metadata.updatedAt && metadata.updatedAt >= metadata.date ? { updatedAt: metadata.updatedAt } : {}),
+      image: resolvePostImage(fileContents, metadata.image),
       readTime: metadata.readTime,
       ...(keywords?.length ? { keywords } : {}),
       ...(hidden ? { hidden: true } : {}),

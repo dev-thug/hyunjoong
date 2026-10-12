@@ -31,6 +31,7 @@ interface BuildContentDetailMetadataOptions {
   image?: string;
   openGraphType?: OpenGraphType;
   publishedTime?: string;
+  modifiedTime?: string;
   noIndex?: boolean;
 }
 
@@ -48,6 +49,7 @@ export const buildContentDetailMetadata = ({
   image = DEFAULT_OG_IMAGE,
   openGraphType = "website",
   publishedTime,
+  modifiedTime,
   noIndex = false,
 }: BuildContentDetailMetadataOptions): Metadata => {
   const baseUrl = getSiteBaseUrl();
@@ -82,6 +84,7 @@ export const buildContentDetailMetadata = ({
       siteName: SITE_NAME,
       type: openGraphType,
       ...(publishedTime ? { publishedTime } : {}),
+      ...(modifiedTime ? { modifiedTime } : {}),
       locale: lang === "ko" ? "ko_KR" : "en_US",
       images: [
         {

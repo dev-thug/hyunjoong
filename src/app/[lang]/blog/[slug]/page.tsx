@@ -1,3 +1,4 @@
+import { rankRelatedPosts } from "@/lib/post-discovery";
 import RelatedContent from "@/components/layout/RelatedContent";
 import { getRelatedProjectsForPost } from "@/lib/related-content";
 import Breadcrumbs from "@/components/layout/Breadcrumbs";
@@ -73,9 +74,10 @@ export async function generateMetadata({
     title: currentPost.title,
     description: currentPost.excerpt,
     availableLocales: { ko: hasKo, en: hasEn },
-    image: DEFAULT_OG_IMAGE,
+    image: currentPost.image ?? DEFAULT_OG_IMAGE,
     openGraphType: "article",
     publishedTime: currentPost.date,
+    modifiedTime: currentPost.updatedAt,
     noIndex: Boolean(currentPost.hidden),
   });
 }
@@ -137,6 +139,7 @@ export default async function BlogPostPage({
   const postSource = await getPostSourceBySlug(slug, lang);
   const tocItems = postSource ? extractTocItems(postSource) : [];
 
+  const relatedPosts = rankRelatedPosts(post, allPosts);
   const currentIndex = allPosts.findIndex((p) => p.slug === slug);
   const prevPost =
     currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
@@ -154,21 +157,23 @@ export default async function BlogPostPage({
 
   const baseUrl = getSiteBaseUrl();
   const articleUrl = `${baseUrl}/${post.lang}/blog/${slug}`;
-  const ogImageUrl = toAbsoluteSiteUrl(DEFAULT_OG_IMAGE);
+  const articleImage = post.image ? toAbsoluteSiteUrl(post.image) : undefined;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
+    "@id": `${articleUrl}#article`,
     headline: post.title,
     description: post.excerpt,
     datePublished: post.date,
+    ...(post.updatedAt ? { dateModified: post.updatedAt } : {}),
     url: articleUrl,
     inLanguage: post.lang,
-    mainEntityOfPage: articleUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
     isPartOf: { "@id": `${baseUrl}/${post.lang}/blog#blog` },
-    author: buildSitePerson(baseUrl, post.lang),
+    author: { ...buildSitePerson(baseUrl, post.lang), url: `${baseUrl}/${post.lang}/profile` },
     publisher: buildSitePerson(baseUrl, post.lang),
-    image: ogImageUrl,
+    ...(articleImage ? { image: articleImage } : {}),
     articleSection: post.category,
     ...(post.keywords?.length ? { keywords: post.keywords } : {}),
   };
@@ -181,13 +186,13 @@ export default async function BlogPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript }}
       />
-      <div className="mx-auto grid w-full max-w-[1200px] gap-10 lg:grid-cols-[minmax(0,85ch)_280px]">
-      <article id="blog-post-content" className="min-w-0">
+      <div className="blog-detail-grid">
+      <article id="blog-post-content" className="blog-article">
         {/* 헤더 */}
         <header className="mb-12">
           <Breadcrumbs lang={post.lang} items={[{ name: lang === "ko" ? "홈" : "Home", path: "/" + lang }, { name: lang === "ko" ? "기술 블로그" : "Blog", path: "/" + lang + "/blog" }, { name: post.title, path: "/" + post.lang + "/blog/" + slug }]} />
 
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-wrap items-center gap-4 mb-4">
             <span
               className={`text-xs font-mono uppercase tracking-wider px-3 py-1 rounded-full ${
                 post.category === "Business"
@@ -202,6 +207,7 @@ export default async function BlogPostPage({
             <span className="text-sm text-gray-400 font-mono">
               <time dateTime={post.date}>{post.date}</time> · {post.readTime} {dict.blog.read_time}
             </span>
+            {post.updatedAt && <span className="text-sm text-zinc-400">{lang === "ko" ? "수정 " : "Updated "}<time dateTime={post.updatedAt}>{post.updatedAt}</time></span>}
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold font-montserrat text-white leading-tight">
@@ -237,6 +243,9 @@ export default async function BlogPostPage({
 
         {/* 댓글 */}
         <Giscus lang={lang as 'ko' | 'en'} />
+
+        <RelatedContent headingId="related-articles-heading" title={lang === "ko" ? "함께 읽을 글" : "Related articles"}
+          items={relatedPosts.map(related => ({ href: `/${related.lang}/blog/${related.slug}`, title: related.title, description: related.excerpt }))} />
 
         <RelatedContent title={lang === "ko" ? "관련 프로젝트" : "Related projects"}
           items={relatedProjects.map(project => ({ href: "/" + project.lang + "/projects/" + project.slug, title: project.title, description: project.adCopy }))} />

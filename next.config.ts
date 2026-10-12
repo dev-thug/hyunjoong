@@ -7,10 +7,14 @@ import { shouldNoIndexDeployment } from './src/lib/indexing-policy';
  *
  * 'unsafe-inline' is permitted for style-src because Tailwind CSS v4 emits
  * inline styles and Next.js injects critical CSS inline at runtime.
+ * React's development debugger needs eval; production must keep it blocked.
  */
+const developmentScriptPolicy = process.env.NODE_ENV === 'development'
+  ? " 'unsafe-eval'"
+  : '';
 const contentSecurityPolicy = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://giscus.app https://va.vercel-scripts.com",
+  `script-src 'self' 'unsafe-inline'${developmentScriptPolicy} https://giscus.app https://va.vercel-scripts.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
