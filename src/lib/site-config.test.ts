@@ -6,10 +6,10 @@ import { BRAND } from "@/constants";
 import { buildLocalizedPageMetadata } from "./metadata/localized-page";
 import { buildContentDetailMetadata } from "./metadata/content-detail";
 
-test("keeps the visible brand and localized social site names aligned", () => {
+test("keeps the English visual brand independent of the Korean search site name", () => {
   assert.equal(SITE_NAME, "김현중");
   assert.equal(SITE_ALTERNATE_NAME, "Hyunjoong Kim");
-  assert.equal(BRAND.NAME, SITE_NAME);
+  assert.equal(BRAND.NAME, "Hyunjoong Kim");
   for (const lang of ["ko", "en"] as const) {
     const page = buildLocalizedPageMetadata({ lang, title: "Profile", description: "Profile", path: "/profile" });
     const article = buildContentDetailMetadata({ lang, canonicalLang: lang, slug: "example", section: "blog", title: "Example", description: "Example", availableLocales: { ko: true, en: true } });
