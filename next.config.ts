@@ -15,7 +15,7 @@ const developmentScriptPolicy = process.env.NODE_ENV === 'development'
 const contentSecurityPolicy = [
   "default-src 'self'",
   `script-src 'self' 'unsafe-inline'${developmentScriptPolicy} https://giscus.app https://va.vercel-scripts.com`,
-  "style-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline' https://giscus.app",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
   "connect-src 'self' https://giscus.app https://va.vercel-scripts.com https://vitals.vercel-insights.com",
