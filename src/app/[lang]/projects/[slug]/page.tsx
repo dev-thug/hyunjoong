@@ -152,6 +152,12 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
                 <ExternalLink size={14} aria-hidden="true" />
               </a>
             )}
+            {(project.slug === "petty" || project.slug === "mamma") && (
+<div className="mt-4 flex flex-wrap gap-3">
+<a href={project.slug === "mamma" ? "https://apps.apple.com/kr/app/id6760751452" : "https://apps.apple.com/kr/app/id6811251214"} target="_blank" rel="noopener noreferrer" style={{ color: "#111827", backgroundColor: "#f8fafc", textDecoration: "none" }} className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl border border-white/20 px-4 py-3 font-semibold shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"><svg width="26" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 12.54c.03 3.2 2.8 4.27 2.83 4.28-.02.08-.44 1.52-1.46 3.01-.88 1.29-1.8 2.58-3.24 2.61-1.41.03-1.87-.84-3.49-.84-1.61 0-2.12.81-3.46.87-1.39.05-2.45-1.4-3.34-2.68-1.81-2.62-3.19-7.4-1.33-10.63.92-1.6 2.57-2.61 4.36-2.64 1.36-.03 2.65.92 3.49.92.83 0 2.4-1.14 4.04-.97.69.03 2.62.28 3.86 2.1-.1.06-2.3 1.34-2.26 3.97ZM14.38 4.74c.74-.9 1.24-2.15 1.1-3.4-1.07.04-2.37.71-3.14 1.61-.69.8-1.3 2.09-1.14 3.32 1.2.09 2.43-.61 3.18-1.53Z" /></svg><span>{lang === "ko" ? "App Store 다운로드" : "App Store"}</span></a>
+<a href={project.slug === "mamma" ? "https://play.google.com/store/apps/details?id=im.mamma.app" : "https://play.google.com/store/apps/details?id=im.petty.app"} target="_blank" rel="noopener noreferrer" style={{ color: "#111827", backgroundColor: "#dcfce7", textDecoration: "none" }} className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl border border-white/20 px-4 py-3 font-semibold shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"><svg width="26" height="28" viewBox="0 0 24 26" aria-hidden="true"><path fill="#4285F4" d="M2 1 14 13 2 25Z"/><path fill="#34A853" d="m2 1 15 8-3 4Z"/><path fill="#FBBC04" d="m17 9 5 3q2 1 0 2l-5 3-3-4Z"/><path fill="#EA4335" d="m2 25 12-12 3 4Z"/></svg><span>{lang === "ko" ? "Google Play 다운로드" : "Google Play"}</span></a>
+</div>
+            )}
           </div>
           <div className="relative  w-full self-start overflow-hidden rounded-xl border border-white/10 bg-zinc-950 lg:self-center" style={{ aspectRatio: project.slug === "genomic-prediction-app" ? "1440 / 804" : "16 / 10" }}>
             <Image
