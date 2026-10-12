@@ -8,7 +8,7 @@ import type { Project } from "@/types/project";
 const PROJECT_READING: Readonly<Record<string, readonly string[]>> = {
   "graphrag-ai-agent-specify": ["post-rag-architecture-graphrag-hybrid-evaluation", "ai-agent-orchestration-architecture"],
   mamma: ["ai-agent-chatbot-mcp-guide", "serverless-pricing"],
-  petty: ["agentic-workflow-architecture", "agent-observability-evals"],
+  petty: ["petty-character-memory-improvements", "agentic-workflow-architecture", "agent-observability-evals"],
 };
 
 export const getRelatedPostsForProject = cache(async (slug: string, lang: string): Promise<Post[]> => {
