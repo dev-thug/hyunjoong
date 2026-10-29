@@ -1,0 +1,66 @@
+export const metadata = {
+  title: "One Year with AI Coding Agents: How I Build Products with AI",
+  excerpt: "What I learned building products with Claude Code and Codex: how to review beyond working code and retain ownership of product design and direction.",
+  category: "Engineering",
+  date: "2026-10-29",
+  readTime: "6 min",
+  lang: "en",
+  keywords: ["AI Coding Agent", "Claude Code", "Codex", "Code Review", "Architecture", "Specify"],
+  hidden: false,
+};
+
+# One Year with AI Coding Agents: How I Build Products with AI
+
+Over the past year, I've used Claude Code and Codex to build products. The agents have been capable at writing code and getting features to work. But deciding whether those features fit the product's direction and circumstances has remained my responsibility.
+
+As development sped up, new questions emerged. How much should I trust an agent when it reports that a feature works? When I can't realistically read every line of the growing codebase, what should I focus on in review?
+
+My conclusion after a year is that **people need to own the product's structure and design intent, while agents implement within that direction**.
+
+## 1. Newer models are much better at understanding intent
+
+With earlier models, I often saw work I hadn't asked for. I would request a fix to one feature, only to find that the agent had also changed something else.
+
+In my experience, Astra 6 and Opus 5.5 understood the context and intent of requests better than earlier models. With faster models such as Luna and Haiku, and with Gemini, I found it more reliable to spell out the task and its boundaries explicitly.
+
+This is my own experience, not a general ranking. Performance varies with the model version, the task, and the context provided. Even as models improve, it remains useful to be clear about **what should change, why, and where the scope ends**.
+
+## 2. A working feature is not necessarily the intended feature
+
+Understanding a request and implementing it in a way that fits the product are different challenges. Agents are good at making features work and passing tests, but they can implement a solution without sufficiently considering business goals, the service's current scale, or future growth.
+
+Even after an agent reported that development and code review were complete, I found problems by examining data flow, memory use, potential database transaction conflicts, and architecture. They tended to fall into four categories:
+
+1. **Duplicate code and unnecessary implementation**: The agent adds a separate implementation to make the feature work when an existing interface could have solved the problem more simply.
+2. **Cost and performance overlooked**: Instead of reusing data already in memory, the agent loads it again on a subsequent run. This can increase costs and latency, and eventually lead to out-of-memory failures.
+3. **Code and documentation drifting apart**: The agent relies on outdated documentation or faulty existing code and builds something different from the original intent.
+4. **Tests that don't provide useful verification**: The agent focuses on coverage numbers and writes tests that fail to check the feature's actual behavior or important failure cases.
+
+Passing tests and an agent's completion report are useful signals. On their own, they don't establish that the design is appropriate or that the right problem has been solved. Someone still needs to use the product and examine important data flows and the effects of the change.
+
+## 3. Keep ownership of the product
+
+As AI coding agents increase development speed, reviewing every generated line becomes harder. Even a side project can accumulate enough commits that keeping up with changes takes significant time.
+
+That doesn't mean handing over judgment. In my experience, agents implement details well when given a clear overall structure and direction. Our job is to look beyond the volume of code and ask whether **the product's structure and features are evolving in the intended direction**.
+
+I think a useful approach is to express code structure and feature behavior in diagrams and plain language, then use those as the basis for review.
+
+- **Architecture review**: Use diagrams derived from the code to inspect the overall structure. Check whether service and domain boundaries make sense, and look for duplication or excessive abstraction.
+- **Feature design review**: Document a new feature's flow and sequence, dependencies between services, and domain boundaries. Before diving into the code, review how the feature is supposed to work and why it was designed that way.
+
+Diagrams and documents don't replace code review. They provide a starting point for understanding the larger context and finding code that deserves closer attention. They also need to be checked against the implementation.
+
+## 4. A practical way to understand and design your product
+
+[Specify](https://specify.app) can help visualize a product's architecture from its codebase and produce development notes and flow diagrams for individual features. These views make it easier to see how data moves and is processed, and how features connect, before following the code line by line.
+
+For a new feature, I use the following sequence:
+
+1. **Understand the current structure**: Review the existing architecture and related features, and identify services and data that can be reused.
+2. **Design the feature**: Write a PRD that identifies the domain where the feature belongs and how it will use existing services and data.
+3. **Request implementation**: Give the coding agent the reviewed direction and constraints, then ask it to implement the feature.
+4. **Review the result**: Use the feature, compare the data flow and changed structure against the design intent, and inspect important code and tests.
+5. **Record decisions**: Keep the design intent and key decisions in development notes for future work.
+
+As agents make it faster to build features, deciding what to build and how the product should evolve becomes more important. Understanding the current structure and owning the design makes it possible to use the agent's implementation speed in service of the product's direction.
